@@ -26,5 +26,4 @@ jobs:
       java-version: 25
       build-image: true
       push-image: ${{ github.ref_name == github.event.repository.default_branch}}
-      upload-image: ${{ github.ref_name != github.event.repository.default_branch }} # TODO: hør med Qadeer om denne trengs
     secrets: inherit
