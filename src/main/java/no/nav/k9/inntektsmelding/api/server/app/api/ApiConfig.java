@@ -58,9 +58,9 @@ public class ApiConfig extends ResourceConfig {
 
     private void registerOpenApi() {
         var oas = new OpenAPI().openapi("3.2.0");
-        var info = new Info().title("Foreldrepenger inntektsmelding API")
+        var info = new Info().title("K9 inntektsmelding API")
             .version("1.0.0")
-            .description("API for inntektsmelding for foreldrepenger og svangerskapspenger");
+            .description("API for inntektsmelding for pleiepenger, omsorgspenger og opplæringspenger");
 
         oas.info(info).addServersItem(new Server())
             .addTagsItem(new Tag().name("Forespørsel om inntektsmelding").description("Endepunkter for å hente forespørsler NAV har sendt til arbeidsgiver"))
