@@ -22,7 +22,7 @@ jobs:
       packages: write
       id-token: write
       pull-requests: read
-    uses: navikt/sif-gha-workflows/.github/workflows/maven-build-app-db.yml@main
+    uses: navikt/sif-gha-workflows/.github/workflows/maven-build-app.yml@main
     with:
       build-image: ${{ github.ref_name == 'master' }} # default: true
       push-image: ${{ github.ref_name == 'master' }} # default: false
