@@ -29,6 +29,9 @@ Klienter mot eksterne systemer (Økonomi/OS, Infotrygd, PDL, Dokarkiv), Kafka (t
 ### Miljøvariabler/hemmeligheter
 Variabler med `SCOPE`, `CLIENT_ID`, `CLIENT_SECRET`, `CREDENTIAL`; Vault/Azure Key Vault-refs; hardkodede URLer/tokens/credentials (→ sikkerhetsflagg)
 
+### Sensitive data i output
+FNR, aktørId, tokens eller request-verdier eksponert via logg, exception-meldinger eller valideringsannotasjoner (`${validatedValue}` i `@Pattern`/`@Size` o.l.) → sikkerhetsflagg
+
 ### GitHub Actions
 Endringer i `.github/workflows/`: bygg/test/deploy, fjerning/svekkelse av teststeg, deployment-targets, upinnede action-versjoner
 
