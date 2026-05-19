@@ -24,12 +24,6 @@ spec:
     periodSeconds: 10
     failureThreshold: 20
     timeout: 3
-  startup:
-    path: /internal/health/isReady
-    initialDelay: 10
-    periodSeconds: 10
-    failureThreshold: 20
-    timeout: 3
   preStopHook:
     http:
       path: /internal/health/preStop
@@ -42,7 +36,7 @@ spec:
     scalingStrategy:
       cpu:
         thresholdPercentage: 50
-      scaleUpStabilizationWindowSeconds: 0
+      scaleUpStabilizationWindowSeconds: 30
   resources:
     limits:
       memory: "{{limits.mem}}"
