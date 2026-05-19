@@ -28,7 +28,7 @@ import no.nav.k9.inntektsmelding.api.server.exceptions.LokalRestExceptionMapper;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.ForespørselRest;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.InntektsmeldingRest;
 import no.nav.vedtak.exception.TekniskException;
-import no.nav.vedtak.server.rest.FeilUtils;
+import no.nav.vedtak.server.rest.RestSecureLogFeature;
 import no.nav.vedtak.server.rest.jackson.Jackson3ContextResolver;
 import no.nav.vedtak.server.rest.jackson.Jackson3ProviderFeature;
 
@@ -37,7 +37,6 @@ public class ApiConfig extends ResourceConfig {
 
     public static final String API_URI = "/v1";
     private static final Logger LOG = LoggerFactory.getLogger(ApiConfig.class);
-    private static final Logger SECURE_LOG = LoggerFactory.getLogger("secureLogger");
 
     public ApiConfig() {
         LOG.info("Initialiserer: {}", API_URI);
@@ -84,8 +83,7 @@ public class ApiConfig extends ResourceConfig {
 
     void registerExceptionMappers() {
         // Behold lokale pga annet respons-body-objekt enn interne apps
-        // Skal forbedre oppsett av sikkerlogging her
-        FeilUtils.setSikkerlogg(SECURE_LOG);
+        register(RestSecureLogFeature.class);
         register(LokalRestExceptionMapper.class);
         register(ConstraintViolationMapper.class);
     }

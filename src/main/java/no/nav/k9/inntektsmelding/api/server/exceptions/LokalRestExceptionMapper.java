@@ -5,7 +5,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
-import no.nav.vedtak.server.rest.FeilUtils;
+import no.nav.vedtak.server.rest.RestServerFeilUtils;
 
 /**
  * Vi ønsker ikke eksponere detaljerte feilmeldinger frontend. Vi spesialbehandler tilgangsmangel, ellers får alle en generell melding om serverfeil.
@@ -16,7 +16,7 @@ public class LokalRestExceptionMapper implements ExceptionMapper<Throwable> {
 
     @Override
     public Response toResponse(Throwable feil) {
-        FeilUtils.loggFeil(feil);
+        RestServerFeilUtils.loggFeil(feil);
         if (feil instanceof InntektsmeldingAPIException ex) {
             return Response.status(ex.getStatus())
                 .entity(new ErrorResponse(ex.getFeilmelding().name(), ex.getFeilmelding().getTekst()))

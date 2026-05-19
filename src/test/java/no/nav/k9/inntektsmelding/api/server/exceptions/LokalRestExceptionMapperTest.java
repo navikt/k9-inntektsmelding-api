@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import jakarta.ws.rs.core.Response;
 
-import no.nav.vedtak.server.rest.FeilUtils;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +15,7 @@ import no.nav.vedtak.exception.FunksjonellException;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.log.mdc.MDCOperations;
 import no.nav.vedtak.log.util.MemoryAppender;
+import no.nav.vedtak.server.rest.RestServerFeilUtils;
 
 @Execution(ExecutionMode.SAME_THREAD)
 class LokalRestExceptionMapperTest {
@@ -27,7 +26,7 @@ class LokalRestExceptionMapperTest {
 
     @BeforeEach
     void setUp() {
-        logSniffer = MemoryAppender.sniff(FeilUtils.class);
+        logSniffer = MemoryAppender.sniff(RestServerFeilUtils.class);
     }
 
     @AfterEach
