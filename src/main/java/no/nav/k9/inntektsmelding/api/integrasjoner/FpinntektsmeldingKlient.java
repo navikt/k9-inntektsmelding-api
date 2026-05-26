@@ -32,7 +32,10 @@ import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
 @Dependent
-@RestClientConfig(tokenConfig = TokenFlow.AZUREAD_CC, application = FpApplication.FPINNTEKTSMELDING)
+@RestClientConfig(
+    tokenConfig = TokenFlow.AZUREAD_CC,
+    scopesProperty = "k9inntektsmelding.scopes",
+    endpointProperty = "k9inntektsmelding.url")
 public class FpinntektsmeldingKlient {
     private static final Logger LOG = LoggerFactory.getLogger(FpinntektsmeldingKlient.class);
     private static final Logger SECURE_LOG = LoggerFactory.getLogger("secureLogger");
