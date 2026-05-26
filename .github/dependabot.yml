@@ -42,3 +42,7 @@ updates:
         patterns:
           - "no.nav.*"
 
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: daily
