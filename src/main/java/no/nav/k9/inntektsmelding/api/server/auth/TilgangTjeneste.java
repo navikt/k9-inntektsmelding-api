@@ -60,7 +60,7 @@ public class TilgangTjeneste implements Tilgang {
     }
 
     private static ManglerTilgangException ikkeTilgang(String begrunnelse) {
-        LOG.warn("IM-00403:" + String.format("Mangler tilgang til tjenesten. %s", begrunnelse));
+        LOG.warn("IM-00403: Mangler tilgang til tjenesten. {}", begrunnelse);
         throw new InntektsmeldingAPIException(EksponertFeilmelding.STANDARD_FEIL, Response.Status.INTERNAL_SERVER_ERROR);
     }
 
