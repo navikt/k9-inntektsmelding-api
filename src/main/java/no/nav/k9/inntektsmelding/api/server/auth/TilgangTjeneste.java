@@ -28,9 +28,8 @@ public class TilgangTjeneste implements Tilgang {
         var orgnummerFraKontekst = hentOrgnrFraKontekst();
         var systemId = hentSystemIdFraKontekst();
         if (!orgnummerFraKontekst.equals(orgnummerFraForespørsel)) {
-            SECURE_LOG.warn("Kontekst har ikke samme orgnummer som forespørsel. "
+            SECURE_LOG.info("Kontekst har ikke samme orgnummer som forespørsel. Dette skyldes trolig at orgnummer fra token er juridisk enhet. "
                 + "Orgnummer fra kontekst var {} og orgnummer fra forespørsel var {}", orgnummerFraKontekst, orgnummerFraForespørsel);
-            throw new InntektsmeldingAPIException(EksponertFeilmelding.MISMATCH_ORGNR, Response.Status.BAD_REQUEST);
         }
         var ressurs = ENV.getRequiredProperty("altinn.tre.inntektsmelding.ressurs");
 
