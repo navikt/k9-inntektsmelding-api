@@ -34,20 +34,20 @@ import no.nav.foreldrepenger.inntektsmelding.imapi.inntektsmelding.SendInntektsm
 import no.nav.vedtak.konfig.Tid;
 
 @Dependent
-public class FpinntektsmeldingTjeneste {
-    private FpinntektsmeldingKlient fpinntektsmeldingKlient;
+public class K9inntektsmeldingTjeneste {
+    private K9inntektsmeldingKlient k9inntektsmeldingKlient;
 
-    FpinntektsmeldingTjeneste() {
+    K9inntektsmeldingTjeneste() {
         // for CDI proxy
     }
 
     @Inject
-    public FpinntektsmeldingTjeneste(FpinntektsmeldingKlient fpinntektsmeldingKlient) {
-        this.fpinntektsmeldingKlient = fpinntektsmeldingKlient;
+    public K9inntektsmeldingTjeneste(K9inntektsmeldingKlient k9inntektsmeldingKlient) {
+        this.k9inntektsmeldingKlient = k9inntektsmeldingKlient;
     }
 
     public Forespørsel hentForespørsel(UUID forespørselUuid) {
-        var response = fpinntektsmeldingKlient.hentForespørsel(forespørselUuid);
+        var response = k9inntektsmeldingKlient.hentForespørsel(forespørselUuid);
         return response != null ? mapResponseTilDomeneobjekt(response) : null;
     }
 
@@ -62,12 +62,12 @@ public class FpinntektsmeldingTjeneste {
             ytelseType == null ? null : mapYtelseType(ytelseType),
             fom,
             tom);
-        var response = fpinntektsmeldingKlient.hentForespørsler(filter);
+        var response = k9inntektsmeldingKlient.hentForespørsler(filter);
         return response.stream().map(this::mapResponseTilDomeneobjekt).toList();
     }
 
     public Inntektsmelding hentInntektsmelding(UUID innsendingId) {
-        var response = fpinntektsmeldingKlient.hentInntektsmelding(innsendingId);
+        var response = k9inntektsmeldingKlient.hentInntektsmelding(innsendingId);
         return response == null ? null : mapInntektsmeldingResponseTilDomeneobjekt(response);
     }
 
@@ -83,7 +83,7 @@ public class FpinntektsmeldingTjeneste {
             uuid,
             fom,
             tom);
-        var response = fpinntektsmeldingKlient.hentInntektsmeldinger(request);
+        var response = k9inntektsmeldingKlient.hentInntektsmeldinger(request);
         return response.stream().map(this::mapInntektsmeldingResponseTilDomeneobjekt).toList();
     }
 
@@ -183,7 +183,7 @@ public class FpinntektsmeldingTjeneste {
                 inntektsmeldingRequest.avsender().systemVersjon())
         );
 
-        return fpinntektsmeldingKlient.sendInntektsmelding(inntektsmeldingRequestDto);
+        return k9inntektsmeldingKlient.sendInntektsmelding(inntektsmeldingRequestDto);
     }
 
     private List<EndringsårsakerDto> mapEndringsårsakerDto(List<InntektsmeldingRequest.InntektInfo.Endringsårsak> endringsårsak) {

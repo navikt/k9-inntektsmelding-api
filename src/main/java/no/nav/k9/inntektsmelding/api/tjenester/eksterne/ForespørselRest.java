@@ -29,7 +29,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
 import no.nav.k9.inntektsmelding.api.forespørsel.ForespørselDto;
-import no.nav.k9.inntektsmelding.api.integrasjoner.FpinntektsmeldingTjeneste;
+import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
 import no.nav.k9.inntektsmelding.api.server.auth.Tilgang;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
 import no.nav.k9.inntektsmelding.api.server.exceptions.ErrorResponse;
@@ -45,7 +45,7 @@ public class ForespørselRest {
     private static final String HENT_FORESPØRSEL = "/{forespoerselId}";
     private static final String HENT_FLERE = "/forespoersler";
     private static final Logger LOG = LoggerFactory.getLogger(ForespørselRest.class);
-    private FpinntektsmeldingTjeneste fpinntektsmeldingTjeneste;
+    private K9inntektsmeldingTjeneste k9inntektsmeldingTjeneste;
     private Tilgang tilgang;
 
     ForespørselRest() {
@@ -53,8 +53,8 @@ public class ForespørselRest {
     }
 
     @Inject
-    public ForespørselRest(FpinntektsmeldingTjeneste fpinntektsmeldingTjeneste, Tilgang tilgang) {
-        this.fpinntektsmeldingTjeneste = fpinntektsmeldingTjeneste;
+    public ForespørselRest(K9inntektsmeldingTjeneste k9inntektsmeldingTjeneste, Tilgang tilgang) {
+        this.k9inntektsmeldingTjeneste = k9inntektsmeldingTjeneste;
         this.tilgang = tilgang;
     }
 
@@ -79,7 +79,7 @@ public class ForespørselRest {
         LOG.info("Innkomende kall på hent forespørsel {}", forespoerselId);
         var uuid = UUID.fromString(forespoerselId);
 
-        Forespørsel forespørsel = fpinntektsmeldingTjeneste.hentForespørsel(uuid);
+        Forespørsel forespørsel = k9inntektsmeldingTjeneste.hentForespørsel(uuid);
         if (forespørsel == null) {
             return Response.status(Response.Status.NOT_FOUND).
                 entity(new ErrorResponse(EksponertFeilmelding.TOM_FORESPOERSEL.name(), EksponertFeilmelding.TOM_FORESPOERSEL.getTekst() + ": " + forespoerselId,
@@ -111,7 +111,7 @@ public class ForespørselRest {
 
         // Det er spurt etter en spesifikk forespørsel, henter kun denne
         if (filterRequest.forespoerselId() != null) {
-            Forespørsel forespørsel = fpinntektsmeldingTjeneste.hentForespørsel(filterRequest.forespoerselId());
+            Forespørsel forespørsel = k9inntektsmeldingTjeneste.hentForespørsel(filterRequest.forespoerselId());
             if (forespørsel == null) {
                 return Response.ok(List.of()).build();
             }
@@ -126,7 +126,7 @@ public class ForespørselRest {
         }
 
         tilgang.sjekkAtSystemHarTilgangTilOrganisasjon(new Organisasjonsnummer(filterRequest.orgnr()));
-        var forespørsler = fpinntektsmeldingTjeneste.hentForespørsler(filterRequest.orgnr(),
+        var forespørsler = k9inntektsmeldingTjeneste.hentForespørsler(filterRequest.orgnr(),
             filterRequest.soekerFnr(),
             filterRequest.status(),
             filterRequest.ytelseType(),

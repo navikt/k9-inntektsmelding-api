@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
 import no.nav.k9.inntektsmelding.api.server.exceptions.InntektsmeldingAPIException;
 import no.nav.vedtak.exception.TekniskException;
-import no.nav.vedtak.felles.integrasjon.rest.FpApplication;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
@@ -36,8 +35,8 @@ import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
     tokenConfig = TokenFlow.AZUREAD_CC,
     scopesProperty = "k9inntektsmelding.scopes",
     endpointProperty = "k9inntektsmelding.url")
-public class FpinntektsmeldingKlient {
-    private static final Logger LOG = LoggerFactory.getLogger(FpinntektsmeldingKlient.class);
+public class K9inntektsmeldingKlient {
+    private static final Logger LOG = LoggerFactory.getLogger(K9inntektsmeldingKlient.class);
     private static final Logger SECURE_LOG = LoggerFactory.getLogger("secureLogger");
 
     private final RestClient restClient;
@@ -48,9 +47,9 @@ public class FpinntektsmeldingKlient {
     private final URI uriHentInntektsmelding;
     private final URI uriHentInntektsmeldinger;
 
-    public FpinntektsmeldingKlient() {
+    public K9inntektsmeldingKlient() {
         this.restClient = RestClient.client();
-        this.restConfig = RestConfig.forClient(FpinntektsmeldingKlient.class);
+        this.restConfig = RestConfig.forClient(K9inntektsmeldingKlient.class);
         this.uriHentForespørsel = toUri(restConfig.fpContextPath(), "api/imapi/foresporsel/hent");
         this.uriHentForespørsler = toUri(restConfig.fpContextPath(), "api/imapi/foresporsel/hent/foresporsler");
         this.uriSendInntektsmelding = toUri(restConfig.fpContextPath(), "api/imapi/inntektsmelding/send-inntektsmelding");
@@ -60,26 +59,26 @@ public class FpinntektsmeldingKlient {
 
     ForespørselResponse hentForespørsel(UUID forespørselUuid) {
         try {
-            LOG.info("Sender request til fpinntektsmelding for forespørselUuid {} ", forespørselUuid);
+            LOG.info("Sender request til k9-inntektsmelding for forespørselUuid {} ", forespørselUuid);
             var request = RestRequest.newGET(toUri(uriHentForespørsel, "/" + forespørselUuid), restConfig);
             var response = restClient.sendReturnUnhandled(request);
             if (response.statusCode() == 404) {
-                LOG.info("Forespørsel ikke funnet i fpinntektsmelding for uuid: {}", forespørselUuid);
+                LOG.info("Forespørsel ikke funnet i k9-inntektsmelding for uuid: {}", forespørselUuid);
                 return null;
             }
             if (response.statusCode() >= 400) {
-                LOG.warn("FP-97215: Uventet respons {} ved henting av forespørsel fra fpinntektsmelding for uuid: {}",
+                LOG.warn("K9-97215: Uventet respons {} ved henting av forespørsel fra k9-inntektsmelding for uuid: {}",
                     response.statusCode(), forespørselUuid);
-                throw feilVedKallTilFpinntektsmelding();
+                throw feilVedKallTilK9inntektsmelding();
             }
             return DefaultJsonMapper.fromJson(response.body(), ForespørselResponse.class);
         } catch (InntektsmeldingAPIException e) {
             throw e;
         } catch (Exception e) {
-            LOG.warn("FP-97215: Feil ved henting av forespørsel fra fpinntektsmelding for uuid: {}. Feilmelding var {}",
+            LOG.warn("K9-97215: Feil ved henting av forespørsel fra k9-inntektsmelding for uuid: {}. Feilmelding var {}",
                 forespørselUuid,
                 e.getMessage());
-            throw feilVedKallTilFpinntektsmelding();
+            throw feilVedKallTilK9inntektsmelding();
         }
     }
 
@@ -89,47 +88,47 @@ public class FpinntektsmeldingKlient {
             var response = restClient.send(request, ForespørselResponse[].class);
             return List.of(response);
         } catch (Exception e) {
-            LOG.warn("FP-97215: Feil ved henting av forespørsler fra fpinntektsmelding for orgnr: {}. Feilmelding var {}",
+            LOG.warn("K9-97215: Feil ved henting av forespørsler fra k9-inntektsmelding for orgnr: {}. Feilmelding var {}",
                 filter.orgnr(),
                 e.getMessage());
-            throw feilVedKallTilFpinntektsmelding();
+            throw feilVedKallTilK9inntektsmelding();
         }
     }
 
     SendInntektsmeldingResponse sendInntektsmelding(SendInntektsmeldingRequest inntektsmeldingRequest) {
         try {
-            LOG.info("Sender inntektsmelding til fpinntektsmelding for forespørselUuid {} ", inntektsmeldingRequest.foresporselUuid());
+            LOG.info("Sender inntektsmelding til k9-inntektsmelding for forespørselUuid {} ", inntektsmeldingRequest.foresporselUuid());
             var request = RestRequest.newPOSTJson(inntektsmeldingRequest, uriSendInntektsmelding, restConfig);
             return restClient.send(request, SendInntektsmeldingResponse.class);
         } catch (Exception e) {
-            LOG.warn("FP-97215: Feil ved sending av inntektsmelding-api til fpinntektsmelding for uuid: {}. Feilmelding var {}", inntektsmeldingRequest.foresporselUuid(), e.getMessage());
-            SECURE_LOG.info("FP-97215: Feil ved sending av inntektsmelding-api til fpinntektsmelding. InntektsmeldingRequestDto er {}", inntektsmeldingRequest);
-            throw feilVedKallTilFpinntektsmelding();
+            LOG.warn("K9-97215: Feil ved sending av inntektsmelding-api til k9-inntektsmelding for uuid: {}. Feilmelding var {}", inntektsmeldingRequest.foresporselUuid(), e.getMessage());
+            SECURE_LOG.info("K9-97215: Feil ved sending av inntektsmelding-api til k9-inntektsmelding. InntektsmeldingRequestDto er {}", inntektsmeldingRequest);
+            throw feilVedKallTilK9inntektsmelding();
         }
     }
 
 
     HentInntektsmeldingResponse hentInntektsmelding(UUID innsendingId) {
         try {
-            LOG.info("Henter inntektsmelding fra fpinntektsmelding for uuid {} ", innsendingId);
+            LOG.info("Henter inntektsmelding fra k9-inntektsmelding for uuid {} ", innsendingId);
             var fullUri = uriHentInntektsmelding.toString() + "/" + innsendingId;
             var request = RestRequest.newGET(URI.create(fullUri), restConfig);
             var response = restClient.sendReturnUnhandled(request);
             if (response.statusCode() == 404) {
-                LOG.info("Inntektsmelding ikke funnet i fpinntektsmelding for uuid: {}", innsendingId);
+                LOG.info("Inntektsmelding ikke funnet i k9-inntektsmelding for uuid: {}", innsendingId);
                 return null;
             }
             if (response.statusCode() >= 400) {
-                LOG.warn("FP-97215: Uventet respons {} ved henting av inntektsmelding fra fpinntektsmelding for uuid: {}",
+                LOG.warn("K9-97215: Uventet respons {} ved henting av inntektsmelding fra k9-inntektsmelding for uuid: {}",
                     response.statusCode(), innsendingId);
-                throw feilVedKallTilFpinntektsmelding();
+                throw feilVedKallTilK9inntektsmelding();
             }
             return DefaultJsonMapper.fromJson(response.body(), HentInntektsmeldingResponse.class);
         } catch (InntektsmeldingAPIException e) {
             throw e;
         } catch (Exception e) {
-            LOG.warn("FP-97215: Feil ved henting av inntektsmelding fra fpinntektsmelding for uuid: {}. Feilmelding var {}", innsendingId, e.getMessage());
-            throw feilVedKallTilFpinntektsmelding();
+            LOG.warn("K9-97215: Feil ved henting av inntektsmelding fra k9-inntektsmelding for uuid: {}. Feilmelding var {}", innsendingId, e.getMessage());
+            throw feilVedKallTilK9inntektsmelding();
         }
     }
 
@@ -139,14 +138,14 @@ public class FpinntektsmeldingKlient {
              var response = restClient.send(request, HentInntektsmeldingResponse[].class);
              return List.of(response);
          } catch (Exception e) {
-             LOG.warn("FP-97215: Feil ved henting av inntektsmeldinger fra fpinntektsmelding for orgnr: {}. Feilmelding var {}",
+             LOG.warn("K9-97215: Feil ved henting av inntektsmeldinger fra k9-inntektsmelding for orgnr: {}. Feilmelding var {}",
                  filter.orgnr(),
                  e.getMessage());
-             throw feilVedKallTilFpinntektsmelding();
+             throw feilVedKallTilK9inntektsmelding();
          }
     }
 
-    private static TekniskException feilVedKallTilFpinntektsmelding() {
+    private static TekniskException feilVedKallTilK9inntektsmelding() {
         throw new InntektsmeldingAPIException(EksponertFeilmelding.STANDARD_FEIL, Response.Status.INTERNAL_SERVER_ERROR);
     }
 

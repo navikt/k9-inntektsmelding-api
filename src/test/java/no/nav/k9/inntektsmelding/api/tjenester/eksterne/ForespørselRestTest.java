@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
 import no.nav.k9.inntektsmelding.api.forespørsel.ForespørselDto;
-import no.nav.k9.inntektsmelding.api.integrasjoner.FpinntektsmeldingTjeneste;
+import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
 import no.nav.k9.inntektsmelding.api.server.auth.TilgangTjeneste;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
 import no.nav.k9.inntektsmelding.api.server.exceptions.ErrorResponse;
@@ -28,7 +28,7 @@ import no.nav.k9.inntektsmelding.api.typer.StatusDto;
 @ExtendWith(MockitoExtension.class)
 class ForespørselRestTest {
     @Mock
-    private FpinntektsmeldingTjeneste fpinntektsmeldingTjeneste;
+    private K9inntektsmeldingTjeneste k9inntektsmeldingTjeneste;
     @Mock
     private TilgangTjeneste tilgangTjeneste;
 
@@ -36,7 +36,7 @@ class ForespørselRestTest {
 
     @BeforeEach
     void setUp() {
-        forespørselRest = new ForespørselRest(fpinntektsmeldingTjeneste, tilgangTjeneste);
+        forespørselRest = new ForespørselRest(k9inntektsmeldingTjeneste, tilgangTjeneste);
     }
 
     @Test
@@ -52,7 +52,7 @@ class ForespørselRestTest {
     void skal_returnere_et_resultat_om_uuid_oppgit_og_ignorere_andre_filter_valg() {
         var orgnummer = "999999999";
         var uuid = UUID.randomUUID();
-        when(fpinntektsmeldingTjeneste.hentForespørsel(uuid)).thenReturn(new Forespørsel(uuid, new Organisasjonsnummer(orgnummer), "11111111111", LocalDate.now(), LocalDate.now(),
+        when(k9inntektsmeldingTjeneste.hentForespørsel(uuid)).thenReturn(new Forespørsel(uuid, new Organisasjonsnummer(orgnummer), "11111111111", LocalDate.now(), LocalDate.now(),
             ForespørselStatus.UNDER_BEHANDLING, YtelseType.FORELDREPENGER, LocalDate.now().atStartOfDay()));
         var response = forespørselRest.hentForespørsler(new ForespørselFilter(orgnummer, null, uuid, StatusDto.FORKASTET, YtelseType.SVANGERSKAPSPENGER, null, null));
         assertThat(response.getStatus()).isEqualTo(200);
@@ -79,7 +79,7 @@ class ForespørselRestTest {
             ForespørselStatus.UNDER_BEHANDLING, YtelseType.FORELDREPENGER, LocalDate.now().atStartOfDay());
         var forespørsel1 = new Forespørsel(UUID.randomUUID(), new Organisasjonsnummer(orgnummer), "11111111111", LocalDate.now(), LocalDate.now(),
             ForespørselStatus.UNDER_BEHANDLING, YtelseType.FORELDREPENGER, LocalDate.now().atStartOfDay());
-        when(fpinntektsmeldingTjeneste.hentForespørsler(orgnummer, null, null, null, null, null)).thenReturn(List.of(forespørsel1, forespørsel2));
+        when(k9inntektsmeldingTjeneste.hentForespørsler(orgnummer, null, null, null, null, null)).thenReturn(List.of(forespørsel1, forespørsel2));
         var response = forespørselRest.hentForespørsler(new ForespørselFilter(orgnummer, null, null, null, null, null, null));
         assertThat(response.getStatus()).isEqualTo(200);
         var forespørsler = (List<ForespørselDto>) response.getEntity();

@@ -30,7 +30,7 @@ import no.nav.foreldrepenger.inntektsmelding.felles.FeilkodeDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.k9.inntektsmelding.api.integrasjoner.FpinntektsmeldingTjeneste;
+import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
 import no.nav.k9.inntektsmelding.api.server.auth.Tilgang;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
@@ -47,7 +47,7 @@ public class InntektsmeldingRest {
     private static final String SEND_INNTEKTSMELDING = "/send-inn";
     private static final String HENT_INNTEKTSMELDING = "/hent/{inntektsmeldingId}";
     private static final String HENT_INNTEKTSMELDINGER = "/hent/inntektsmeldinger";
-    private FpinntektsmeldingTjeneste fpinntektsmeldingTjeneste;
+    private K9inntektsmeldingTjeneste k9inntektsmeldingTjeneste;
     private Tilgang tilgang;
 
     InntektsmeldingRest() {
@@ -55,8 +55,8 @@ public class InntektsmeldingRest {
     }
 
     @Inject
-    public InntektsmeldingRest(FpinntektsmeldingTjeneste fpinntektsmeldingTjeneste, Tilgang tilgang) {
-        this.fpinntektsmeldingTjeneste = fpinntektsmeldingTjeneste;
+    public InntektsmeldingRest(K9inntektsmeldingTjeneste k9inntektsmeldingTjeneste, Tilgang tilgang) {
+        this.k9inntektsmeldingTjeneste = k9inntektsmeldingTjeneste;
         this.tilgang = tilgang;
     }
 
@@ -84,7 +84,7 @@ public class InntektsmeldingRest {
     public Response sendInntektsmelding(@Valid @NotNull InntektsmeldingRequest inntektsmeldingRequest) {
         var forespørselUuid = inntektsmeldingRequest.forespoerselId();
         LOG.info("Mottatt inntektsmelding for forespørselUuid {} ", forespørselUuid);
-        var forespørsel = fpinntektsmeldingTjeneste.hentForespørsel(forespørselUuid);
+        var forespørsel = k9inntektsmeldingTjeneste.hentForespørsel(forespørselUuid);
 
         if (forespørsel == null) {
             LOG.info("Avvist inntektsmelding for forespørselUuid {}. Forespørsel ikke funnet.", forespørselUuid);
@@ -114,7 +114,7 @@ public class InntektsmeldingRest {
                 .entity(new ErrorResponse(feilmelding.get().name(), feilmelding.get().getTekst(), forespørselUuid.toString()))
                 .build();
         }
-        var response = fpinntektsmeldingTjeneste.sendInntektsmelding(inntektsmeldingRequest, forespørsel);
+        var response = k9inntektsmeldingTjeneste.sendInntektsmelding(inntektsmeldingRequest, forespørsel);
 
         if (response.success()) {
             return Response.ok(response.inntektsmeldingUuid()).build();
@@ -158,7 +158,7 @@ public class InntektsmeldingRest {
                                         @Pattern(regexp = "^[a-fA-F\\d]{8}(?:-[a-fA-F\\d]{4}){3}-[a-fA-F\\d]{12}$", message = "Ugyldig UUID-format")
                                         String inntektsmeldingId) {
         LOG.info("Hent inntektsmelding med inntektsmeldingId {} ", inntektsmeldingId);
-        var inntektsmelding = fpinntektsmeldingTjeneste.hentInntektsmelding(UUID.fromString(inntektsmeldingId));
+        var inntektsmelding = k9inntektsmeldingTjeneste.hentInntektsmelding(UUID.fromString(inntektsmeldingId));
 
         if (inntektsmelding == null) {
             LOG.info("Avvist inntektsmelding for inntektsmeldingId {}. Inntektsmelding ikke funnet.", inntektsmeldingId);
@@ -194,7 +194,7 @@ public class InntektsmeldingRest {
         LOG.info("Innkomende kall på søk etter inntektsmeldinger");
         tilgang.sjekkAtSystemHarTilgangTilOrganisasjon(new Organisasjonsnummer(inntektsmeldingFilter.orgnr()));
         if (inntektsmeldingFilter.inntektsmeldingId() != null) {
-            var inntektsmelding = fpinntektsmeldingTjeneste.hentInntektsmelding(inntektsmeldingFilter.inntektsmeldingId());
+            var inntektsmelding = k9inntektsmeldingTjeneste.hentInntektsmelding(inntektsmeldingFilter.inntektsmeldingId());
             if (inntektsmelding == null) {
                 LOG.info("Inntektsmelding med inntektsmeldingId {} ikke funnet.", inntektsmeldingFilter.inntektsmeldingId());
                 return Response.ok(new ErrorResponse(EksponertFeilmelding.TOM_INNTEKTSMELDING.name(), EksponertFeilmelding.TOM_INNTEKTSMELDING.getTekst(), inntektsmeldingFilter.inntektsmeldingId().toString())).build();
@@ -212,7 +212,7 @@ public class InntektsmeldingRest {
                 .build();
         }
 
-        var inntektsmeldinger = fpinntektsmeldingTjeneste.hentInntektsmeldinger(inntektsmeldingFilter.orgnr(),
+        var inntektsmeldinger = k9inntektsmeldingTjeneste.hentInntektsmeldinger(inntektsmeldingFilter.orgnr(),
             inntektsmeldingFilter.soekerFnr(),
             inntektsmeldingFilter.forespoerselId(),
             inntektsmeldingFilter.ytelseType(),

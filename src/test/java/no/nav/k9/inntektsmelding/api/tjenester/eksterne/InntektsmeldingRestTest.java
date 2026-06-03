@@ -5,7 +5,7 @@ import jakarta.ws.rs.core.Response;
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
 import no.nav.k9.inntektsmelding.api.inntektsmelding.Inntektsmelding;
 import no.nav.k9.inntektsmelding.api.inntektsmelding.InntektsmeldingDto;
-import no.nav.k9.inntektsmelding.api.integrasjoner.FpinntektsmeldingTjeneste;
+import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
 import no.nav.k9.inntektsmelding.api.server.auth.Tilgang;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
 import no.nav.k9.inntektsmelding.api.server.exceptions.ErrorResponse;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class InntektsmeldingRestTest {
     @Mock
-    private FpinntektsmeldingTjeneste fpinntektsmeldingTjeneste;
+    private K9inntektsmeldingTjeneste k9inntektsmeldingTjeneste;
     @Mock
     private Tilgang tilgang;
 
@@ -43,7 +43,7 @@ class InntektsmeldingRestTest {
 
     @BeforeEach
     void setUp() {
-        inntektsmeldingRest = new InntektsmeldingRest(fpinntektsmeldingTjeneste, tilgang);
+        inntektsmeldingRest = new InntektsmeldingRest(k9inntektsmeldingTjeneste, tilgang);
     }
 
     @Test
@@ -70,8 +70,8 @@ class InntektsmeldingRestTest {
             new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0")
         );
 
-        when(fpinntektsmeldingTjeneste.hentForespørsel(forespørselUuid)).thenReturn(forespørsel);
-        when(fpinntektsmeldingTjeneste.sendInntektsmelding(any(), any()))
+        when(k9inntektsmeldingTjeneste.hentForespørsel(forespørselUuid)).thenReturn(forespørsel);
+        when(k9inntektsmeldingTjeneste.sendInntektsmelding(any(), any()))
             .thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
 
         // Act
@@ -99,7 +99,7 @@ class InntektsmeldingRestTest {
             new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0")
         );
 
-        when(fpinntektsmeldingTjeneste.hentForespørsel(forespørselUuid)).thenReturn(null);
+        when(k9inntektsmeldingTjeneste.hentForespørsel(forespørselUuid)).thenReturn(null);
 
         // Act
         var response = inntektsmeldingRest.sendInntektsmelding(inntektsmeldingRequest);
@@ -118,7 +118,7 @@ class InntektsmeldingRestTest {
         var filter = new InntektsmeldingFilter(orgnr, fnr, forespørselId, null, YtelseType.FORELDREPENGER, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31));
 
         var inntektsmelding = lagInntektsmelding(orgnr);
-        when(fpinntektsmeldingTjeneste.hentInntektsmeldinger(orgnr, fnr, forespørselId, YtelseType.FORELDREPENGER, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31)))
+        when(k9inntektsmeldingTjeneste.hentInntektsmeldinger(orgnr, fnr, forespørselId, YtelseType.FORELDREPENGER, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31)))
             .thenReturn(List.of(inntektsmelding));
 
         var response = inntektsmeldingRest.hentInntektsmeldinger(filter);
@@ -137,7 +137,7 @@ class InntektsmeldingRestTest {
         var filter = new InntektsmeldingFilter(orgnr, null, null, innsendingId, null, LocalDate.of(2025, 12, 31), LocalDate.of(2025, 1, 1));
 
         var inntektsmelding = lagInntektsmelding(orgnr);
-        when(fpinntektsmeldingTjeneste.hentInntektsmelding(innsendingId)).thenReturn(inntektsmelding);
+        when(k9inntektsmeldingTjeneste.hentInntektsmelding(innsendingId)).thenReturn(inntektsmelding);
 
         var response = inntektsmeldingRest.hentInntektsmeldinger(filter);
 

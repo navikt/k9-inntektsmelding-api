@@ -31,15 +31,15 @@ import no.nav.foreldrepenger.inntektsmelding.imapi.forespørsel.ForespørselResp
 import no.nav.foreldrepenger.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingResponse;
 
 @ExtendWith(MockitoExtension.class)
-class FpinntektsmeldingTjenesteTest {
+class K9inntektsmeldingTjenesteTest {
     @Mock
-    private FpinntektsmeldingKlient fpinntektsmeldingKlient;
+    private K9inntektsmeldingKlient k9inntektsmeldingKlient;
 
-    private FpinntektsmeldingTjeneste fpinntektsmeldingTjeneste;
+    private K9inntektsmeldingTjeneste k9inntektsmeldingTjeneste;
 
     @BeforeEach
     void setUp() {
-        fpinntektsmeldingTjeneste = new FpinntektsmeldingTjeneste(fpinntektsmeldingKlient);
+        k9inntektsmeldingTjeneste = new K9inntektsmeldingTjeneste(k9inntektsmeldingKlient);
     }
 
     @Test
@@ -49,8 +49,8 @@ class FpinntektsmeldingTjenesteTest {
         var fødselsnummer = "123";
         var response = new ForespørselResponse(uuid, new OrganisasjonsnummerDto(orgnummer), new FødselsnummerDto(fødselsnummer),
             LocalDate.now(), LocalDate.now(), ForespørselStatusDto.UNDER_BEHANDLING, YtelseTypeDto.FORELDREPENGER, LocalDateTime.now());
-        when(fpinntektsmeldingKlient.hentForespørsel(uuid)).thenReturn(response);
-        var forespørsel = fpinntektsmeldingTjeneste.hentForespørsel(uuid);
+        when(k9inntektsmeldingKlient.hentForespørsel(uuid)).thenReturn(response);
+        var forespørsel = k9inntektsmeldingTjeneste.hentForespørsel(uuid);
         assertThat(forespørsel.orgnummer().orgnr()).isEqualTo(orgnummer);
         assertThat(forespørsel.ytelseType()).isEqualTo(YtelseType.FORELDREPENGER);
         assertThat(forespørsel.fødselsnummer()).isEqualTo(fødselsnummer);
@@ -59,14 +59,14 @@ class FpinntektsmeldingTjenesteTest {
     @Test
     void skal_hente_tom_liste_forespørsler() {
         var orgnummer = "999999999";
-        when(fpinntektsmeldingKlient.hentForespørsler(new ForespørselFilterRequest(new OrganisasjonsnummerDto(orgnummer),
+        when(k9inntektsmeldingKlient.hentForespørsler(new ForespørselFilterRequest(new OrganisasjonsnummerDto(orgnummer),
             null,
             null,
             null,
             null,
             null))).thenReturn(
             List.of());
-        var forespørsler = fpinntektsmeldingTjeneste.hentForespørsler(orgnummer, null, null, null, null, null);
+        var forespørsler = k9inntektsmeldingTjeneste.hentForespørsler(orgnummer, null, null, null, null, null);
         assertThat(forespørsler).isEmpty();
     }
 
@@ -79,14 +79,14 @@ class FpinntektsmeldingTjenesteTest {
         var response2 = new ForespørselResponse(UUID.randomUUID(), new OrganisasjonsnummerDto(orgnummer), new FødselsnummerDto(fødselsnummer),
             LocalDate.now(), LocalDate.now(), ForespørselStatusDto.UTGÅTT, YtelseTypeDto.SVANGERSKAPSPENGER, LocalDateTime.now());
 
-        when(fpinntektsmeldingKlient.hentForespørsler(new ForespørselFilterRequest(new OrganisasjonsnummerDto(orgnummer),
+        when(k9inntektsmeldingKlient.hentForespørsler(new ForespørselFilterRequest(new OrganisasjonsnummerDto(orgnummer),
             null,
             null,
             null,
             null,
             null))).thenReturn(
             List.of(response1, response2));
-        var forespørsler = fpinntektsmeldingTjeneste.hentForespørsler(orgnummer, null, null, null, null, null);
+        var forespørsler = k9inntektsmeldingTjeneste.hentForespørsler(orgnummer, null, null, null, null, null);
         assertThat(forespørsler).hasSize(2);
         var forespørsel1 = forespørsler.stream().filter(f -> f.ytelseType().equals(YtelseType.FORELDREPENGER)).findFirst().orElseThrow();
         var forespørsel2 = forespørsler.stream().filter(f -> f.ytelseType().equals(YtelseType.SVANGERSKAPSPENGER)).findFirst().orElseThrow();
@@ -120,12 +120,12 @@ class FpinntektsmeldingTjenesteTest {
             new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0")
         );
         var responseUuid = UUID.randomUUID();
-        when(fpinntektsmeldingKlient.sendInntektsmelding(any())).thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
+        when(k9inntektsmeldingKlient.sendInntektsmelding(any())).thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
 
-        var response = fpinntektsmeldingTjeneste.sendInntektsmelding(inntektsmeldingRequest, forespørsel);
+        var response = k9inntektsmeldingTjeneste.sendInntektsmelding(inntektsmeldingRequest, forespørsel);
 
         assertThat(response).isNotNull();
-        verify(fpinntektsmeldingKlient).sendInntektsmelding(any());
+        verify(k9inntektsmeldingKlient).sendInntektsmelding(any());
     }
 
     @Test
@@ -153,12 +153,12 @@ class FpinntektsmeldingTjenesteTest {
             new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0")
         );
         var responseUuid = UUID.randomUUID();
-        when(fpinntektsmeldingKlient.sendInntektsmelding(any())).thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
+        when(k9inntektsmeldingKlient.sendInntektsmelding(any())).thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
 
-        var response = fpinntektsmeldingTjeneste.sendInntektsmelding(inntektsmeldingRequest, forespørsel);
+        var response = k9inntektsmeldingTjeneste.sendInntektsmelding(inntektsmeldingRequest, forespørsel);
 
         assertThat(response).isNotNull();
-        verify(fpinntektsmeldingKlient).sendInntektsmelding(any());
+        verify(k9inntektsmeldingKlient).sendInntektsmelding(any());
     }
 
     @Test
@@ -186,12 +186,12 @@ class FpinntektsmeldingTjenesteTest {
             new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0")
         );
         var responseUuid = UUID.randomUUID();
-        when(fpinntektsmeldingKlient.sendInntektsmelding(any())).thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
+        when(k9inntektsmeldingKlient.sendInntektsmelding(any())).thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
 
-        var response = fpinntektsmeldingTjeneste.sendInntektsmelding(inntektsmeldingRequest, forespørsel);
+        var response = k9inntektsmeldingTjeneste.sendInntektsmelding(inntektsmeldingRequest, forespørsel);
 
         assertThat(response).isNotNull();
-        verify(fpinntektsmeldingKlient).sendInntektsmelding(any());
+        verify(k9inntektsmeldingKlient).sendInntektsmelding(any());
     }
 
     @Test
@@ -218,11 +218,11 @@ class FpinntektsmeldingTjenesteTest {
             new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0")
         );
         var responseUuid = UUID.randomUUID();
-        when(fpinntektsmeldingKlient.sendInntektsmelding(any())).thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
+        when(k9inntektsmeldingKlient.sendInntektsmelding(any())).thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
 
-        var response = fpinntektsmeldingTjeneste.sendInntektsmelding(inntektsmeldingRequest, forespørsel);
+        var response = k9inntektsmeldingTjeneste.sendInntektsmelding(inntektsmeldingRequest, forespørsel);
 
         assertThat(response).isNotNull();
-        verify(fpinntektsmeldingKlient).sendInntektsmelding(any());
+        verify(k9inntektsmeldingKlient).sendInntektsmelding(any());
     }
 }
