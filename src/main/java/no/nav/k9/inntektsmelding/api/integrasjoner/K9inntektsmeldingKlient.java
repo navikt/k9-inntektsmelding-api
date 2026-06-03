@@ -50,11 +50,11 @@ public class K9inntektsmeldingKlient {
     public K9inntektsmeldingKlient() {
         this.restClient = RestClient.client();
         this.restConfig = RestConfig.forClient(K9inntektsmeldingKlient.class);
-        this.uriHentForespørsel = toUri(restConfig.fpContextPath(), "api/imapi/foresporsel/hent");
-        this.uriHentForespørsler = toUri(restConfig.fpContextPath(), "api/imapi/foresporsel/hent/foresporsler");
-        this.uriSendInntektsmelding = toUri(restConfig.fpContextPath(), "api/imapi/inntektsmelding/send-inntektsmelding");
-        this.uriHentInntektsmelding = toUri(restConfig.fpContextPath(), "api/imapi/inntektsmelding/hent");
-        this.uriHentInntektsmeldinger = toUri(restConfig.fpContextPath(), "api/imapi/inntektsmelding/hent/inntektsmeldinger");
+        this.uriHentForespørsel = toUri(restConfig.endpoint(), "api/imapi/foresporsel/hent");
+        this.uriHentForespørsler = toUri(restConfig.endpoint(), "api/imapi/foresporsel/hent/foresporsler");
+        this.uriSendInntektsmelding = toUri(restConfig.endpoint(), "api/imapi/inntektsmelding/send-inntektsmelding");
+        this.uriHentInntektsmelding = toUri(restConfig.endpoint(), "api/imapi/inntektsmelding/hent");
+        this.uriHentInntektsmeldinger = toUri(restConfig.endpoint(), "api/imapi/inntektsmelding/hent/inntektsmeldinger");
     }
 
     ForespørselResponse hentForespørsel(UUID forespørselUuid) {
