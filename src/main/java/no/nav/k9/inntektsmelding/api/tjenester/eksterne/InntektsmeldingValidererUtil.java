@@ -47,11 +47,11 @@ public class InntektsmeldingValidererUtil {
             LOG.warn("Forespørsel med uuid {} har status UTGÅTT, og kan ikke motta inntektsmelding.", forespørsel.forespørselUuid());
             return Optional.of(EksponertFeilmelding.UGYLDIG_FORESPOERSEL);
         }
-        if (!inntektsmeldingRequest.startdato().equals(forespørsel.førsteUttaksdato())) {
-            LOG.warn("Startdato fra inntektsmelding {} og første uttaksdato fra forespørsel {} matcher ikke.",
+        if (!inntektsmeldingRequest.startdato().equals(forespørsel.skjæringstidspunkt())) {
+            LOG.warn("Startdato fra inntektsmelding {} og skjæringstidspunkt fra forespørsel {} matcher ikke.",
                 inntektsmeldingRequest.startdato(),
-                forespørsel.førsteUttaksdato());
-            return Optional.of(EksponertFeilmelding.MISMATCH_FOERSTE_UTTAKSDATO);
+                forespørsel.skjæringstidspunkt());
+            return Optional.of(EksponertFeilmelding.MISMATCH_SKJAERINGSTIDSPUNKT);
         }
         if (!inntektsmeldingRequest.ytelse().equals(forespørsel.ytelseType())) {
             LOG.warn("Ytelsetype fra inntektsmelding {} og ytelsetype fra forespørsel {} matcher ikke.",

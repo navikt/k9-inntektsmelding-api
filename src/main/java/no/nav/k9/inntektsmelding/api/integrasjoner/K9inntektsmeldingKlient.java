@@ -1,21 +1,20 @@
 package no.nav.k9.inntektsmelding.api.integrasjoner;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 import jakarta.enterprise.context.Dependent;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 
-import no.nav.foreldrepenger.inntektsmelding.imapi.forespørsel.ForespørselFilterRequest;
-import no.nav.foreldrepenger.inntektsmelding.imapi.forespørsel.ForespørselResponse;
-import no.nav.foreldrepenger.inntektsmelding.imapi.inntektsmelding.HentInntektsmeldingResponse;
-import no.nav.foreldrepenger.inntektsmelding.imapi.inntektsmelding.InntektsmeldingFilterRequest;
-import no.nav.foreldrepenger.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingRequest;
-
-import no.nav.foreldrepenger.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingResponse;
-
+import no.nav.k9.inntektsmelding.imapi.forespørsel.ForespørselDto;
+import no.nav.k9.inntektsmelding.imapi.forespørsel.HentForespørselerRequest;
+import no.nav.k9.inntektsmelding.imapi.forespørsel.HentForespørslerResponse;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.HentInntektsmeldingerRequest;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.HentInntektsmeldingerResponse;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.InntektsmeldingDto;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingRequest;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingResponse;
 import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 import org.slf4j.Logger;
@@ -57,7 +56,7 @@ public class K9inntektsmeldingKlient {
         this.uriHentInntektsmeldinger = toUri(restConfig.endpoint(), "api/imapi/inntektsmelding/hent/inntektsmeldinger");
     }
 
-    ForespørselResponse hentForespørsel(UUID forespørselUuid) {
+    ForespørselDto hentForespørsel(UUID forespørselUuid) {
         try {
             LOG.info("Sender request til k9-inntektsmelding for forespørselUuid {} ", forespørselUuid);
             var request = RestRequest.newGET(toUri(uriHentForespørsel, "/" + forespørselUuid), restConfig);
@@ -71,7 +70,7 @@ public class K9inntektsmeldingKlient {
                     response.statusCode(), forespørselUuid);
                 throw feilVedKallTilK9inntektsmelding();
             }
-            return DefaultJsonMapper.fromJson(response.body(), ForespørselResponse.class);
+            return DefaultJsonMapper.fromJson(response.body(), ForespørselDto.class);
         } catch (InntektsmeldingAPIException e) {
             throw e;
         } catch (Exception e) {
@@ -82,11 +81,10 @@ public class K9inntektsmeldingKlient {
         }
     }
 
-    List<ForespørselResponse> hentForespørsler(ForespørselFilterRequest filter) {
+    HentForespørslerResponse hentForespørsler(HentForespørselerRequest filter) {
         try {
             var request = RestRequest.newPOSTJson(filter, uriHentForespørsler, restConfig);
-            var response = restClient.send(request, ForespørselResponse[].class);
-            return List.of(response);
+            return restClient.send(request, HentForespørslerResponse.class);
         } catch (Exception e) {
             LOG.warn("K9-97215: Feil ved henting av forespørsler fra k9-inntektsmelding for orgnr: {}. Feilmelding var {}",
                 filter.orgnr(),
@@ -108,7 +106,7 @@ public class K9inntektsmeldingKlient {
     }
 
 
-    HentInntektsmeldingResponse hentInntektsmelding(UUID innsendingId) {
+    InntektsmeldingDto hentInntektsmelding(UUID innsendingId) {
         try {
             LOG.info("Henter inntektsmelding fra k9-inntektsmelding for uuid {} ", innsendingId);
             var fullUri = uriHentInntektsmelding.toString() + "/" + innsendingId;
@@ -123,7 +121,7 @@ public class K9inntektsmeldingKlient {
                     response.statusCode(), innsendingId);
                 throw feilVedKallTilK9inntektsmelding();
             }
-            return DefaultJsonMapper.fromJson(response.body(), HentInntektsmeldingResponse.class);
+            return DefaultJsonMapper.fromJson(response.body(), InntektsmeldingDto.class);
         } catch (InntektsmeldingAPIException e) {
             throw e;
         } catch (Exception e) {
@@ -132,11 +130,11 @@ public class K9inntektsmeldingKlient {
         }
     }
 
-     List<HentInntektsmeldingResponse> hentInntektsmeldinger(InntektsmeldingFilterRequest filter) {
+     HentInntektsmeldingerResponse hentInntektsmeldinger(HentInntektsmeldingerRequest filter) {
          try {
              var request = RestRequest.newPOSTJson(filter, uriHentInntektsmeldinger, restConfig);
-             var response = restClient.send(request, HentInntektsmeldingResponse[].class);
-             return List.of(response);
+             var response = restClient.send(request, HentInntektsmeldingerResponse.class);
+             return response;
          } catch (Exception e) {
              LOG.warn("K9-97215: Feil ved henting av inntektsmeldinger fra k9-inntektsmelding for orgnr: {}. Feilmelding var {}",
                  filter.orgnr(),

@@ -25,7 +25,7 @@ import no.nav.k9.inntektsmelding.api.inntektsmelding.InntektsmeldingMapper;
 import no.nav.k9.inntektsmelding.api.inntektsmelding.InntektsmeldingDto;
 import no.nav.k9.inntektsmelding.api.server.exceptions.ErrorResponse;
 
-import no.nav.foreldrepenger.inntektsmelding.felles.FeilkodeDto;
+import no.nav.k9.inntektsmelding.felles.FeilkodeDto;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

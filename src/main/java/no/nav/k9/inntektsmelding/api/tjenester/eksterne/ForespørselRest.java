@@ -146,7 +146,7 @@ public class ForespørselRest {
         return new ForespørselDto(forespørsel.forespørselUuid(),
             forespørsel.orgnummer().orgnr(),
             forespørsel.fødselsnummer(),
-            forespørsel.førsteUttaksdato(),
+            forespørsel.skjæringstidspunkt(),
             forespørsel.skjæringstidspunkt(),
             KodeverkMapper.mapTilDto(forespørsel.status()),
             KodeverkMapper.mapTilDto(forespørsel.ytelseType()),

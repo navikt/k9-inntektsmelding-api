@@ -17,7 +17,6 @@ public enum EksponertFeilmelding {
     TOM_INNTEKTSMELDING("Finner ikke inntektsmelding"),
     UGYLDIG_PERIODE("Oppgitt periode er ugyldig, fom kan ikke være etter tom"),
     MISMATCH_ORGNR("Organisasjonsnummer fra token og organisasjonsnummer fra etterspurt forespørsel matcher ikke"),
-    MISMATCH_FOERSTE_UTTAKSDATO("Første uttaksdato fra inntektsmelding og første uttaksdato fra etterspurt forespørsel matcher ikke"),
     MISMATCH_SKJAERINGSTIDSPUNKT("Skjæringstidspunkt fra inntektsmelding og skjæringstidspunkt fra etterspurt forespørsel matcher ikke"),
     MISMATCH_YTELSE("Ytelse fra inntektsmelding og ytelse fra etterspurt forespørsel matcher ikke"),
     MISMATCH_FOEDSELSNUMMER("Fødselsnummer fra inntektsmelding og forespørsel matcher ikke"),

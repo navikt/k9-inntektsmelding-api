@@ -13,7 +13,7 @@ import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
 import no.nav.k9.inntektsmelding.api.typer.YtelseTypeDto;
-import no.nav.foreldrepenger.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingResponse;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingResponse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,14 +55,14 @@ class InntektsmeldingRestTest {
         var responseUuid = UUID.randomUUID();
 
         var forespørsel = new Forespørsel(forespørselUuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
-            LocalDate.now(), LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.FORELDREPENGER,
+            LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN,
             LocalDateTime.now());
 
         var inntektsmeldingRequest = new InntektsmeldingRequest(
             forespørselUuid,
             fødselsnummer,
             LocalDate.now(),
-            YtelseType.FORELDREPENGER,
+            YtelseType.PLEIEPENGER_SYKT_BARN,
             new InntektsmeldingRequest.InntektInfo(BigDecimal.valueOf(25000.00), List.of()),
             new InntektsmeldingRequest.Refusjon(BigDecimal.valueOf(25000.00), List.of()),
             List.of(),
@@ -91,7 +91,7 @@ class InntektsmeldingRestTest {
             forespørselUuid,
             "12345678901",
             LocalDate.now(),
-            YtelseType.FORELDREPENGER,
+            YtelseType.PLEIEPENGER_SYKT_BARN,
             new InntektsmeldingRequest.InntektInfo(BigDecimal.valueOf(25000.00), List.of()),
             new InntektsmeldingRequest.Refusjon(BigDecimal.valueOf(25000.00), List.of()),
             List.of(),
@@ -115,10 +115,10 @@ class InntektsmeldingRestTest {
         var orgnr = "999999999";
         var fnr = "12345678901";
         var forespørselId = UUID.randomUUID();
-        var filter = new InntektsmeldingFilter(orgnr, fnr, forespørselId, null, YtelseType.FORELDREPENGER, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31));
+        var filter = new InntektsmeldingFilter(orgnr, fnr, forespørselId, null, YtelseType.PLEIEPENGER_SYKT_BARN, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31));
 
         var inntektsmelding = lagInntektsmelding(orgnr);
-        when(k9inntektsmeldingTjeneste.hentInntektsmeldinger(orgnr, fnr, forespørselId, YtelseType.FORELDREPENGER, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31)))
+        when(k9inntektsmeldingTjeneste.hentInntektsmeldinger(orgnr, fnr, forespørselId, YtelseType.PLEIEPENGER_SYKT_BARN, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31)))
             .thenReturn(List.of(inntektsmelding));
 
         var response = inntektsmeldingRest.hentInntektsmeldinger(filter);
@@ -148,7 +148,7 @@ class InntektsmeldingRestTest {
 
     private Inntektsmelding lagInntektsmelding(String orgnr) {
         return new Inntektsmelding(
-            UUID.randomUUID(), "12345678901", YtelseTypeDto.FORELDREPENGER,
+            UUID.randomUUID(), "12345678901", YtelseTypeDto.PLEIEPENGER_SYKT_BARN,
             new Organisasjonsnummer(orgnr),
             new Inntektsmelding.Kontaktperson("Test", "12345678"),
             LocalDate.now(),
