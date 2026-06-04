@@ -57,7 +57,7 @@ class InntektsmeldingValidererUtilTest {
     }
 
     @Test
-    void skal_godkjenne_svangerskapspenger_matcher() {
+    void skal_godkjenne_omsorgspenger_matcher() {
         var request = lagRequest(YtelseType.OMSORGSPENGER,
             new InntektsmeldingRequest.Refusjon(DEFAULT_BELØP, List.of()),
             Collections.emptyList(),
