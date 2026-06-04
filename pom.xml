@@ -36,9 +36,9 @@
                 <version>2.7.4</version>
             </dependency>
             <dependency>
-                <groupId>no.nav.foreldrepenger.inntektsmelding</groupId>
-                <artifactId>inntektsmelding-kontrakt</artifactId>
-                <version>0.1.6</version>
+                <groupId>no.nav.k9.inntektsmelding</groupId>
+                <artifactId>k9-inntektsmelding-kontrakt</artifactId>
+                <version>0.1.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -145,8 +145,8 @@
             <artifactId>fpsak-tidsserie</artifactId>
         </dependency>
         <dependency>
-        <groupId>no.nav.foreldrepenger.inntektsmelding</groupId>
-        <artifactId>inntektsmelding-kontrakt</artifactId>
+            <groupId>no.nav.k9.inntektsmelding</groupId>
+            <artifactId>k9-inntektsmelding-kontrakt</artifactId>
         </dependency>
         <!-- test -->
         <dependency>

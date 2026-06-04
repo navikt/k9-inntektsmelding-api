@@ -35,7 +35,7 @@ class InntektsmeldingMapperTest {
 
         assertThat(dto.inntektsmeldingId()).isEqualTo(TEST_UUID);
         assertThat(dto.soekerFnr()).isEqualTo(FNR);
-        assertThat(dto.ytelse()).isEqualTo(YtelseTypeDto.FORELDREPENGER);
+        assertThat(dto.ytelse()).isEqualTo(YtelseTypeDto.PLEIEPENGER_SYKT_BARN);
         assertThat(dto.arbeidsgiver().orgnr()).isEqualTo(ORGNR);
         assertThat(dto.startdato()).isEqualTo(STARTDATO);
         assertThat(dto.innsendtTid()).isEqualTo(INNSENDT_TIDSPUNKT);
@@ -184,7 +184,7 @@ class InntektsmeldingMapperTest {
         return new Inntektsmelding(
             TEST_UUID,
             FNR,
-            YtelseTypeDto.FORELDREPENGER,
+            YtelseTypeDto.PLEIEPENGER_SYKT_BARN,
             new Organisasjonsnummer(ORGNR),
             new Inntektsmelding.Kontaktperson("Ola Nordmann", "12345678"),
             STARTDATO,

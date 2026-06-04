@@ -15,39 +15,39 @@ import no.nav.k9.inntektsmelding.api.typer.KodeverkMapper;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.StatusDto;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
-import no.nav.foreldrepenger.inntektsmelding.felles.AvsenderSystemDto;
-import no.nav.foreldrepenger.inntektsmelding.felles.BortfaltNaturalytelseDto;
-import no.nav.foreldrepenger.inntektsmelding.felles.EndringsårsakDto;
-import no.nav.foreldrepenger.inntektsmelding.felles.EndringsårsakerDto;
-import no.nav.foreldrepenger.inntektsmelding.felles.FødselsnummerDto;
-import no.nav.foreldrepenger.inntektsmelding.felles.KontaktpersonDto;
-import no.nav.foreldrepenger.inntektsmelding.felles.NaturalytelsetypeDto;
-import no.nav.foreldrepenger.inntektsmelding.felles.OrganisasjonsnummerDto;
-import no.nav.foreldrepenger.inntektsmelding.felles.SøktRefusjonDto;
-import no.nav.foreldrepenger.inntektsmelding.felles.YtelseTypeDto;
-import no.nav.foreldrepenger.inntektsmelding.imapi.forespørsel.ForespørselFilterRequest;
-import no.nav.foreldrepenger.inntektsmelding.imapi.forespørsel.ForespørselResponse;
-import no.nav.foreldrepenger.inntektsmelding.imapi.inntektsmelding.HentInntektsmeldingResponse;
-import no.nav.foreldrepenger.inntektsmelding.imapi.inntektsmelding.InntektsmeldingFilterRequest;
-import no.nav.foreldrepenger.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingRequest;
-import no.nav.foreldrepenger.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingResponse;
+import no.nav.k9.inntektsmelding.felles.AvsenderSystemDto;
+import no.nav.k9.inntektsmelding.felles.BortfaltNaturalytelseDto;
+import no.nav.k9.inntektsmelding.felles.EndringsårsakDto;
+import no.nav.k9.inntektsmelding.felles.EndringsårsakerDto;
+import no.nav.k9.inntektsmelding.felles.FødselsnummerDto;
+import no.nav.k9.inntektsmelding.felles.KontaktpersonDto;
+import no.nav.k9.inntektsmelding.felles.NaturalytelsetypeDto;
+import no.nav.k9.inntektsmelding.felles.OrganisasjonsnummerDto;
+import no.nav.k9.inntektsmelding.felles.RefusjonDto;
+import no.nav.k9.inntektsmelding.felles.YtelseTypeDto;
+import no.nav.k9.inntektsmelding.imapi.forespørsel.ForespørselDto;
+import no.nav.k9.inntektsmelding.imapi.forespørsel.HentForespørselerRequest;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.HentInntektsmeldingerRequest;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.InntektsmeldingDto;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingRequest;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingResponse;
 import no.nav.vedtak.konfig.Tid;
 
 @Dependent
-public class FpinntektsmeldingTjeneste {
-    private FpinntektsmeldingKlient fpinntektsmeldingKlient;
+public class K9inntektsmeldingTjeneste {
+    private K9inntektsmeldingKlient k9inntektsmeldingKlient;
 
-    FpinntektsmeldingTjeneste() {
+    K9inntektsmeldingTjeneste() {
         // for CDI proxy
     }
 
     @Inject
-    public FpinntektsmeldingTjeneste(FpinntektsmeldingKlient fpinntektsmeldingKlient) {
-        this.fpinntektsmeldingKlient = fpinntektsmeldingKlient;
+    public K9inntektsmeldingTjeneste(K9inntektsmeldingKlient k9inntektsmeldingKlient) {
+        this.k9inntektsmeldingKlient = k9inntektsmeldingKlient;
     }
 
     public Forespørsel hentForespørsel(UUID forespørselUuid) {
-        var response = fpinntektsmeldingKlient.hentForespørsel(forespørselUuid);
+        var response = k9inntektsmeldingKlient.hentForespørsel(forespørselUuid);
         return response != null ? mapResponseTilDomeneobjekt(response) : null;
     }
 
@@ -57,17 +57,17 @@ public class FpinntektsmeldingTjeneste {
                                               YtelseType ytelseType,
                                               LocalDate fom,
                                               LocalDate tom) {
-        var filter = new ForespørselFilterRequest(new OrganisasjonsnummerDto(orgnr), fnr == null ? null : new FødselsnummerDto(fnr),
+        var filter = new HentForespørselerRequest(new OrganisasjonsnummerDto(orgnr), fnr == null ? null : new FødselsnummerDto(fnr),
             status == null ? null : KodeverkMapper.mapApiStatusTilForespørselStatus(status),
             ytelseType == null ? null : mapYtelseType(ytelseType),
             fom,
             tom);
-        var response = fpinntektsmeldingKlient.hentForespørsler(filter);
-        return response.stream().map(this::mapResponseTilDomeneobjekt).toList();
+        var response = k9inntektsmeldingKlient.hentForespørsler(filter);
+        return response.forespørsler().stream().map(this::mapResponseTilDomeneobjekt).toList();
     }
 
     public Inntektsmelding hentInntektsmelding(UUID innsendingId) {
-        var response = fpinntektsmeldingKlient.hentInntektsmelding(innsendingId);
+        var response = k9inntektsmeldingKlient.hentInntektsmelding(innsendingId);
         return response == null ? null : mapInntektsmeldingResponseTilDomeneobjekt(response);
     }
 
@@ -77,17 +77,17 @@ public class FpinntektsmeldingTjeneste {
                                                        YtelseType ytelseType,
                                                        LocalDate fom,
                                                        LocalDate tom) {
-        var request = new InntektsmeldingFilterRequest(new OrganisasjonsnummerDto(orgnr),
+        var request = new HentInntektsmeldingerRequest(new OrganisasjonsnummerDto(orgnr),
             fnr == null ? null : new FødselsnummerDto(fnr),
             ytelseType == null ? null : mapYtelseType(ytelseType),
             uuid,
             fom,
             tom);
-        var response = fpinntektsmeldingKlient.hentInntektsmeldinger(request);
-        return response.stream().map(this::mapInntektsmeldingResponseTilDomeneobjekt).toList();
+        var response = k9inntektsmeldingKlient.hentInntektsmeldinger(request);
+        return response.inntektsmeldinger().stream().map(this::mapInntektsmeldingResponseTilDomeneobjekt).toList();
     }
 
-    private Inntektsmelding mapInntektsmeldingResponseTilDomeneobjekt(HentInntektsmeldingResponse response) {
+    private Inntektsmelding mapInntektsmeldingResponseTilDomeneobjekt(InntektsmeldingDto response) {
         return new Inntektsmelding(
             response.inntektsmeldingUuid(),
             response.fnr().fnr(),
@@ -183,7 +183,7 @@ public class FpinntektsmeldingTjeneste {
                 inntektsmeldingRequest.avsender().systemVersjon())
         );
 
-        return fpinntektsmeldingKlient.sendInntektsmelding(inntektsmeldingRequestDto);
+        return k9inntektsmeldingKlient.sendInntektsmelding(inntektsmeldingRequestDto);
     }
 
     private List<EndringsårsakerDto> mapEndringsårsakerDto(List<InntektsmeldingRequest.InntektInfo.Endringsårsak> endringsårsak) {
@@ -241,21 +241,23 @@ public class FpinntektsmeldingTjeneste {
         };
     }
 
-    private List<SøktRefusjonDto> mapRefusjonDto(InntektsmeldingRequest.Refusjon refusjon, LocalDate startdato) {
+    private List<RefusjonDto> mapRefusjonDto(InntektsmeldingRequest.Refusjon refusjon, LocalDate startdato) {
         if (refusjon == null) {
             return List.of();
         }
-        List<SøktRefusjonDto> søktRefusjonDtoListe = new ArrayList<>();
-        søktRefusjonDtoListe.add(new SøktRefusjonDto(startdato, refusjon.beloepPerMaaned()));
-        refusjon.endringer().forEach(r -> søktRefusjonDtoListe.add(new SøktRefusjonDto(r.stardato(), r.beloepPerMaaned())));
-        return søktRefusjonDtoListe;
+        List<RefusjonDto> refusjonDtoListe = new ArrayList<>();
+        refusjonDtoListe.add(new RefusjonDto(startdato, refusjon.beloepPerMaaned()));
+        refusjon.endringer().forEach(r -> refusjonDtoListe.add(new RefusjonDto(r.stardato(), r.beloepPerMaaned())));
+        return refusjonDtoListe;
     }
 
 
     private YtelseTypeDto mapYtelseType(YtelseType ytelseType) {
         return switch (ytelseType) {
-            case FORELDREPENGER -> YtelseTypeDto.FORELDREPENGER;
-            case SVANGERSKAPSPENGER -> YtelseTypeDto.SVANGERSKAPSPENGER;
+            case PLEIEPENGER_SYKT_BARN -> YtelseTypeDto.PLEIEPENGER_SYKT_BARN;
+            case PLEIEPENGER_I_LIVETS_SLUTTFASE -> YtelseTypeDto.PLEIEPENGER_I_LIVETS_SLUTTFASE;
+            case OPPLÆRINGSPENGER -> YtelseTypeDto.OPPLÆRINGSPENGER;
+            case OMSORGSPENGER -> YtelseTypeDto.OMSORGSPENGER;
         };
     }
 
@@ -263,11 +265,10 @@ public class FpinntektsmeldingTjeneste {
         return new KontaktpersonDto(kontaktinformasjon.arbeidsgiverNavn(), kontaktinformasjon.arbeidsgiverTlf());
     }
 
-    private Forespørsel mapResponseTilDomeneobjekt(ForespørselResponse response) {
+    private Forespørsel mapResponseTilDomeneobjekt(ForespørselDto response) {
         return new Forespørsel(response.forespørselUuid(),
             new Organisasjonsnummer(response.orgnummer().orgnr()),
             response.fødselsnummer().fnr(),
-            response.førsteUttaksdato(),
             response.skjæringstidspunkt(),
             KodeverkMapper.mapForespørselStatus(response.status()),
             KodeverkMapper.mapYtelseType(response.ytelseType()),

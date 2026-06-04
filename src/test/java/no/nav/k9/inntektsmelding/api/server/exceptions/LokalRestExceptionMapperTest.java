@@ -65,7 +65,7 @@ class LokalRestExceptionMapperTest {
     void skalMappeVLException() {
         var callId = MDCOperations.generateCallId();
         MDCOperations.putCallId(callId);
-        try (var response = exceptionMapper.toResponse(new FunksjonellException("FPIMAPI-123456", "en teknisk feilmelding") {
+        try (var response = exceptionMapper.toResponse(new FunksjonellException("K9IMAPI-123456", "en teknisk feilmelding") {
 
         })) {
             assertThat(response.getEntity()).isInstanceOf(ErrorResponse.class);

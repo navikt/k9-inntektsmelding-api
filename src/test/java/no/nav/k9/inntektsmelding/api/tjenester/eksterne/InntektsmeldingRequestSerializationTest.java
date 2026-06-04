@@ -27,7 +27,7 @@ class InntektsmeldingRequestSerializationTest {
         // Assert
         assertThat(json)
             .contains("\"kontaktinformasjon\":{\"arbeidsgiverNavn\":\"Test Kontaktperson\",\"arbeidsgiverTlf\":\"12345678\"}")
-            .contains("\"ytelse\":\"FORELDREPENGER\"")
+            .contains("\"ytelse\":\"PLEIEPENGER_SYKT_BARN\"")
             .contains("\"inntekt\":{\"beloepPerMaaned\":25000.0,\"endringAarsaker\":[{\"aarsak\":\"PERMISJON\",\"fom\":\"2024-03-01\",\"tom\":\"2024-03-15\",\"gjelderFra\":\"2024-02-15\"}]}");
     }
 
@@ -81,7 +81,7 @@ class InntektsmeldingRequestSerializationTest {
             uuid,
             fødselsnummer,
             startdato,
-            YtelseType.FORELDREPENGER,
+            YtelseType.PLEIEPENGER_SYKT_BARN,
             new InntektsmeldingRequest.InntektInfo(BigDecimal.valueOf(25000.00), endringsårsaker),
             refusjon,
             bortfaltNaturalytelse,
@@ -149,7 +149,7 @@ class InntektsmeldingRequestSerializationTest {
             UUID.randomUUID(),
             "12345678901",
             LocalDate.of(2024, 1, 15),
-            YtelseType.FORELDREPENGER,
+            YtelseType.PLEIEPENGER_SYKT_BARN,
             new InntektsmeldingRequest.InntektInfo(BigDecimal.valueOf(25000.00), List.of(new InntektsmeldingRequest.InntektInfo.Endringsårsak(
                 InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.PERMISJON,
                 LocalDate.of(2024, 3, 1),

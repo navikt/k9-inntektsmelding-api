@@ -31,7 +31,7 @@ class InntektsmeldingValidererUtilTest {
 
     @Test
     void skal_avvise_mismatch_ytelsetype() {
-        var forespørsel = lagForespørsel(ForespørselStatus.UNDER_BEHANDLING, STARTDATO, YtelseType.SVANGERSKAPSPENGER);
+        var forespørsel = lagForespørsel(ForespørselStatus.UNDER_BEHANDLING, STARTDATO, YtelseType.OMSORGSPENGER);
         var result = InntektsmeldingValidererUtil.validerInntektsmeldingMotForespørsel(lagDefaultRequest(), forespørsel);
         assertThat(result).hasValue(EksponertFeilmelding.MISMATCH_YTELSE);
     }
@@ -44,32 +44,32 @@ class InntektsmeldingValidererUtilTest {
 
     @Test
     void skal_avvise_utgått_forespørsel() {
-        var forespørsel = lagForespørsel(ForespørselStatus.UTGÅTT, STARTDATO, YtelseType.FORELDREPENGER);
+        var forespørsel = lagForespørsel(ForespørselStatus.UTGÅTT, STARTDATO, YtelseType.PLEIEPENGER_SYKT_BARN);
         var result = InntektsmeldingValidererUtil.validerInntektsmeldingMotForespørsel(lagDefaultRequest(), forespørsel);
         assertThat(result).hasValue(EksponertFeilmelding.UGYLDIG_FORESPOERSEL);
     }
 
     @Test
     void skal_avvise_mismatch_startdato() {
-        var forespørsel = lagForespørsel(ForespørselStatus.UNDER_BEHANDLING, STARTDATO.plusDays(5), YtelseType.FORELDREPENGER);
+        var forespørsel = lagForespørsel(ForespørselStatus.UNDER_BEHANDLING, STARTDATO.plusDays(5), YtelseType.PLEIEPENGER_SYKT_BARN);
         var result = InntektsmeldingValidererUtil.validerInntektsmeldingMotForespørsel(lagDefaultRequest(), forespørsel);
-        assertThat(result).hasValue(EksponertFeilmelding.MISMATCH_FOERSTE_UTTAKSDATO);
+        assertThat(result).hasValue(EksponertFeilmelding.MISMATCH_SKJAERINGSTIDSPUNKT);
     }
 
     @Test
-    void skal_godkjenne_svangerskapspenger_matcher() {
-        var request = lagRequest(YtelseType.SVANGERSKAPSPENGER,
+    void skal_godkjenne_omsorgspenger_matcher() {
+        var request = lagRequest(YtelseType.OMSORGSPENGER,
             new InntektsmeldingRequest.Refusjon(DEFAULT_BELØP, List.of()),
             Collections.emptyList(),
             new InntektsmeldingRequest.InntektInfo(DEFAULT_BELØP,List.of()));
-        var forespørsel = lagForespørsel(ForespørselStatus.UNDER_BEHANDLING, STARTDATO, YtelseType.SVANGERSKAPSPENGER);
+        var forespørsel = lagForespørsel(ForespørselStatus.UNDER_BEHANDLING, STARTDATO, YtelseType.OMSORGSPENGER);
         var result = InntektsmeldingValidererUtil.validerInntektsmeldingMotForespørsel(request, forespørsel);
         assertThat(result).isEmpty();
     }
 
     @Test
     void skal_godkjenne_ferdig_forespørsel() {
-        var forespørsel = lagForespørsel(ForespørselStatus.FERDIG, STARTDATO, YtelseType.FORELDREPENGER);
+        var forespørsel = lagForespørsel(ForespørselStatus.FERDIG, STARTDATO, YtelseType.PLEIEPENGER_SYKT_BARN);
         var result = InntektsmeldingValidererUtil.validerInntektsmeldingMotForespørsel(lagDefaultRequest(), forespørsel);
         assertThat(result).isEmpty();
     }
@@ -558,7 +558,7 @@ class InntektsmeldingValidererUtilTest {
 
     @Test
     void skal_returnere_feil_fra_naturalytelse_validering() {
-        var request = lagRequest(YtelseType.FORELDREPENGER,
+        var request = lagRequest(YtelseType.PLEIEPENGER_SYKT_BARN,
             new InntektsmeldingRequest.Refusjon(DEFAULT_BELØP, List.of()),
             List.of(new InntektsmeldingRequest.Naturalytelse(InntektsmeldingRequest.Naturalytelse.Naturalytelsetype.BIL, DEFAULT_BELØP,
                 STARTDATO.plusDays(10), STARTDATO)),
@@ -570,7 +570,7 @@ class InntektsmeldingValidererUtilTest {
 
     @Test
     void skal_returnere_feil_fra_endringsårsak_validering() {
-        var request = lagRequest(YtelseType.FORELDREPENGER,
+        var request = lagRequest(YtelseType.PLEIEPENGER_SYKT_BARN,
             new InntektsmeldingRequest.Refusjon(DEFAULT_BELØP, List.of()),
             List.of(), new InntektsmeldingRequest.InntektInfo(DEFAULT_BELØP, List.of(new InntektsmeldingRequest.InntektInfo.Endringsårsak(
                 InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.NY_STILLING, null, null, null))));
@@ -591,18 +591,18 @@ class InntektsmeldingValidererUtilTest {
     }
 
     private static InntektsmeldingRequest lagDefaultRequest() {
-        return lagRequest(YtelseType.FORELDREPENGER,
+        return lagRequest(YtelseType.PLEIEPENGER_SYKT_BARN,
             new InntektsmeldingRequest.Refusjon(DEFAULT_BELØP, List.of()),
             Collections.emptyList(),
             new InntektsmeldingRequest.InntektInfo(DEFAULT_BELØP, List.of()));
     }
 
-    private static Forespørsel lagForespørsel(ForespørselStatus status, LocalDate førsteUttaksdato, YtelseType ytelseType) {
-        return new Forespørsel(DEFAULT_UUID, new Organisasjonsnummer("999999999"), DEFAULT_FNR, førsteUttaksdato,
-            LocalDate.of(2025, 5, 1), status, ytelseType, LocalDateTime.now());
+    private static Forespørsel lagForespørsel(ForespørselStatus status, LocalDate skjæringstidspunkt, YtelseType ytelseType) {
+        return new Forespørsel(DEFAULT_UUID, new Organisasjonsnummer("999999999"), DEFAULT_FNR, skjæringstidspunkt,
+            status, ytelseType, LocalDateTime.now());
     }
 
     private static Forespørsel lagDefaultForespørsel() {
-        return lagForespørsel(ForespørselStatus.UNDER_BEHANDLING, STARTDATO, YtelseType.FORELDREPENGER);
+        return lagForespørsel(ForespørselStatus.UNDER_BEHANDLING, STARTDATO, YtelseType.PLEIEPENGER_SYKT_BARN);
     }
 }

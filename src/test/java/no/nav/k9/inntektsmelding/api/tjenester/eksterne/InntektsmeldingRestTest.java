@@ -5,7 +5,7 @@ import jakarta.ws.rs.core.Response;
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
 import no.nav.k9.inntektsmelding.api.inntektsmelding.Inntektsmelding;
 import no.nav.k9.inntektsmelding.api.inntektsmelding.InntektsmeldingDto;
-import no.nav.k9.inntektsmelding.api.integrasjoner.FpinntektsmeldingTjeneste;
+import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
 import no.nav.k9.inntektsmelding.api.server.auth.Tilgang;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
 import no.nav.k9.inntektsmelding.api.server.exceptions.ErrorResponse;
@@ -13,7 +13,7 @@ import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
 import no.nav.k9.inntektsmelding.api.typer.YtelseTypeDto;
-import no.nav.foreldrepenger.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingResponse;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingResponse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class InntektsmeldingRestTest {
     @Mock
-    private FpinntektsmeldingTjeneste fpinntektsmeldingTjeneste;
+    private K9inntektsmeldingTjeneste k9inntektsmeldingTjeneste;
     @Mock
     private Tilgang tilgang;
 
@@ -43,7 +43,7 @@ class InntektsmeldingRestTest {
 
     @BeforeEach
     void setUp() {
-        inntektsmeldingRest = new InntektsmeldingRest(fpinntektsmeldingTjeneste, tilgang);
+        inntektsmeldingRest = new InntektsmeldingRest(k9inntektsmeldingTjeneste, tilgang);
     }
 
     @Test
@@ -55,14 +55,14 @@ class InntektsmeldingRestTest {
         var responseUuid = UUID.randomUUID();
 
         var forespørsel = new Forespørsel(forespørselUuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
-            LocalDate.now(), LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.FORELDREPENGER,
+            LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN,
             LocalDateTime.now());
 
         var inntektsmeldingRequest = new InntektsmeldingRequest(
             forespørselUuid,
             fødselsnummer,
             LocalDate.now(),
-            YtelseType.FORELDREPENGER,
+            YtelseType.PLEIEPENGER_SYKT_BARN,
             new InntektsmeldingRequest.InntektInfo(BigDecimal.valueOf(25000.00), List.of()),
             new InntektsmeldingRequest.Refusjon(BigDecimal.valueOf(25000.00), List.of()),
             List.of(),
@@ -70,8 +70,8 @@ class InntektsmeldingRestTest {
             new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0")
         );
 
-        when(fpinntektsmeldingTjeneste.hentForespørsel(forespørselUuid)).thenReturn(forespørsel);
-        when(fpinntektsmeldingTjeneste.sendInntektsmelding(any(), any()))
+        when(k9inntektsmeldingTjeneste.hentForespørsel(forespørselUuid)).thenReturn(forespørsel);
+        when(k9inntektsmeldingTjeneste.sendInntektsmelding(any(), any()))
             .thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
 
         // Act
@@ -91,7 +91,7 @@ class InntektsmeldingRestTest {
             forespørselUuid,
             "12345678901",
             LocalDate.now(),
-            YtelseType.FORELDREPENGER,
+            YtelseType.PLEIEPENGER_SYKT_BARN,
             new InntektsmeldingRequest.InntektInfo(BigDecimal.valueOf(25000.00), List.of()),
             new InntektsmeldingRequest.Refusjon(BigDecimal.valueOf(25000.00), List.of()),
             List.of(),
@@ -99,7 +99,7 @@ class InntektsmeldingRestTest {
             new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0")
         );
 
-        when(fpinntektsmeldingTjeneste.hentForespørsel(forespørselUuid)).thenReturn(null);
+        when(k9inntektsmeldingTjeneste.hentForespørsel(forespørselUuid)).thenReturn(null);
 
         // Act
         var response = inntektsmeldingRest.sendInntektsmelding(inntektsmeldingRequest);
@@ -115,10 +115,10 @@ class InntektsmeldingRestTest {
         var orgnr = "999999999";
         var fnr = "12345678901";
         var forespørselId = UUID.randomUUID();
-        var filter = new InntektsmeldingFilter(orgnr, fnr, forespørselId, null, YtelseType.FORELDREPENGER, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31));
+        var filter = new InntektsmeldingFilter(orgnr, fnr, forespørselId, null, YtelseType.PLEIEPENGER_SYKT_BARN, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31));
 
         var inntektsmelding = lagInntektsmelding(orgnr);
-        when(fpinntektsmeldingTjeneste.hentInntektsmeldinger(orgnr, fnr, forespørselId, YtelseType.FORELDREPENGER, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31)))
+        when(k9inntektsmeldingTjeneste.hentInntektsmeldinger(orgnr, fnr, forespørselId, YtelseType.PLEIEPENGER_SYKT_BARN, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31)))
             .thenReturn(List.of(inntektsmelding));
 
         var response = inntektsmeldingRest.hentInntektsmeldinger(filter);
@@ -137,7 +137,7 @@ class InntektsmeldingRestTest {
         var filter = new InntektsmeldingFilter(orgnr, null, null, innsendingId, null, LocalDate.of(2025, 12, 31), LocalDate.of(2025, 1, 1));
 
         var inntektsmelding = lagInntektsmelding(orgnr);
-        when(fpinntektsmeldingTjeneste.hentInntektsmelding(innsendingId)).thenReturn(inntektsmelding);
+        when(k9inntektsmeldingTjeneste.hentInntektsmelding(innsendingId)).thenReturn(inntektsmelding);
 
         var response = inntektsmeldingRest.hentInntektsmeldinger(filter);
 
@@ -148,7 +148,7 @@ class InntektsmeldingRestTest {
 
     private Inntektsmelding lagInntektsmelding(String orgnr) {
         return new Inntektsmelding(
-            UUID.randomUUID(), "12345678901", YtelseTypeDto.FORELDREPENGER,
+            UUID.randomUUID(), "12345678901", YtelseTypeDto.PLEIEPENGER_SYKT_BARN,
             new Organisasjonsnummer(orgnr),
             new Inntektsmelding.Kontaktperson("Test", "12345678"),
             LocalDate.now(),
