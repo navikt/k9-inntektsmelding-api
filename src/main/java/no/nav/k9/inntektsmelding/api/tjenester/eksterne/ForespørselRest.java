@@ -147,7 +147,6 @@ public class ForespørselRest {
             forespørsel.orgnummer().orgnr(),
             forespørsel.fødselsnummer(),
             forespørsel.skjæringstidspunkt(),
-            forespørsel.skjæringstidspunkt(),
             KodeverkMapper.mapTilDto(forespørsel.status()),
             KodeverkMapper.mapTilDto(forespørsel.ytelseType()),
             forespørsel.opprettetTid());
