@@ -126,7 +126,7 @@ public class K9inntektsmeldingKlient {
             throw e;
         } catch (Exception e) {
             LOG.warn("K9-97215: Feil ved henting av inntektsmelding fra k9-inntektsmelding for uuid: {}. Feilmelding var {}", innsendingId, e.getMessage());
-            throw feilVedKallTilK9inntektsmelding();
+            throw e;
         }
     }
 
