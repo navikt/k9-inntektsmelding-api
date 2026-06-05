@@ -75,8 +75,7 @@ public class K9inntektsmeldingKlient {
             throw e;
         } catch (Exception e) {
             LOG.warn("K9-97215: Feil ved henting av forespørsel fra k9-inntektsmelding for uuid: {}. Feilmelding var {}",
-                forespørselUuid,
-                e.getMessage());
+                forespørselUuid, e.getMessage(), e);
             throw feilVedKallTilK9inntektsmelding();
         }
     }
@@ -87,8 +86,7 @@ public class K9inntektsmeldingKlient {
             return restClient.send(request, HentForespørslerResponse.class);
         } catch (Exception e) {
             LOG.warn("K9-97215: Feil ved henting av forespørsler fra k9-inntektsmelding for orgnr: {}. Feilmelding var {}",
-                filter.orgnr(),
-                e.getMessage(), e);
+                filter.orgnr(), e.getMessage(), e);
             throw feilVedKallTilK9inntektsmelding();
         }
     }
@@ -99,7 +97,8 @@ public class K9inntektsmeldingKlient {
             var request = RestRequest.newPOSTJson(inntektsmeldingRequest, uriSendInntektsmelding, restConfig);
             return restClient.send(request, SendInntektsmeldingResponse.class);
         } catch (Exception e) {
-            LOG.warn("K9-97215: Feil ved sending av inntektsmelding-api til k9-inntektsmelding for uuid: {}. Feilmelding var {}", inntektsmeldingRequest.foresporselUuid(), e.getMessage());
+            LOG.warn("K9-97215: Feil ved sending av inntektsmelding-api til k9-inntektsmelding for uuid: {}. Feilmelding var {}",
+                inntektsmeldingRequest.foresporselUuid(), e.getMessage(), e);
             SECURE_LOG.info("K9-97215: Feil ved sending av inntektsmelding-api til k9-inntektsmelding. InntektsmeldingRequestDto er {}", inntektsmeldingRequest);
             throw feilVedKallTilK9inntektsmelding();
         }
@@ -125,7 +124,8 @@ public class K9inntektsmeldingKlient {
         } catch (InntektsmeldingAPIException e) {
             throw e;
         } catch (Exception e) {
-            LOG.warn("K9-97215: Feil ved henting av inntektsmelding fra k9-inntektsmelding for uuid: {}. Feilmelding var {}", innsendingId, e.getMessage());
+            LOG.warn("K9-97215: Feil ved henting av inntektsmelding fra k9-inntektsmelding for uuid: {}. Feilmelding var {}",
+                innsendingId, e.getMessage(), e);
             throw feilVedKallTilK9inntektsmelding();
         }
     }
@@ -137,8 +137,7 @@ public class K9inntektsmeldingKlient {
              return response;
          } catch (Exception e) {
              LOG.warn("K9-97215: Feil ved henting av inntektsmeldinger fra k9-inntektsmelding for orgnr: {}. Feilmelding var {}",
-                 filter.orgnr(),
-                 e.getMessage());
+                 filter.orgnr(), e.getMessage(), e);
              throw feilVedKallTilK9inntektsmelding();
          }
     }
@@ -151,7 +150,7 @@ public class K9inntektsmeldingKlient {
         try {
             return UriBuilder.fromUri(endpointURI).path(path).build();
         } catch (Exception e) {
-            LOG.warn("Ugyldig uri: {}, feilmelding {}", endpointURI + path, e.getMessage());
+            LOG.warn("Ugyldig uri: {}, feilmelding {}", endpointURI + path, e.getMessage(), e);
             throw new InntektsmeldingAPIException(EksponertFeilmelding.STANDARD_FEIL, Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
