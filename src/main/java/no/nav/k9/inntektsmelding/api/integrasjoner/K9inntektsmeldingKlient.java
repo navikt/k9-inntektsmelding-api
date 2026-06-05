@@ -88,7 +88,7 @@ public class K9inntektsmeldingKlient {
         } catch (Exception e) {
             LOG.warn("K9-97215: Feil ved henting av forespørsler fra k9-inntektsmelding for orgnr: {}. Feilmelding var {}",
                 filter.orgnr(),
-                e.getMessage());
+                e.getMessage(), e);
             throw feilVedKallTilK9inntektsmelding();
         }
     }
