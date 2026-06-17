@@ -149,6 +149,7 @@ public class ForespørselRest {
             forespørsel.skjæringstidspunkt(),
             KodeverkMapper.mapTilDto(forespørsel.status()),
             KodeverkMapper.mapTilDto(forespørsel.ytelseType()),
+            forespørsel.etterspurtePerioder(),
             forespørsel.opprettetTid());
     }
 }

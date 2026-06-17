@@ -587,7 +587,7 @@ class InntektsmeldingValidererUtilTest {
         return new InntektsmeldingRequest(
             DEFAULT_UUID, DEFAULT_FNR, InntektsmeldingValidererUtilTest.STARTDATO, ytelse, inntektInfo,
             refusjon, naturalytelser, new InntektsmeldingRequest.Kontaktinformasjon("Test Person", "99887766"),
-            new InntektsmeldingRequest.Avsender("TestSystem", "1.0"));
+            new InntektsmeldingRequest.Avsender("TestSystem", "1.0"), null);
     }
 
     private static InntektsmeldingRequest lagDefaultRequest() {
@@ -599,7 +599,7 @@ class InntektsmeldingValidererUtilTest {
 
     private static Forespørsel lagForespørsel(ForespørselStatus status, LocalDate skjæringstidspunkt, YtelseType ytelseType) {
         return new Forespørsel(DEFAULT_UUID, new Organisasjonsnummer("999999999"), DEFAULT_FNR, skjæringstidspunkt,
-            status, ytelseType, LocalDateTime.now());
+            status, ytelseType, List.of(), LocalDateTime.now());
     }
 
     private static Forespørsel lagDefaultForespørsel() {

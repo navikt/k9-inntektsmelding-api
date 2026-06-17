@@ -26,7 +26,8 @@ public record InntektsmeldingRequest(@NotNull @Valid UUID forespoerselId,
                                      @Valid Refusjon refusjon,
                                      @NotNull List<@Valid Naturalytelse> naturalytelser,
                                      @NotNull Kontaktinformasjon kontaktinformasjon,
-                                     @NotNull @Valid Avsender avsender) {
+                                     @NotNull @Valid Avsender avsender,
+                                     @Valid Omsorgspenger omsorgspenger) {
 
 
     public record InntektInfo(@NotNull @Min(0) @Max(Integer.MAX_VALUE) @Digits(integer = 20, fraction = 2) BigDecimal beloepPerMaaned, @NotNull List<Endringsårsak> endringAarsaker) {
@@ -89,5 +90,12 @@ public record InntektsmeldingRequest(@NotNull @Valid UUID forespoerselId,
 
     public record Avsender(@NotNull @Size(max = 200) String systemNavn, @NotNull @Size(max = 100) String systemVersjon) {
 
+    }
+
+    public record Omsorgspenger(Boolean harUtbetaltPliktigeDager,
+                                @NotNull List<@Valid FraværHeleDager> fraværHeleDager,
+                                @NotNull List<@Valid FraværDelerAvDagen> fraværDelerAvDagen) {
+        public record FraværHeleDager(@NotNull LocalDate fom, @NotNull LocalDate tom) {}
+        public record FraværDelerAvDagen(@NotNull LocalDate dato, @NotNull @Min(0) BigDecimal timer) {}
     }
 }

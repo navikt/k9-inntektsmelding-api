@@ -86,7 +86,8 @@ class InntektsmeldingRequestSerializationTest {
             refusjon,
             bortfaltNaturalytelse,
             new InntektsmeldingRequest.Kontaktinformasjon(kontaktperson, arbeidsgiverTlf),
-            avsenderSystem
+            avsenderSystem,
+            null
         );
 
         // Act
@@ -163,7 +164,8 @@ class InntektsmeldingRequestSerializationTest {
                     LocalDate.of(2024, 2, 1),
                     null)),
             new InntektsmeldingRequest.Kontaktinformasjon("Test Kontaktperson","12345678"),
-            new InntektsmeldingRequest.Avsender("SAP", "1.0.0")
+            new InntektsmeldingRequest.Avsender("SAP", "1.0.0"),
+            null
         );
     }
 }

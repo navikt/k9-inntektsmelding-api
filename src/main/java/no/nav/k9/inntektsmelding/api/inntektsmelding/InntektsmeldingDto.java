@@ -23,7 +23,8 @@ public record InntektsmeldingDto(@NotNull UUID inntektsmeldingId,
                                  @NotNull LocalDateTime innsendtTid,
                                  @NotNull AvsenderSystem avsender,
                                  Refusjon refusjon,
-                                 List<Naturalytelse> naturalytelser) {
+                                 List<Naturalytelse> naturalytelser,
+                                 Omsorgspenger omsorgspenger) {
 
     public record Inntekt(@NotNull BigDecimal beloep, @NotNull LocalDate inntektsdato, @NotNull List<InntektEndringsårsaker> endringAarsaker) {
     }
@@ -47,6 +48,13 @@ public record InntektsmeldingDto(@NotNull UUID inntektsmeldingId,
     }
 
     public record Naturalytelse(@NotNull BigDecimal verdi, @NotNull LocalDate sluttdato, @NotNull NaturalytelsetypeDto naturalytelse) {
+    }
+
+    public record Omsorgspenger(Boolean harUtbetaltPliktigeDager,
+                                @NotNull List<FraværHeleDager> fravaerHeleDager,
+                                @NotNull List<FraværDelerAvDagen> fravaerDelerAvDagen) {
+        public record FraværHeleDager(@NotNull LocalDate fom, @NotNull LocalDate tom) {}
+        public record FraværDelerAvDagen(@NotNull LocalDate dato, @NotNull BigDecimal timer) {}
     }
 }
 

@@ -21,6 +21,7 @@ public class InntektsmeldingMapper {
         var alleRefusjonsendringer = mapRefusjon(inntektsmelding);
         var naturalytelser = mapNaturalytelser(inntektsmelding);
         var refusjon = new InntektsmeldingDto.Refusjon(inntektsmelding.månedRefusjon(), alleRefusjonsendringer);
+        var omsorgspenger = mapOmsorgspenger(inntektsmelding.omsorgspenger());
         return new InntektsmeldingDto(inntektsmelding.inntektsmeldingUuid(),
             inntektsmelding.fnr(),
             inntektsmelding.ytelse(),
@@ -30,7 +31,8 @@ public class InntektsmeldingMapper {
             inntektsmelding.innsendtTidspunkt(),
             avsendersystemDto,
             refusjon,
-            naturalytelser);
+            naturalytelser,
+            omsorgspenger);
     }
 
     private static List<InntektsmeldingDto.Naturalytelse> mapNaturalytelser(Inntektsmelding inntektsmelding) {
@@ -56,6 +58,19 @@ public class InntektsmeldingMapper {
             listeMedEndringer.add(new InntektsmeldingDto.RefusjonEndring(BigDecimal.ZERO, inntektsmelding.opphørsdatoRefusjon()));
         }
         return listeMedEndringer;
+    }
+
+    private static InntektsmeldingDto.Omsorgspenger mapOmsorgspenger(Inntektsmelding.Omsorgspenger omsorgspenger) {
+        if (omsorgspenger == null) {
+            return null;
+        }
+        var fraværHeleDager = omsorgspenger.fraværHeleDager().stream()
+            .map(f -> new InntektsmeldingDto.Omsorgspenger.FraværHeleDager(f.fom(), f.tom()))
+            .toList();
+        var fraværDelerAvDagen = omsorgspenger.fraværDelerAvDagen().stream()
+            .map(f -> new InntektsmeldingDto.Omsorgspenger.FraværDelerAvDagen(f.dato(), f.timer()))
+            .toList();
+        return new InntektsmeldingDto.Omsorgspenger(omsorgspenger.harUtbetaltPliktigeDager(), fraværHeleDager, fraværDelerAvDagen);
     }
 
 }

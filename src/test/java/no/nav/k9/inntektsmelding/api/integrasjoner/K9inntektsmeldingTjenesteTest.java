@@ -108,7 +108,7 @@ class K9inntektsmeldingTjenesteTest {
         var fødselsnummer = "12345678901";
         var uuid = UUID.randomUUID();
         var forespørsel = new Forespørsel(uuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
-            LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, LocalDateTime.now());
+            LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, List.of(), LocalDateTime.now());
         var inntektsmeldingRequest = new InntektsmeldingRequest(
             uuid,
             fødselsnummer,
@@ -118,7 +118,7 @@ class K9inntektsmeldingTjenesteTest {
             new InntektsmeldingRequest.Refusjon(BigDecimal.valueOf(25000.00), List.of()),
             List.of(),
             new InntektsmeldingRequest.Kontaktinformasjon("Kontaktperson", "12345678"),
-            new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0")
+            new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0"), null
         );
         var responseUuid = UUID.randomUUID();
         when(k9inntektsmeldingKlient.sendInntektsmelding(any())).thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
@@ -135,7 +135,7 @@ class K9inntektsmeldingTjenesteTest {
         var fødselsnummer = "11111111111";
         var uuid = UUID.randomUUID();
         var forespørsel = new Forespørsel(uuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
-            LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, LocalDateTime.now());
+            LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, List.of(), LocalDateTime.now());
         var bortfaltNaturalytelse = new InntektsmeldingRequest.Naturalytelse(
             InntektsmeldingRequest.Naturalytelse.Naturalytelsetype.ELEKTRISK_KOMMUNIKASJON,
             BigDecimal.valueOf(500.00),
@@ -151,7 +151,7 @@ class K9inntektsmeldingTjenesteTest {
             null,
             List.of(bortfaltNaturalytelse),
             new InntektsmeldingRequest.Kontaktinformasjon("Kontaktperson","12345678"),
-            new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0")
+            new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0"), null
         );
         var responseUuid = UUID.randomUUID();
         when(k9inntektsmeldingKlient.sendInntektsmelding(any())).thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
@@ -168,7 +168,7 @@ class K9inntektsmeldingTjenesteTest {
         var fødselsnummer = "22222222222";
         var uuid = UUID.randomUUID();
         var forespørsel = new Forespørsel(uuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
-            LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, LocalDateTime.now());
+            LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, List.of(), LocalDateTime.now());
         var endringsårsak = new InntektsmeldingRequest.InntektInfo.Endringsårsak(
             InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.PERMISJON,
             LocalDate.now(),
@@ -184,7 +184,7 @@ class K9inntektsmeldingTjenesteTest {
             new InntektsmeldingRequest.Refusjon(BigDecimal.valueOf(25000.00), List.of()),
             List.of(),
             new InntektsmeldingRequest.Kontaktinformasjon("Kontaktperson", "12345678"),
-            new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0")
+            new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0"), null
         );
         var responseUuid = UUID.randomUUID();
         when(k9inntektsmeldingKlient.sendInntektsmelding(any())).thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
@@ -201,7 +201,7 @@ class K9inntektsmeldingTjenesteTest {
         var fødselsnummer = "33333333333";
         var uuid = UUID.randomUUID();
         var forespørsel = new Forespørsel(uuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
-            LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, LocalDateTime.now());
+            LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, List.of(), LocalDateTime.now());
         var refusjoner =
             new InntektsmeldingRequest.Refusjon(BigDecimal.valueOf(25000.00), List.of(
                 new InntektsmeldingRequest.Refusjon.RefusjonEndring(BigDecimal.valueOf(20000),LocalDate.now().plusDays(10)),
@@ -216,7 +216,7 @@ class K9inntektsmeldingTjenesteTest {
             refusjoner,
             List.of(),
             new InntektsmeldingRequest.Kontaktinformasjon("Kontaktperson", "12345678"),
-            new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0")
+            new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0"), null
         );
         var responseUuid = UUID.randomUUID();
         when(k9inntektsmeldingKlient.sendInntektsmelding(any())).thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
