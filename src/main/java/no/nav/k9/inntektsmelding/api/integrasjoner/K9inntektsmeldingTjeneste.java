@@ -124,14 +124,15 @@ public class K9inntektsmeldingTjeneste {
         if (omsorgspengerDto == null) {
             return null;
         }
-        return new Inntektsmelding.Omsorgspenger(
-            omsorgspengerDto.harUtbetaltPliktigeDager(),
+        List<Inntektsmelding.Omsorgspenger.FraværHeleDager> heleDager = omsorgspengerDto.fraværHeleDager() == null ? List.of() :
             omsorgspengerDto.fraværHeleDager().stream()
                 .map(f -> new Inntektsmelding.Omsorgspenger.FraværHeleDager(f.fom(), f.tom()))
-                .toList(),
+                .toList();
+        List<Inntektsmelding.Omsorgspenger.FraværDelerAvDagen> delerAvDagen = omsorgspengerDto.fraværDelerAvDagen() == null ? List.of() :
             omsorgspengerDto.fraværDelerAvDagen().stream()
                 .map(f -> new Inntektsmelding.Omsorgspenger.FraværDelerAvDagen(f.dato(), f.timer()))
-                .toList());
+                .toList();
+        return new Inntektsmelding.Omsorgspenger(omsorgspengerDto.harUtbetaltPliktigeDager(), heleDager, delerAvDagen);
     }
 
     private no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto mapNaturalytelseTypeTilApiType(NaturalytelsetypeDto naturalytelsetype) {
