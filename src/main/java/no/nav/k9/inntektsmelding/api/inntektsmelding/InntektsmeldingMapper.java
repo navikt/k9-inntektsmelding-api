@@ -65,12 +65,14 @@ public class InntektsmeldingMapper {
         if (omsorgspenger == null) {
             return null;
         }
-        var fraværHeleDager = omsorgspenger.fraværHeleDager().stream()
-            .map(f -> new InntektsmeldingDto.Omsorgspenger.FraværHeleDager(f.fom(), f.tom()))
-            .toList();
-        var fraværDelerAvDagen = omsorgspenger.fraværDelerAvDagen().stream()
-            .map(f -> new InntektsmeldingDto.Omsorgspenger.FraværDelerAvDagen(f.dato(), f.timer()))
-            .toList();
+        List<InntektsmeldingDto.Omsorgspenger.FraværHeleDager> fraværHeleDager = omsorgspenger.fraværHeleDager() == null ? List.of() :
+            omsorgspenger.fraværHeleDager().stream()
+                .map(f -> new InntektsmeldingDto.Omsorgspenger.FraværHeleDager(f.fom(), f.tom()))
+                .toList();
+        List<InntektsmeldingDto.Omsorgspenger.FraværDelerAvDagen> fraværDelerAvDagen = omsorgspenger.fraværDelerAvDagen() == null ? List.of() :
+            omsorgspenger.fraværDelerAvDagen().stream()
+                .map(f -> new InntektsmeldingDto.Omsorgspenger.FraværDelerAvDagen(f.dato(), f.timer()))
+                .toList();
         return new InntektsmeldingDto.Omsorgspenger(omsorgspenger.harUtbetaltPliktigeDager(), fraværHeleDager, fraværDelerAvDagen);
     }
 
