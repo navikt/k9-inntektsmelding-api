@@ -16,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
-import no.nav.k9.inntektsmelding.api.forespørsel.ForespørselDto;
 import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
 import no.nav.k9.inntektsmelding.api.server.auth.TilgangTjeneste;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;

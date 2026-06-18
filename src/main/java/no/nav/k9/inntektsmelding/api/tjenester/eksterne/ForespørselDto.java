@@ -1,4 +1,4 @@
-package no.nav.k9.inntektsmelding.api.forespørsel;
+package no.nav.k9.inntektsmelding.api.tjenester.eksterne;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

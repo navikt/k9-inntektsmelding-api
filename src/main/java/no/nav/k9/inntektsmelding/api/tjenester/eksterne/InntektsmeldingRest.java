@@ -22,7 +22,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.k9.inntektsmelding.api.inntektsmelding.InntektsmeldingMapper;
-import no.nav.k9.inntektsmelding.api.inntektsmelding.InntektsmeldingDto;
 import no.nav.k9.inntektsmelding.api.server.exceptions.ErrorResponse;
 
 import no.nav.k9.inntektsmelding.felles.FeilkodeDto;
