@@ -75,6 +75,87 @@ class InntektsmeldingValidererUtilTest {
     }
 
     // =====================================================================
+    // validerOmsorgspenger
+    // =====================================================================
+
+    @Test
+    void skal_godkjenne_omsorgspenger_med_kun_hele_dager() {
+        var omsorgspenger = new InntektsmeldingRequest.Omsorgspenger(
+            true,
+            List.of(new InntektsmeldingRequest.Omsorgspenger.FraværHeleDagenPeriode(STARTDATO, STARTDATO.plusDays(2))),
+            List.of()
+        );
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspenger(omsorgspenger)).isEmpty();
+    }
+
+    @Test
+    void skal_godkjenne_omsorgspenger_med_kun_deler_av_dagen() {
+        var omsorgspenger = new InntektsmeldingRequest.Omsorgspenger(
+            false,
+            List.of(),
+            List.of(new InntektsmeldingRequest.Omsorgspenger.FraværDelerAvDagen(STARTDATO, BigDecimal.valueOf(3.5)))
+        );
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspenger(omsorgspenger)).isEmpty();
+    }
+
+    @Test
+    void skal_avvise_omsorgspenger_uten_fraværsperioder() {
+        var omsorgspenger = new InntektsmeldingRequest.Omsorgspenger(true, List.of(), List.of());
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspenger(omsorgspenger))
+            .hasValue(EksponertFeilmelding.OMSORGSPENGER_MANGLER_FRAVÆRSPERIODER);
+    }
+
+    @Test
+    void skal_avvise_fom_etter_tom_i_hele_dager() {
+        var omsorgspenger = new InntektsmeldingRequest.Omsorgspenger(
+            true,
+            List.of(new InntektsmeldingRequest.Omsorgspenger.FraværHeleDagenPeriode(STARTDATO.plusDays(5), STARTDATO)),
+            List.of()
+        );
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspenger(omsorgspenger))
+            .hasValue(EksponertFeilmelding.FRA_DATO_ETTER_TOM);
+    }
+
+    @Test
+    void skal_avvise_overlappende_hele_dager() {
+        var omsorgspenger = new InntektsmeldingRequest.Omsorgspenger(
+            true,
+            List.of(
+                new InntektsmeldingRequest.Omsorgspenger.FraværHeleDagenPeriode(STARTDATO, STARTDATO.plusDays(5)),
+                new InntektsmeldingRequest.Omsorgspenger.FraværHeleDagenPeriode(STARTDATO.plusDays(3), STARTDATO.plusDays(8))
+            ),
+            List.of()
+        );
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspenger(omsorgspenger))
+            .hasValue(EksponertFeilmelding.OMSORGSPENGER_OVERLAPP_I_HELE_DAGER);
+    }
+
+    @Test
+    void skal_avvise_duplikate_datoer_i_deler_av_dagen() {
+        var omsorgspenger = new InntektsmeldingRequest.Omsorgspenger(
+            false,
+            List.of(),
+            List.of(
+                new InntektsmeldingRequest.Omsorgspenger.FraværDelerAvDagen(STARTDATO, BigDecimal.valueOf(2)),
+                new InntektsmeldingRequest.Omsorgspenger.FraværDelerAvDagen(STARTDATO, BigDecimal.valueOf(3))
+            )
+        );
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspenger(omsorgspenger))
+            .hasValue(EksponertFeilmelding.OMSORGSPENGER_DUPLIKAT_FRAVAR_DELER_AV_DAGEN);
+    }
+
+    @Test
+    void skal_avvise_deler_av_dagen_innenfor_hel_dag_periode() {
+        var omsorgspenger = new InntektsmeldingRequest.Omsorgspenger(
+            true,
+            List.of(new InntektsmeldingRequest.Omsorgspenger.FraværHeleDagenPeriode(STARTDATO, STARTDATO.plusDays(5))),
+            List.of(new InntektsmeldingRequest.Omsorgspenger.FraværDelerAvDagen(STARTDATO.plusDays(2), BigDecimal.valueOf(4)))
+        );
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspenger(omsorgspenger))
+            .hasValue(EksponertFeilmelding.OMSORGSPENGER_FRAVAR_DELER_AV_DAGEN_OVERLAPPER_HEL_DAG);
+    }
+
+    // =====================================================================
     // validerRefusjon
     // =====================================================================
 

@@ -93,9 +93,9 @@ public record InntektsmeldingRequest(@NotNull @Valid UUID forespoerselId,
     }
 
     public record Omsorgspenger(Boolean harUtbetaltPliktigeDager,
-                                @NotNull List<@Valid FraværHeleDager> fraværHeleDager,
-                                @NotNull List<@Valid FraværDelerAvDagen> fraværDelerAvDagen) {
-        public record FraværHeleDager(@NotNull LocalDate fom, @NotNull LocalDate tom) {}
+                                @NotNull List<@Valid FraværHeleDagenPeriode> fraværHeleDagenPerioder,
+                                @NotNull List<@Valid FraværDelerAvDagen> fraværDelerAvDager) {
+        public record FraværHeleDagenPeriode(@NotNull LocalDate fom, @NotNull LocalDate tom) {}
         public record FraværDelerAvDagen(@NotNull LocalDate dato, @NotNull @Min(0) BigDecimal timer) {}
     }
 }

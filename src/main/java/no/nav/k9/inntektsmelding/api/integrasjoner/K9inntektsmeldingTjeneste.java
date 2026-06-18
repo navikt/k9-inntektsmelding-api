@@ -275,10 +275,10 @@ public class K9inntektsmeldingTjeneste {
         if (omsorgspenger == null) {
             return null;
         }
-        var fraværHeleDager = omsorgspenger.fraværHeleDager().stream()
+        var fraværHeleDager = omsorgspenger.fraværHeleDagenPerioder().stream()
             .map(f -> new no.nav.k9.inntektsmelding.felles.OmsorgspengerDto.FraværHeleDagerDto(f.fom(), f.tom()))
             .toList();
-        var fraværDelerAvDagen = omsorgspenger.fraværDelerAvDagen().stream()
+        var fraværDelerAvDagen = omsorgspenger.fraværDelerAvDager().stream()
             .map(f -> new no.nav.k9.inntektsmelding.felles.OmsorgspengerDto.FraværDelerAvDagenDto(f.dato(), f.timer()))
             .toList();
         return new no.nav.k9.inntektsmelding.felles.OmsorgspengerDto(omsorgspenger.harUtbetaltPliktigeDager(), fraværHeleDager, fraværDelerAvDagen);
