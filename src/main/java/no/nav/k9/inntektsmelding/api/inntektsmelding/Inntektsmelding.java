@@ -58,9 +58,13 @@ public record Inntektsmelding(
     }
 
     public record Omsorgspenger(Boolean harUtbetaltPliktigeDager,
-                                List<FraværHeleDager> fraværHeleDager,
-                                List<FraværDelerAvDagen> fraværDelerAvDagen) {
-        public record FraværHeleDager(LocalDate fom, LocalDate tom) {}
-        public record FraværDelerAvDagen(LocalDate dato, BigDecimal timer) {}
+                                List<FraværHeleDagenPeriode> fraværHeleDagenPerioder,
+                                List<FraværDelerAvDagen> fraværDelerAvDager) {
+
+        public record FraværHeleDagenPeriode(LocalDate fom,
+                                             LocalDate tom) {}
+
+        public record FraværDelerAvDagen(LocalDate dato,
+                                         BigDecimal timer) {}
     }
 }

@@ -89,7 +89,7 @@ public class InntektsmeldingValidererUtil {
             // fom kan ikke være etter tom
             for (var periode : heleDagenPerioder) {
                 if (periode.fom().isAfter(periode.tom())) {
-                    LOG.warn("FraværHeleDager har fom etter tom: {} > {}", periode.fom(), periode.tom());
+                    LOG.warn("FraværHeleDagenPeriode har fom etter tom: {} > {}", periode.fom(), periode.tom());
                     return Optional.of(EksponertFeilmelding.FRA_DATO_ETTER_TOM);
                 }
             }
@@ -97,7 +97,7 @@ public class InntektsmeldingValidererUtil {
             if (finnesOverlapp(heleDagenPerioder,
                 InntektsmeldingRequest.Omsorgspenger.FraværHeleDagenPeriode::fom,
                 InntektsmeldingRequest.Omsorgspenger.FraværHeleDagenPeriode::tom)) {
-                LOG.warn("FraværHeleDager har overlappende perioder");
+                LOG.warn("FraværHeleDagenPerioder har overlappende perioder");
                 return Optional.of(EksponertFeilmelding.OMSORGSPENGER_OVERLAPP_I_HELE_DAGER);
             }
         }
@@ -106,17 +106,17 @@ public class InntektsmeldingValidererUtil {
             // Ingen duplikate datoer
             var datoer = delerAvDager.stream().map(InntektsmeldingRequest.Omsorgspenger.FraværDelerAvDagen::dato).toList();
             if (datoer.size() != new HashSet<>(datoer).size()) {
-                LOG.warn("FraværDelerAvDagen har duplikate datoer");
+                LOG.warn("FraværDelerAvDager har duplikate datoer");
                 return Optional.of(EksponertFeilmelding.OMSORGSPENGER_DUPLIKAT_FRAVAR_DELER_AV_DAGEN);
             }
 
-            // Ingen fraværDelerAvDager-dato innenfor en fraværHeleDager-periode
+            // Ingen fraværDelerAvDager-dato innenfor en fraværHeleDagenPeriode
             if (heleDagenPerioder != null) {
                 for (var periode : heleDagenPerioder) {
                     for (var delAvDag : delerAvDager) {
                         var dato = delAvDag.dato();
                         if (!dato.isBefore(periode.fom()) && !dato.isAfter(periode.tom())) {
-                            LOG.warn("FraværDelerAvDagen-dato {} faller innenfor fraværHeleDager-periode {} - {}",
+                            LOG.warn("FraværDelerAvDagen-dato {} faller innenfor fraværHeleDagenPeriode {} - {}",
                                 dato, periode.fom(), periode.tom());
                             return Optional.of(EksponertFeilmelding.OMSORGSPENGER_FRAVAR_DELER_AV_DAGEN_OVERLAPPER_HEL_DAG);
                         }

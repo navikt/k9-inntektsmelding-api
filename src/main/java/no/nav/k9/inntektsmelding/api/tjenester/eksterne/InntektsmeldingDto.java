@@ -52,11 +52,11 @@ public record InntektsmeldingDto(@NotNull UUID inntektsmeldingId,
     }
 
     public record Omsorgspenger(@NotNull Boolean harUtbetaltPliktigeDager,
-                                List<@Valid FraværHeleDager> fravaerHeleDager,
-                                List<@Valid FraværDelerAvDagen> fravaerDelerAvDagen) {
+                                List<@Valid FraværHeleDagenPeriode> fraværHeleDagenPerioder,
+                                List<@Valid FraværDelerAvDagen> fravaerDelerAvDager) {
 
-        public record FraværHeleDager(@NotNull LocalDate fom,
-                                      @NotNull LocalDate tom) {}
+        public record FraværHeleDagenPeriode(@NotNull LocalDate fom,
+                                             @NotNull LocalDate tom) {}
 
         public record FraværDelerAvDagen(@NotNull LocalDate dato,
                                          @NotNull BigDecimal timer) {}
