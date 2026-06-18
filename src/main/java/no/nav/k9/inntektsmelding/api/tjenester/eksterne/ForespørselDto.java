@@ -5,10 +5,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-import no.nav.k9.inntektsmelding.api.typer.Periode;
 import no.nav.k9.inntektsmelding.api.typer.StatusDto;
 import no.nav.k9.inntektsmelding.api.typer.YtelseTypeDto;
 
@@ -18,7 +18,11 @@ public record ForespørselDto(@NotNull UUID forespoerselId,
                              @NotNull LocalDate startdato,
                              @NotNull StatusDto status,
                              @NotNull YtelseTypeDto ytelseType,
-                             List<Periode> etterspurtePerioder,
+                             List<@Valid Periode> etterspurtePerioder,
                              @NotNull LocalDateTime opprettetTid) {
+
+    public record Periode(@NotNull LocalDate fom,
+                          @NotNull LocalDate tom) {
+    }
 
 }

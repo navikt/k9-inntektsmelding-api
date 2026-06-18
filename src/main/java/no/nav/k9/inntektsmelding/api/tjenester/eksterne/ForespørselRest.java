@@ -148,7 +148,16 @@ public class ForespørselRest {
             forespørsel.skjæringstidspunkt(),
             KodeverkMapper.mapTilDto(forespørsel.status()),
             KodeverkMapper.mapTilDto(forespørsel.ytelseType()),
-            forespørsel.etterspurtePerioder(),
+            mapEtterspurtePerioder(forespørsel),
             forespørsel.opprettetTid());
+    }
+
+    private static List<ForespørselDto.Periode> mapEtterspurtePerioder(Forespørsel forespørsel) {
+        if (forespørsel.etterspurtePerioder() == null) {
+            return null;
+        }
+        return forespørsel.etterspurtePerioder().stream()
+            .map(periode -> new ForespørselDto.Periode(periode.fom(), periode.tom()))
+            .toList();
     }
 }
