@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import jakarta.validation.constraints.Pattern;
@@ -50,11 +51,15 @@ public record InntektsmeldingDto(@NotNull UUID inntektsmeldingId,
     public record Naturalytelse(@NotNull BigDecimal verdi, @NotNull LocalDate sluttdato, @NotNull NaturalytelsetypeDto naturalytelse) {
     }
 
-    public record Omsorgspenger(Boolean harUtbetaltPliktigeDager,
-                                @NotNull List<FraværHeleDager> fravaerHeleDager,
-                                @NotNull List<FraværDelerAvDagen> fravaerDelerAvDagen) {
-        public record FraværHeleDager(@NotNull LocalDate fom, @NotNull LocalDate tom) {}
-        public record FraværDelerAvDagen(@NotNull LocalDate dato, @NotNull BigDecimal timer) {}
+    public record Omsorgspenger(@NotNull Boolean harUtbetaltPliktigeDager,
+                                List<@Valid FraværHeleDager> fravaerHeleDager,
+                                List<@Valid FraværDelerAvDagen> fravaerDelerAvDagen) {
+
+        public record FraværHeleDager(@NotNull LocalDate fom,
+                                      @NotNull LocalDate tom) {}
+
+        public record FraværDelerAvDagen(@NotNull LocalDate dato,
+                                         @NotNull BigDecimal timer) {}
     }
 }
 
