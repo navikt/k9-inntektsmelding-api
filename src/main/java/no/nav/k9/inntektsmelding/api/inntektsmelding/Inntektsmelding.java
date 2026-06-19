@@ -27,7 +27,7 @@ public record Inntektsmelding(
     List<Refusjon> refusjon,
     List<BortfaltNaturalytelse> bortfaltNaturalytelsePerioder,
     List<Endringsårsaker> endringAvInntektÅrsaker,
-    Omsorgspenger omsorgspenger) {
+    OmsorgspengerInfo omsorgspengerInfo) {
 
     public record Refusjon(LocalDate fom,
                            BigDecimal beløp) {
@@ -57,9 +57,9 @@ public record Inntektsmelding(
     ) {
     }
 
-    public record Omsorgspenger(Boolean harUtbetaltPliktigeDager,
-                                List<FraværHeleDagenPeriode> fraværHeleDagenPerioder,
-                                List<FraværDelerAvDagen> fraværDelerAvDager) {
+    public record OmsorgspengerInfo(Boolean harUtbetaltPliktigeDager,
+                                    List<FraværHeleDagenPeriode> fraværHeleDagenPerioder,
+                                    List<FraværDelerAvDagen> fraværDelerAvDager) {
 
         public record FraværHeleDagenPeriode(LocalDate fom,
                                              LocalDate tom) {}

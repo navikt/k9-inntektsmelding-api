@@ -30,9 +30,9 @@ public class InntektsmeldingValidererUtil {
         }
 
         if (YtelseType.OMSORGSPENGER.equals(inntektsmeldingRequest.ytelse())) {
-            var feilmeldingOmsorgspenger = validerOmsorgspenger(inntektsmeldingRequest.omsorgspenger());
-            if (feilmeldingOmsorgspenger.isPresent()) {
-                return feilmeldingOmsorgspenger;
+            var feilmeldingOmsorgspengerInfo = validerOmsorgspengerInfo(inntektsmeldingRequest.omsorgspengerInfo());
+            if (feilmeldingOmsorgspengerInfo.isPresent()) {
+                return feilmeldingOmsorgspengerInfo;
             }
         }
 
@@ -70,14 +70,14 @@ public class InntektsmeldingValidererUtil {
         return Optional.empty();
     }
 
-    public static Optional<EksponertFeilmelding> validerOmsorgspenger(InntektsmeldingRequest.Omsorgspenger omsorgspenger) {
-        if (omsorgspenger == null) {
+    public static Optional<EksponertFeilmelding> validerOmsorgspengerInfo(InntektsmeldingRequest.OmsorgspengerInfo omsorgspengerInfo) {
+        if (omsorgspengerInfo == null) {
             LOG.warn("Inntektsmelding for Omsorgspenger mangler omsorgspenger-informasjon");
             return Optional.of(EksponertFeilmelding.OMSORGSPENGER_KREVER_OMSORGSPENGER_INFO);
         }
 
-        var heleDagenPerioder = omsorgspenger.fraværHeleDagenPerioder();
-        var delerAvDager = omsorgspenger.fraværDelerAvDager();
+        var heleDagenPerioder = omsorgspengerInfo.fraværHeleDagenPerioder();
+        var delerAvDager = omsorgspengerInfo.fraværDelerAvDager();
 
         // Må ha minst én fraværsperiode
         if ((heleDagenPerioder == null || heleDagenPerioder.isEmpty()) && (delerAvDager == null || delerAvDager.isEmpty())) {
@@ -95,8 +95,8 @@ public class InntektsmeldingValidererUtil {
             }
             // Ingen overlappende perioder
             if (finnesOverlapp(heleDagenPerioder,
-                InntektsmeldingRequest.Omsorgspenger.FraværHeleDagenPeriode::fom,
-                InntektsmeldingRequest.Omsorgspenger.FraværHeleDagenPeriode::tom)) {
+                InntektsmeldingRequest.OmsorgspengerInfo.FraværHeleDagenPeriode::fom,
+                InntektsmeldingRequest.OmsorgspengerInfo.FraværHeleDagenPeriode::tom)) {
                 LOG.warn("FraværHeleDagenPerioder har overlappende perioder");
                 return Optional.of(EksponertFeilmelding.OMSORGSPENGER_OVERLAPP_I_HELE_DAGER);
             }
@@ -104,7 +104,7 @@ public class InntektsmeldingValidererUtil {
 
         if (delerAvDager != null && !delerAvDager.isEmpty()) {
             // Ingen duplikate datoer
-            var datoer = delerAvDager.stream().map(InntektsmeldingRequest.Omsorgspenger.FraværDelerAvDagen::dato).toList();
+            var datoer = delerAvDager.stream().map(InntektsmeldingRequest.OmsorgspengerInfo.FraværDelerAvDagen::dato).toList();
             if (datoer.size() != new HashSet<>(datoer).size()) {
                 LOG.warn("FraværDelerAvDager har duplikate datoer");
                 return Optional.of(EksponertFeilmelding.OMSORGSPENGER_DUPLIKAT_FRAVAR_DELER_AV_DAGEN);
