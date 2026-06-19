@@ -1,4 +1,4 @@
-package no.nav.k9.inntektsmelding.api.inntektsmelding;
+package no.nav.k9.inntektsmelding.api.tjenester.eksterne;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import jakarta.validation.constraints.Pattern;
@@ -23,7 +24,8 @@ public record InntektsmeldingDto(@NotNull UUID inntektsmeldingId,
                                  @NotNull LocalDateTime innsendtTid,
                                  @NotNull AvsenderSystem avsender,
                                  Refusjon refusjon,
-                                 List<Naturalytelse> naturalytelser) {
+                                 List<Naturalytelse> naturalytelser,
+                                 OmsorgspengerInfo omsorgspengerInfo) {
 
     public record Inntekt(@NotNull BigDecimal beloep, @NotNull LocalDate inntektsdato, @NotNull List<InntektEndringsårsaker> endringAarsaker) {
     }
@@ -47,6 +49,17 @@ public record InntektsmeldingDto(@NotNull UUID inntektsmeldingId,
     }
 
     public record Naturalytelse(@NotNull BigDecimal verdi, @NotNull LocalDate sluttdato, @NotNull NaturalytelsetypeDto naturalytelse) {
+    }
+
+    public record OmsorgspengerInfo(@NotNull Boolean harUtbetaltPliktigeDager,
+                                    List<@Valid FraværHeleDagenPeriode> fraværHeleDagenPerioder,
+                                    List<@Valid FraværDelerAvDagen> fravaerDelerAvDager) {
+
+        public record FraværHeleDagenPeriode(@NotNull LocalDate fom,
+                                             @NotNull LocalDate tom) {}
+
+        public record FraværDelerAvDagen(@NotNull LocalDate dato,
+                                         @NotNull BigDecimal timer) {}
     }
 }
 

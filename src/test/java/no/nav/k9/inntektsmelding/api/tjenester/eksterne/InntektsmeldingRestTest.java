@@ -4,7 +4,6 @@ import jakarta.ws.rs.core.Response;
 
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
 import no.nav.k9.inntektsmelding.api.inntektsmelding.Inntektsmelding;
-import no.nav.k9.inntektsmelding.api.inntektsmelding.InntektsmeldingDto;
 import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
 import no.nav.k9.inntektsmelding.api.server.auth.Tilgang;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
@@ -56,7 +55,7 @@ class InntektsmeldingRestTest {
 
         var forespørsel = new Forespørsel(forespørselUuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
             LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN,
-            LocalDateTime.now());
+            List.of(), LocalDateTime.now());
 
         var inntektsmeldingRequest = new InntektsmeldingRequest(
             forespørselUuid,
@@ -67,9 +66,9 @@ class InntektsmeldingRestTest {
             new InntektsmeldingRequest.Refusjon(BigDecimal.valueOf(25000.00), List.of()),
             List.of(),
             new InntektsmeldingRequest.Kontaktinformasjon("Kontaktperson","12345678"),
-            new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0")
+            new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0"),
+            null
         );
-
         when(k9inntektsmeldingTjeneste.hentForespørsel(forespørselUuid)).thenReturn(forespørsel);
         when(k9inntektsmeldingTjeneste.sendInntektsmelding(any(), any()))
             .thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
@@ -96,7 +95,8 @@ class InntektsmeldingRestTest {
             new InntektsmeldingRequest.Refusjon(BigDecimal.valueOf(25000.00), List.of()),
             List.of(),
             new InntektsmeldingRequest.Kontaktinformasjon("Kontaktperson", "12345678"),
-            new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0")
+            new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0"),
+            null
         );
 
         when(k9inntektsmeldingTjeneste.hentForespørsel(forespørselUuid)).thenReturn(null);
@@ -154,7 +154,7 @@ class InntektsmeldingRestTest {
             LocalDate.now(),
             BigDecimal.valueOf(50000), LocalDate.now(), LocalDateTime.now(),
             new Inntektsmelding.AvsenderSystem("Test", "1.0"),
-            null, null, List.of(), List.of(), List.of()
+            null, null, List.of(), List.of(), List.of(), null
         );
     }
 }

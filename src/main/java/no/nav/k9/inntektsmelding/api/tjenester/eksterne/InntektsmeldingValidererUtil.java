@@ -13,6 +13,7 @@ import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
 import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
 import no.nav.fpsak.tidsserie.LocalDateInterval;
+import no.nav.k9.inntektsmelding.api.typer.YtelseType;
 
 public class InntektsmeldingValidererUtil {
     private static final Logger LOG = LoggerFactory.getLogger(InntektsmeldingValidererUtil.class);
@@ -26,6 +27,11 @@ public class InntektsmeldingValidererUtil {
         var feilmeldingForespørsel = validerInntektsmeldingMotForespørsel(inntektsmeldingRequest, forespørsel);
         if (feilmeldingForespørsel.isPresent()) {
             return feilmeldingForespørsel;
+        }
+
+        var feilmeldingOmsorgspengerInfo = validerOmsorgspengerInfo(inntektsmeldingRequest.omsorgspengerInfo(), inntektsmeldingRequest.ytelse());
+        if (feilmeldingOmsorgspengerInfo.isPresent()) {
+            return feilmeldingOmsorgspengerInfo;
         }
 
         var feilmeldingRefusjon = validerRefusjon(inntektsmeldingRequest.refusjon(), inntektsmeldingRequest.startdato());
@@ -59,6 +65,73 @@ public class InntektsmeldingValidererUtil {
                 forespørsel.ytelseType());
             return Optional.of(EksponertFeilmelding.MISMATCH_YTELSE);
         }
+        return Optional.empty();
+    }
+
+    public static Optional<EksponertFeilmelding> validerOmsorgspengerInfo(InntektsmeldingRequest.OmsorgspengerInfo omsorgspengerInfo,
+                                                                          YtelseType ytelseType) {
+        if (!YtelseType.OMSORGSPENGER.equals(ytelseType)) {
+            if (omsorgspengerInfo != null) {
+                LOG.warn("Ytelsetype er {}, og skal ikke ha omsorgspenger-informasjon", ytelseType);
+                return Optional.of(EksponertFeilmelding.OMSORGSPENGER_INFO_UGYLDIG_FOR_YTELSE);
+            }
+            return Optional.empty();
+        }
+
+        if (omsorgspengerInfo == null) {
+            LOG.warn("Inntektsmelding for Omsorgspenger mangler omsorgspenger-informasjon");
+            return Optional.of(EksponertFeilmelding.OMSORGSPENGER_KREVER_OMSORGSPENGER_INFO);
+        }
+
+        var heleDagenPerioder = omsorgspengerInfo.fraværHeleDagenPerioder();
+        var delerAvDager = omsorgspengerInfo.fraværDelerAvDager();
+
+        // Må ha minst én fraværsperiode
+        if ((heleDagenPerioder == null || heleDagenPerioder.isEmpty()) && (delerAvDager == null || delerAvDager.isEmpty())) {
+            LOG.warn("Omsorgspenger mangler fraværsperioder");
+            return Optional.of(EksponertFeilmelding.OMSORGSPENGER_MANGLER_FRAVÆRSPERIODER);
+        }
+
+        if (heleDagenPerioder != null && !heleDagenPerioder.isEmpty()) {
+            // fom kan ikke være etter tom
+            for (var periode : heleDagenPerioder) {
+                if (periode.fom().isAfter(periode.tom())) {
+                    LOG.warn("FraværHeleDagenPeriode har fom etter tom: {} > {}", periode.fom(), periode.tom());
+                    return Optional.of(EksponertFeilmelding.FRA_DATO_ETTER_TOM);
+                }
+            }
+            // Ingen overlappende perioder
+            if (finnesOverlapp(heleDagenPerioder,
+                InntektsmeldingRequest.OmsorgspengerInfo.FraværHeleDagenPeriode::fom,
+                InntektsmeldingRequest.OmsorgspengerInfo.FraværHeleDagenPeriode::tom)) {
+                LOG.warn("FraværHeleDagenPerioder har overlappende perioder");
+                return Optional.of(EksponertFeilmelding.OMSORGSPENGER_OVERLAPP_I_HELE_DAGER);
+            }
+        }
+
+        if (delerAvDager != null && !delerAvDager.isEmpty()) {
+            // Ingen duplikate datoer
+            var datoer = delerAvDager.stream().map(InntektsmeldingRequest.OmsorgspengerInfo.FraværDelerAvDagen::dato).toList();
+            if (datoer.size() != new HashSet<>(datoer).size()) {
+                LOG.warn("FraværDelerAvDager har duplikate datoer");
+                return Optional.of(EksponertFeilmelding.OMSORGSPENGER_DUPLIKAT_FRAVAR_DELER_AV_DAGEN);
+            }
+
+            // Ingen fraværDelerAvDager-dato innenfor en fraværHeleDagenPeriode
+            if (heleDagenPerioder != null) {
+                for (var periode : heleDagenPerioder) {
+                    for (var delAvDag : delerAvDager) {
+                        var dato = delAvDag.dato();
+                        if (!dato.isBefore(periode.fom()) && !dato.isAfter(periode.tom())) {
+                            LOG.warn("FraværDelerAvDagen-dato {} faller innenfor fraværHeleDagenPeriode {} - {}",
+                                dato, periode.fom(), periode.tom());
+                            return Optional.of(EksponertFeilmelding.OMSORGSPENGER_FRAVAR_DELER_AV_DAGEN_OVERLAPPER_HEL_DAG);
+                        }
+                    }
+                }
+            }
+        }
+
         return Optional.empty();
     }
 

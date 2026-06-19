@@ -16,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
-import no.nav.k9.inntektsmelding.api.forespørsel.ForespørselDto;
 import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
 import no.nav.k9.inntektsmelding.api.server.auth.TilgangTjeneste;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
@@ -53,7 +52,7 @@ class ForespørselRestTest {
         var orgnummer = "999999999";
         var uuid = UUID.randomUUID();
         when(k9inntektsmeldingTjeneste.hentForespørsel(uuid)).thenReturn(new Forespørsel(uuid, new Organisasjonsnummer(orgnummer), "11111111111", LocalDate.now(),
-            ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, LocalDate.now().atStartOfDay()));
+            ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, List.of(), LocalDate.now().atStartOfDay()));
         var response = forespørselRest.hentForespørsler(new ForespørselFilter(orgnummer, null, uuid, StatusDto.FORKASTET, YtelseType.OMSORGSPENGER, null, null));
         assertThat(response.getStatus()).isEqualTo(200);
         var forespørsler = (List<ForespørselDto>) response.getEntity();
@@ -76,9 +75,9 @@ class ForespørselRestTest {
     void skal_returnere_liste_om_flere_matcher() {
         var orgnummer = "999999999";
         var forespørsel2 = new Forespørsel(UUID.randomUUID(), new Organisasjonsnummer(orgnummer), "22222222222", LocalDate.now(),
-            ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, LocalDate.now().atStartOfDay());
+            ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, List.of(), LocalDate.now().atStartOfDay());
         var forespørsel1 = new Forespørsel(UUID.randomUUID(), new Organisasjonsnummer(orgnummer), "11111111111", LocalDate.now(),
-            ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, LocalDate.now().atStartOfDay());
+            ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, List.of(), LocalDate.now().atStartOfDay());
         when(k9inntektsmeldingTjeneste.hentForespørsler(orgnummer, null, null, null, null, null)).thenReturn(List.of(forespørsel1, forespørsel2));
         var response = forespørselRest.hentForespørsler(new ForespørselFilter(orgnummer, null, null, null, null, null, null));
         assertThat(response.getStatus()).isEqualTo(200);

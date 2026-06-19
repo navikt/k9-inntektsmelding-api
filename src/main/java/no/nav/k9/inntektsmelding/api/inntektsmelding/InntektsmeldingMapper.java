@@ -1,5 +1,6 @@
 package no.nav.k9.inntektsmelding.api.inntektsmelding;
 
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.InntektsmeldingDto;
 import no.nav.vedtak.konfig.Tid;
 
 import java.math.BigDecimal;
@@ -21,6 +22,7 @@ public class InntektsmeldingMapper {
         var alleRefusjonsendringer = mapRefusjon(inntektsmelding);
         var naturalytelser = mapNaturalytelser(inntektsmelding);
         var refusjon = new InntektsmeldingDto.Refusjon(inntektsmelding.månedRefusjon(), alleRefusjonsendringer);
+        var omsorgspengerInfo = mapOmsorgspengerInfo(inntektsmelding.omsorgspengerInfo());
         return new InntektsmeldingDto(inntektsmelding.inntektsmeldingUuid(),
             inntektsmelding.fnr(),
             inntektsmelding.ytelse(),
@@ -30,7 +32,8 @@ public class InntektsmeldingMapper {
             inntektsmelding.innsendtTidspunkt(),
             avsendersystemDto,
             refusjon,
-            naturalytelser);
+            naturalytelser,
+            omsorgspengerInfo);
     }
 
     private static List<InntektsmeldingDto.Naturalytelse> mapNaturalytelser(Inntektsmelding inntektsmelding) {
@@ -56,6 +59,21 @@ public class InntektsmeldingMapper {
             listeMedEndringer.add(new InntektsmeldingDto.RefusjonEndring(BigDecimal.ZERO, inntektsmelding.opphørsdatoRefusjon()));
         }
         return listeMedEndringer;
+    }
+
+    private static InntektsmeldingDto.OmsorgspengerInfo mapOmsorgspengerInfo(Inntektsmelding.OmsorgspengerInfo omsorgspengerInfo) {
+        if (omsorgspengerInfo == null) {
+            return null;
+        }
+        List<InntektsmeldingDto.OmsorgspengerInfo.FraværHeleDagenPeriode> fraværHeleDagenPerioder = omsorgspengerInfo.fraværHeleDagenPerioder() == null ? List.of() :
+                                                                                                    omsorgspengerInfo.fraværHeleDagenPerioder().stream()
+                .map(f -> new InntektsmeldingDto.OmsorgspengerInfo.FraværHeleDagenPeriode(f.fom(), f.tom()))
+                .toList();
+        List<InntektsmeldingDto.OmsorgspengerInfo.FraværDelerAvDagen> fraværDelerAvDager = omsorgspengerInfo.fraværDelerAvDager() == null ? List.of() :
+                                                                                           omsorgspengerInfo.fraværDelerAvDager().stream()
+                .map(f -> new InntektsmeldingDto.OmsorgspengerInfo.FraværDelerAvDagen(f.dato(), f.timer()))
+                .toList();
+        return new InntektsmeldingDto.OmsorgspengerInfo(omsorgspengerInfo.harUtbetaltPliktigeDager(), fraværHeleDagenPerioder, fraværDelerAvDager);
     }
 
 }

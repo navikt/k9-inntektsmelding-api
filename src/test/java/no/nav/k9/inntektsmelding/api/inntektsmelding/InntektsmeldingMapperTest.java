@@ -196,7 +196,8 @@ class InntektsmeldingMapperTest {
             opphørsdatoRefusjon,
             refusjonsendringer,
             naturalytelser,
-            endringsårsaker
+            endringsårsaker,
+            null
         );
     }
 }

@@ -13,6 +13,7 @@ import no.nav.k9.inntektsmelding.api.inntektsmelding.Inntektsmelding;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.InntektsmeldingRequest;
 import no.nav.k9.inntektsmelding.api.typer.KodeverkMapper;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
+import no.nav.k9.inntektsmelding.api.typer.Periode;
 import no.nav.k9.inntektsmelding.api.typer.StatusDto;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
 import no.nav.k9.inntektsmelding.felles.AvsenderSystemDto;
@@ -22,7 +23,9 @@ import no.nav.k9.inntektsmelding.felles.EndringsårsakerDto;
 import no.nav.k9.inntektsmelding.felles.FødselsnummerDto;
 import no.nav.k9.inntektsmelding.felles.KontaktpersonDto;
 import no.nav.k9.inntektsmelding.felles.NaturalytelsetypeDto;
+import no.nav.k9.inntektsmelding.felles.OmsorgspengerDto;
 import no.nav.k9.inntektsmelding.felles.OrganisasjonsnummerDto;
+import no.nav.k9.inntektsmelding.felles.PeriodeDto;
 import no.nav.k9.inntektsmelding.felles.RefusjonDto;
 import no.nav.k9.inntektsmelding.felles.YtelseTypeDto;
 import no.nav.k9.inntektsmelding.imapi.forespørsel.ForespørselDto;
@@ -112,8 +115,24 @@ public class K9inntektsmeldingTjeneste {
                 .toList(),
             response.endringAvInntektÅrsaker().stream()
                 .map(e -> new Inntektsmelding.Endringsårsaker(mapEndringsårsakTilApiType(e.årsak()), e.fom(), e.tom(), e.bleKjentFom()))
-                .toList()
+                .toList(),
+            mapOmsorgspengerTilDomeneobjekt(response.omsorgspenger())
         );
+    }
+
+    private static Inntektsmelding.OmsorgspengerInfo mapOmsorgspengerTilDomeneobjekt(OmsorgspengerDto omsorgspengerDto) {
+        if (omsorgspengerDto == null) {
+            return null;
+        }
+        List<Inntektsmelding.OmsorgspengerInfo.FraværHeleDagenPeriode> heleDager = omsorgspengerDto.fraværHeleDager() == null ? List.of() :
+                                                                                   omsorgspengerDto.fraværHeleDager().stream()
+                .map(f -> new Inntektsmelding.OmsorgspengerInfo.FraværHeleDagenPeriode(f.fom(), f.tom()))
+                .toList();
+        List<Inntektsmelding.OmsorgspengerInfo.FraværDelerAvDagen> delerAvDager = omsorgspengerDto.fraværDelerAvDagen() == null ? List.of() :
+                                                                                  omsorgspengerDto.fraværDelerAvDagen().stream()
+                .map(f -> new Inntektsmelding.OmsorgspengerInfo.FraværDelerAvDagen(f.dato(), f.timer()))
+                .toList();
+        return new Inntektsmelding.OmsorgspengerInfo(omsorgspengerDto.harUtbetaltPliktigeDager(), heleDager, delerAvDager);
     }
 
     private no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto mapNaturalytelseTypeTilApiType(NaturalytelsetypeDto naturalytelsetype) {
@@ -180,7 +199,8 @@ public class K9inntektsmeldingTjeneste {
             mapNaturalYtelseDto(inntektsmeldingRequest.naturalytelser()),
             mapEndringsårsakerDto(inntektsmeldingRequest.inntekt().endringAarsaker()),
             new AvsenderSystemDto(inntektsmeldingRequest.avsender().systemNavn(),
-                inntektsmeldingRequest.avsender().systemVersjon())
+                inntektsmeldingRequest.avsender().systemVersjon()),
+            mapOmsorgspengerDto(inntektsmeldingRequest.omsorgspengerInfo())
         );
 
         return k9inntektsmeldingKlient.sendInntektsmelding(inntektsmeldingRequestDto);
@@ -252,6 +272,21 @@ public class K9inntektsmeldingTjeneste {
     }
 
 
+    private no.nav.k9.inntektsmelding.felles.OmsorgspengerDto mapOmsorgspengerDto(InntektsmeldingRequest.OmsorgspengerInfo omsorgspengerInfo) {
+        if (omsorgspengerInfo == null) {
+            return null;
+        }
+        List<no.nav.k9.inntektsmelding.felles.OmsorgspengerDto.FraværHeleDagerDto> fraværHeleDager = omsorgspengerInfo.fraværHeleDagenPerioder() == null ? List.of() :
+                                                                                                     omsorgspengerInfo.fraværHeleDagenPerioder().stream()
+                .map(f -> new no.nav.k9.inntektsmelding.felles.OmsorgspengerDto.FraværHeleDagerDto(f.fom(), f.tom()))
+                .toList();
+        List<no.nav.k9.inntektsmelding.felles.OmsorgspengerDto.FraværDelerAvDagenDto> fraværDelerAvDager = omsorgspengerInfo.fraværDelerAvDager() == null ? List.of() :
+                                                                                                           omsorgspengerInfo.fraværDelerAvDager().stream()
+                .map(f -> new no.nav.k9.inntektsmelding.felles.OmsorgspengerDto.FraværDelerAvDagenDto(f.dato(), f.timer()))
+                .toList();
+        return new no.nav.k9.inntektsmelding.felles.OmsorgspengerDto(omsorgspengerInfo.harUtbetaltPliktigeDager(), fraværHeleDager, fraværDelerAvDager);
+    }
+
     private YtelseTypeDto mapYtelseType(YtelseType ytelseType) {
         return switch (ytelseType) {
             case PLEIEPENGER_SYKT_BARN -> YtelseTypeDto.PLEIEPENGER_SYKT_BARN;
@@ -272,8 +307,16 @@ public class K9inntektsmeldingTjeneste {
             response.skjæringstidspunkt(),
             KodeverkMapper.mapForespørselStatus(response.status()),
             KodeverkMapper.mapYtelseType(response.ytelseType()),
+            mapEtterspurtePerioder(response.etterspurtePerioder()),
             response.opprettetTid());
     }
 
-
+    private static List<Periode> mapEtterspurtePerioder(List<PeriodeDto> etterspurtePerioder) {
+        if (etterspurtePerioder == null) {
+            return List.of();
+        }
+        return etterspurtePerioder.stream()
+                .map(p -> new Periode(p.fom(), p.tom()))
+                .toList();
+    }
 }

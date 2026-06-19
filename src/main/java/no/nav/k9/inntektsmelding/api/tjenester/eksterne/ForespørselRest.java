@@ -28,7 +28,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
-import no.nav.k9.inntektsmelding.api.forespørsel.ForespørselDto;
 import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
 import no.nav.k9.inntektsmelding.api.server.auth.Tilgang;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
@@ -149,6 +148,16 @@ public class ForespørselRest {
             forespørsel.skjæringstidspunkt(),
             KodeverkMapper.mapTilDto(forespørsel.status()),
             KodeverkMapper.mapTilDto(forespørsel.ytelseType()),
+            mapEtterspurtePerioder(forespørsel),
             forespørsel.opprettetTid());
+    }
+
+    private static List<ForespørselDto.Periode> mapEtterspurtePerioder(Forespørsel forespørsel) {
+        if (forespørsel.etterspurtePerioder() == null) {
+            return null;
+        }
+        return forespørsel.etterspurtePerioder().stream()
+            .map(periode -> new ForespørselDto.Periode(periode.fom(), periode.tom()))
+            .toList();
     }
 }

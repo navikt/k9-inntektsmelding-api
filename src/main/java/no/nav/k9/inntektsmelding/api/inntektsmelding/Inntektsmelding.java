@@ -26,7 +26,8 @@ public record Inntektsmelding(
     LocalDate opphørsdatoRefusjon,
     List<Refusjon> refusjon,
     List<BortfaltNaturalytelse> bortfaltNaturalytelsePerioder,
-    List<Endringsårsaker> endringAvInntektÅrsaker) {
+    List<Endringsårsaker> endringAvInntektÅrsaker,
+    OmsorgspengerInfo omsorgspengerInfo) {
 
     public record Refusjon(LocalDate fom,
                            BigDecimal beløp) {
@@ -54,5 +55,16 @@ public record Inntektsmelding(
         String navn,
         String versjon
     ) {
+    }
+
+    public record OmsorgspengerInfo(Boolean harUtbetaltPliktigeDager,
+                                    List<FraværHeleDagenPeriode> fraværHeleDagenPerioder,
+                                    List<FraværDelerAvDagen> fraværDelerAvDager) {
+
+        public record FraværHeleDagenPeriode(LocalDate fom,
+                                             LocalDate tom) {}
+
+        public record FraværDelerAvDagen(LocalDate dato,
+                                         BigDecimal timer) {}
     }
 }

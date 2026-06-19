@@ -1,11 +1,12 @@
-package no.nav.k9.inntektsmelding.api.forespørsel;
+package no.nav.k9.inntektsmelding.api.tjenester.eksterne;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-
 import jakarta.validation.constraints.Pattern;
 
 import no.nav.k9.inntektsmelding.api.typer.StatusDto;
@@ -17,6 +18,11 @@ public record ForespørselDto(@NotNull UUID forespoerselId,
                              @NotNull LocalDate startdato,
                              @NotNull StatusDto status,
                              @NotNull YtelseTypeDto ytelseType,
+                             List<@Valid Periode> etterspurtePerioder,
                              @NotNull LocalDateTime opprettetTid) {
+
+    public record Periode(@NotNull LocalDate fom,
+                          @NotNull LocalDate tom) {
+    }
 
 }
