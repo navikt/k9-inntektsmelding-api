@@ -85,7 +85,7 @@ class InntektsmeldingValidererUtilTest {
             List.of(new InntektsmeldingRequest.OmsorgspengerInfo.FraværHeleDagenPeriode(STARTDATO, STARTDATO.plusDays(2))),
             List.of()
         );
-        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger)).isEmpty();
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER)).isEmpty();
     }
 
     @Test
@@ -95,13 +95,24 @@ class InntektsmeldingValidererUtilTest {
             List.of(),
             List.of(new InntektsmeldingRequest.OmsorgspengerInfo.FraværDelerAvDagen(STARTDATO, BigDecimal.valueOf(3.5)))
         );
-        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger)).isEmpty();
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER)).isEmpty();
+    }
+
+    @Test
+    void skal_avvise_andre_ytelser_enn_omsorgspenger_med_omsorgspenger_info() {
+        var omsorgspenger = new InntektsmeldingRequest.OmsorgspengerInfo(
+            false,
+            List.of(new InntektsmeldingRequest.OmsorgspengerInfo.FraværHeleDagenPeriode(STARTDATO, STARTDATO.plusDays(2))),
+            List.of()
+        );
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.PLEIEPENGER_SYKT_BARN))
+            .hasValue(EksponertFeilmelding.OMSORGSPENGER_INFO_UGYLDIG_FOR_YTELSE);
     }
 
     @Test
     void skal_avvise_omsorgspenger_uten_fraværsperioder() {
         var omsorgspenger = new InntektsmeldingRequest.OmsorgspengerInfo(true, List.of(), List.of());
-        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger))
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER))
             .hasValue(EksponertFeilmelding.OMSORGSPENGER_MANGLER_FRAVÆRSPERIODER);
     }
 
@@ -112,7 +123,7 @@ class InntektsmeldingValidererUtilTest {
             List.of(new InntektsmeldingRequest.OmsorgspengerInfo.FraværHeleDagenPeriode(STARTDATO.plusDays(5), STARTDATO)),
             List.of()
         );
-        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger))
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER))
             .hasValue(EksponertFeilmelding.FRA_DATO_ETTER_TOM);
     }
 
@@ -126,7 +137,7 @@ class InntektsmeldingValidererUtilTest {
             ),
             List.of()
         );
-        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger))
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER))
             .hasValue(EksponertFeilmelding.OMSORGSPENGER_OVERLAPP_I_HELE_DAGER);
     }
 
@@ -140,7 +151,7 @@ class InntektsmeldingValidererUtilTest {
                 new InntektsmeldingRequest.OmsorgspengerInfo.FraværDelerAvDagen(STARTDATO, BigDecimal.valueOf(3))
             )
         );
-        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger))
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER))
             .hasValue(EksponertFeilmelding.OMSORGSPENGER_DUPLIKAT_FRAVAR_DELER_AV_DAGEN);
     }
 
@@ -151,7 +162,7 @@ class InntektsmeldingValidererUtilTest {
             List.of(new InntektsmeldingRequest.OmsorgspengerInfo.FraværHeleDagenPeriode(STARTDATO, STARTDATO.plusDays(5))),
             List.of(new InntektsmeldingRequest.OmsorgspengerInfo.FraværDelerAvDagen(STARTDATO.plusDays(2), BigDecimal.valueOf(4)))
         );
-        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger))
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER))
             .hasValue(EksponertFeilmelding.OMSORGSPENGER_FRAVAR_DELER_AV_DAGEN_OVERLAPPER_HEL_DAG);
     }
 

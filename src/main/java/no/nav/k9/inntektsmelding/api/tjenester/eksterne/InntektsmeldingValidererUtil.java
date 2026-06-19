@@ -29,11 +29,9 @@ public class InntektsmeldingValidererUtil {
             return feilmeldingForespørsel;
         }
 
-        if (YtelseType.OMSORGSPENGER.equals(inntektsmeldingRequest.ytelse())) {
-            var feilmeldingOmsorgspengerInfo = validerOmsorgspengerInfo(inntektsmeldingRequest.omsorgspengerInfo());
-            if (feilmeldingOmsorgspengerInfo.isPresent()) {
-                return feilmeldingOmsorgspengerInfo;
-            }
+        var feilmeldingOmsorgspengerInfo = validerOmsorgspengerInfo(inntektsmeldingRequest.omsorgspengerInfo(), inntektsmeldingRequest.ytelse());
+        if (feilmeldingOmsorgspengerInfo.isPresent()) {
+            return feilmeldingOmsorgspengerInfo;
         }
 
         var feilmeldingRefusjon = validerRefusjon(inntektsmeldingRequest.refusjon(), inntektsmeldingRequest.startdato());
@@ -70,7 +68,16 @@ public class InntektsmeldingValidererUtil {
         return Optional.empty();
     }
 
-    public static Optional<EksponertFeilmelding> validerOmsorgspengerInfo(InntektsmeldingRequest.OmsorgspengerInfo omsorgspengerInfo) {
+    public static Optional<EksponertFeilmelding> validerOmsorgspengerInfo(InntektsmeldingRequest.OmsorgspengerInfo omsorgspengerInfo,
+                                                                          YtelseType ytelseType) {
+        if (!YtelseType.OMSORGSPENGER.equals(ytelseType)) {
+            if (omsorgspengerInfo != null) {
+                LOG.warn("Ytelsetype er {}, og skal ikke ha omsorgspenger-informasjon", ytelseType);
+                return Optional.of(EksponertFeilmelding.OMSORGSPENGER_INFO_UGYLDIG_FOR_YTELSE);
+            }
+            return Optional.empty();
+        }
+
         if (omsorgspengerInfo == null) {
             LOG.warn("Inntektsmelding for Omsorgspenger mangler omsorgspenger-informasjon");
             return Optional.of(EksponertFeilmelding.OMSORGSPENGER_KREVER_OMSORGSPENGER_INFO);

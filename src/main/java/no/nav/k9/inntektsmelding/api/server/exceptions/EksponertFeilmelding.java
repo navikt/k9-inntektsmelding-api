@@ -30,6 +30,7 @@ public enum EksponertFeilmelding {
     AARSAK_KREVER_FRA_DATO("Endringsårskene NY_STILLING, NY_STILLINGSPROSENT og VARIG_LØNNSENDRING krever at det oppgis en fra dato"),
     AARSAK_KREVER_FRA_OG_TIL_DATO("Endringsårskene FERIE, PERMISJON, PERMITTERING og SYKEFRAVÆR krever at det oppgis en fra dato og en til dato"),
     KREVER_FRA_OG_BLE_KJENT_DATO("Endringsårsaken Tariffendring krever at fra dato og gjelder fra dato er oppgitt"),
+    OMSORGSPENGER_INFO_UGYLDIG_FOR_YTELSE("OmsorgspengerInfo er kun gyldig for ytelsen Omsorgspenger"),
     OMSORGSPENGER_KREVER_OMSORGSPENGER_INFO("Omsorgspenger krever at omsorgspengerInfo er oppgitt"),
     OMSORGSPENGER_OVERLAPP_I_HELE_DAGER("Omsorgspenger kan ikke ha overlappende perioder for hele dager"),
     OMSORGSPENGER_MANGLER_FRAVÆRSPERIODER("Omsorgspenger krever minst én fraværsperiode (hel dag eller del av dag)"),
