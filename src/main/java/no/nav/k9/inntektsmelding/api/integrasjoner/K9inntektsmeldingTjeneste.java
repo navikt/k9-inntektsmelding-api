@@ -104,16 +104,16 @@ public class K9inntektsmeldingTjeneste {
             new Inntektsmelding.AvsenderSystem(response.avsenderSystem().systemNavn(), response.avsenderSystem().systemVersjon()),
             response.refusjonPrMnd(),
             response.opphørsdatoRefusjon(),
-            response.refusjonsendringer().stream()
+            response.refusjonsendringer() == null ? List.of() : response.refusjonsendringer().stream()
                 .map(r -> new Inntektsmelding.Refusjon(r.fom(), r.beløp()))
                 .toList(),
-            response.bortfaltNaturalytelsePerioder().stream()
+            response.bortfaltNaturalytelsePerioder() == null ? List.of() : response.bortfaltNaturalytelsePerioder().stream()
                 .map(b -> new Inntektsmelding.BortfaltNaturalytelse(b.fom(),
                     b.tom(),
                     mapNaturalytelseTypeTilApiType(b.naturalytelsetype()),
                     b.beløp()))
                 .toList(),
-            response.endringAvInntektÅrsaker().stream()
+            response.endringAvInntektÅrsaker() == null ? List.of() : response.endringAvInntektÅrsaker().stream()
                 .map(e -> new Inntektsmelding.Endringsårsaker(mapEndringsårsakTilApiType(e.årsak()), e.fom(), e.tom(), e.bleKjentFom()))
                 .toList(),
             mapOmsorgspengerTilDomeneobjekt(response.omsorgspenger())
@@ -207,6 +207,9 @@ public class K9inntektsmeldingTjeneste {
     }
 
     private List<EndringsårsakerDto> mapEndringsårsakerDto(List<InntektsmeldingRequest.InntektInfo.Endringsårsak> endringsårsak) {
+        if (endringsårsak == null) {
+            return List.of();
+        }
         return endringsårsak.stream()
             .map(e -> new EndringsårsakerDto(mapÅrsakType(e.aarsak()), e.fom(), e.tom(), e.gjelderFra()))
             .toList();
@@ -231,7 +234,9 @@ public class K9inntektsmeldingTjeneste {
     }
 
     private List<BortfaltNaturalytelseDto> mapNaturalYtelseDto(List<InntektsmeldingRequest.Naturalytelse> naturalYtelser) {
-
+        if (naturalYtelser == null) {
+            return List.of();
+        }
         return naturalYtelser.stream()
             .map(b -> new BortfaltNaturalytelseDto(b.bortfallerFra(), b.bortfallerTil() != null ? b.bortfallerTil() : Tid.TIDENES_ENDE, mapNaturalYtelseType(b.naturalytelse()), b.beloepPerMaaned()))
             .toList();

@@ -164,6 +164,17 @@ class InntektsmeldingMapperTest {
         assertThat(dto.naturalytelser()).isEmpty();
     }
 
+    @Test
+    void skal_returnere_tomme_lister_når_lister_er_null() {
+        var inntektsmelding = lagInntektsmeldingBuilder(null, null, null, null, null);
+
+        var dto = InntektsmeldingMapper.mapTilDto(inntektsmelding);
+
+        assertThat(dto.inntekt().endringAarsaker()).isEmpty();
+        assertThat(dto.refusjon().endringer()).isEmpty();
+        assertThat(dto.naturalytelser()).isEmpty();
+    }
+
     private Inntektsmelding lagInntektsmeldingMedTommeLister() {
         return lagInntektsmeldingBuilder(List.of(), List.of(), List.of(), null, null);
     }
