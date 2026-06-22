@@ -22,13 +22,17 @@ import no.nav.k9.inntektsmelding.api.tjenester.eksterne.InntektsmeldingRequest;
 import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
+import no.nav.k9.inntektsmelding.felles.AvsenderSystemDto;
 import no.nav.k9.inntektsmelding.felles.ForespørselStatusDto;
 import no.nav.k9.inntektsmelding.felles.FødselsnummerDto;
+import no.nav.k9.inntektsmelding.felles.KontaktpersonDto;
 import no.nav.k9.inntektsmelding.felles.OrganisasjonsnummerDto;
 import no.nav.k9.inntektsmelding.felles.YtelseTypeDto;
 import no.nav.k9.inntektsmelding.imapi.forespørsel.ForespørselDto;
 import no.nav.k9.inntektsmelding.imapi.forespørsel.HentForespørselerRequest;
 import no.nav.k9.inntektsmelding.imapi.forespørsel.HentForespørslerResponse;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.HentInntektsmeldingerResponse;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.InntektsmeldingDto;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingResponse;
 
 @ExtendWith(MockitoExtension.class)
@@ -225,5 +229,55 @@ class K9inntektsmeldingTjenesteTest {
 
         assertThat(response).isNotNull();
         verify(k9inntektsmeldingKlient).sendInntektsmelding(any());
+    }
+
+    @Test
+    void skal_returnere_tomme_lister_naar_refusjonsendringer_naturalytelser_og_endringsaarsaker_er_null_i_hentInntektsmelding() {
+        var uuid = UUID.randomUUID();
+        var dto = lagInntektsmeldingDtoMedNullLister(uuid);
+        when(k9inntektsmeldingKlient.hentInntektsmelding(uuid)).thenReturn(dto);
+
+        var inntektsmelding = k9inntektsmeldingTjeneste.hentInntektsmelding(uuid);
+
+        assertThat(inntektsmelding).isNotNull();
+        assertThat(inntektsmelding.refusjon()).isEmpty();
+        assertThat(inntektsmelding.bortfaltNaturalytelsePerioder()).isEmpty();
+        assertThat(inntektsmelding.endringAvInntektÅrsaker()).isEmpty();
+    }
+
+    @Test
+    void skal_returnere_tomme_lister_naar_refusjonsendringer_naturalytelser_og_endringsaarsaker_er_null_i_hentInntektsmeldinger() {
+        var orgnr = "999999999";
+        var dto = lagInntektsmeldingDtoMedNullLister(UUID.randomUUID());
+        when(k9inntektsmeldingKlient.hentInntektsmeldinger(any())).thenReturn(new HentInntektsmeldingerResponse(List.of(dto)));
+
+        var inntektsmeldinger = k9inntektsmeldingTjeneste.hentInntektsmeldinger(orgnr, null, null, YtelseType.PLEIEPENGER_SYKT_BARN, null, null);
+
+        assertThat(inntektsmeldinger).hasSize(1);
+        var inntektsmelding = inntektsmeldinger.getFirst();
+        assertThat(inntektsmelding.refusjon()).isEmpty();
+        assertThat(inntektsmelding.bortfaltNaturalytelsePerioder()).isEmpty();
+        assertThat(inntektsmelding.endringAvInntektÅrsaker()).isEmpty();
+    }
+
+    private static InntektsmeldingDto lagInntektsmeldingDtoMedNullLister(UUID inntektsmeldingUuid) {
+        return new InntektsmeldingDto(
+            inntektsmeldingUuid,
+            UUID.randomUUID(),
+            new FødselsnummerDto("12345678901"),
+            YtelseTypeDto.PLEIEPENGER_SYKT_BARN,
+            new OrganisasjonsnummerDto("999999999"),
+            new KontaktpersonDto("Ola Nordmann", "99999999"),
+            LocalDate.now(),
+            BigDecimal.valueOf(50000),
+            LocalDateTime.now(),
+            BigDecimal.valueOf(50000),
+            LocalDate.now().plusMonths(1),
+            new AvsenderSystemDto("TestSystem", "1.0"),
+            null,  // refusjonsendringer
+            null,  // bortfaltNaturalytelsePerioder
+            null,  // endringAvInntektÅrsaker
+            null   // omsorgspenger
+        );
     }
 }
