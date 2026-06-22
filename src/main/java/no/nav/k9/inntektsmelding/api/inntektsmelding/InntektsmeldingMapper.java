@@ -61,7 +61,7 @@ public class InntektsmeldingMapper {
             inntektsmelding.refusjon()
                 .stream()
                 .map(r -> new InntektsmeldingDto.RefusjonEndring(r.beløp(), r.fom()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(java.util.ArrayList::new));
         if (inntektsmelding.opphørsdatoRefusjon() != null && !inntektsmelding.opphørsdatoRefusjon().equals(Tid.TIDENES_ENDE)) {
             listeMedEndringer.add(new InntektsmeldingDto.RefusjonEndring(BigDecimal.ZERO, inntektsmelding.opphørsdatoRefusjon()));
         }
