@@ -37,6 +37,9 @@ public class InntektsmeldingMapper {
     }
 
     private static List<InntektsmeldingDto.Naturalytelse> mapNaturalytelser(Inntektsmelding inntektsmelding) {
+        if (inntektsmelding.bortfaltNaturalytelsePerioder() == null) {
+            return List.of();
+        }
         return inntektsmelding.bortfaltNaturalytelsePerioder()
             .stream()
             .map(n -> new InntektsmeldingDto.Naturalytelse(n.beløp(), n.fom(), n.naturalytelsetype()))
@@ -44,6 +47,9 @@ public class InntektsmeldingMapper {
     }
 
     private static List<InntektsmeldingDto.InntektEndringsårsaker> mapEndringsårsaker(Inntektsmelding inntektsmelding) {
+        if (inntektsmelding.endringAvInntektÅrsaker() == null) {
+            return List.of();
+        }
         return inntektsmelding.endringAvInntektÅrsaker()
             .stream()
             .map(e -> new InntektsmeldingDto.InntektEndringsårsaker(e.årsak(), e.fom(), e.tom(), e.bleKjentFom()))
@@ -51,10 +57,11 @@ public class InntektsmeldingMapper {
     }
 
     private static List<InntektsmeldingDto.RefusjonEndring> mapRefusjon(Inntektsmelding inntektsmelding) {
-        var listeMedEndringer = inntektsmelding.refusjon()
-            .stream()
-            .map(r -> new InntektsmeldingDto.RefusjonEndring(r.beløp(), r.fom()))
-            .collect(Collectors.toList());
+        var listeMedEndringer = inntektsmelding.refusjon() == null ? new java.util.ArrayList<InntektsmeldingDto.RefusjonEndring>() :
+            inntektsmelding.refusjon()
+                .stream()
+                .map(r -> new InntektsmeldingDto.RefusjonEndring(r.beløp(), r.fom()))
+                .collect(Collectors.toCollection(java.util.ArrayList::new));
         if (inntektsmelding.opphørsdatoRefusjon() != null && !inntektsmelding.opphørsdatoRefusjon().equals(Tid.TIDENES_ENDE)) {
             listeMedEndringer.add(new InntektsmeldingDto.RefusjonEndring(BigDecimal.ZERO, inntektsmelding.opphørsdatoRefusjon()));
         }
