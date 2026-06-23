@@ -60,12 +60,16 @@ public class K9inntektsmeldingTjeneste {
                                               YtelseType ytelseType,
                                               LocalDate fom,
                                               LocalDate tom) {
-        var filter = new HentForespørselerRequest(new OrganisasjonsnummerDto(orgnr), fnr == null ? null : new FødselsnummerDto(fnr),
+        var filter = new HentForespørselerRequest(new OrganisasjonsnummerDto(orgnr),
+            fnr == null ? null : new FødselsnummerDto(fnr),
             status == null ? null : KodeverkMapper.mapApiStatusTilForespørselStatus(status),
             ytelseType == null ? null : mapYtelseType(ytelseType),
             fom,
             tom);
         var response = k9inntektsmeldingKlient.hentForespørsler(filter);
+        if (response == null || response.forespørsler() == null) {
+            return List.of();
+        }
         return response.forespørsler().stream().map(this::mapResponseTilDomeneobjekt).toList();
     }
 
@@ -87,6 +91,9 @@ public class K9inntektsmeldingTjeneste {
             fom,
             tom);
         var response = k9inntektsmeldingKlient.hentInntektsmeldinger(request);
+        if (response == null || response.inntektsmeldinger() == null) {
+            return List.of();
+        }
         return response.inntektsmeldinger().stream().map(this::mapInntektsmeldingResponseTilDomeneobjekt).toList();
     }
 
