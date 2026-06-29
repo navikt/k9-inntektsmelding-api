@@ -260,6 +260,24 @@ class K9inntektsmeldingTjenesteTest {
         assertThat(inntektsmelding.endringAvInntektÅrsaker()).isEmpty();
     }
 
+    @Test
+    void skal_returnere_tom_liste_naar_hentForespørsler_klient_svarer_null() {
+        when(k9inntektsmeldingKlient.hentForespørsler(any())).thenReturn(null);
+
+        var forespørsler = k9inntektsmeldingTjeneste.hentForespørsler("999999999", null, null, null, null, null);
+
+        assertThat(forespørsler).isEmpty();
+    }
+
+    @Test
+    void skal_returnere_tom_liste_naar_hentInntektsmeldinger_klient_svarer_null() {
+        when(k9inntektsmeldingKlient.hentInntektsmeldinger(any())).thenReturn(null);
+
+        var inntektsmeldinger = k9inntektsmeldingTjeneste.hentInntektsmeldinger("999999999", null, null, YtelseType.PLEIEPENGER_SYKT_BARN, null, null);
+
+        assertThat(inntektsmeldinger).isEmpty();
+    }
+
     private static InntektsmeldingDto lagInntektsmeldingDtoMedNullLister(UUID inntektsmeldingUuid) {
         return new InntektsmeldingDto(
             inntektsmeldingUuid,
