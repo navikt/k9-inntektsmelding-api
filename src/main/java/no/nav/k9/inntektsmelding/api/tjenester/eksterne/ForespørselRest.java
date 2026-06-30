@@ -27,8 +27,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
 import no.nav.foreldrepenger.konfig.Environment;
+import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
 import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
 import no.nav.k9.inntektsmelding.api.server.auth.Tilgang;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
@@ -58,7 +58,7 @@ public class ForespørselRest {
     public ForespørselRest(K9inntektsmeldingTjeneste k9inntektsmeldingTjeneste, Tilgang tilgang) {
         this.k9inntektsmeldingTjeneste = k9inntektsmeldingTjeneste;
         this.tilgang = tilgang;
-        this.apiEnabled = ENV.getProperty("inntektsmelding-api.enabled", Boolean.class, false);
+        this.apiEnabled = ENV.getProperty("inntektsmelding-api.enabled", Boolean.class, true);
     }
 
     @GET

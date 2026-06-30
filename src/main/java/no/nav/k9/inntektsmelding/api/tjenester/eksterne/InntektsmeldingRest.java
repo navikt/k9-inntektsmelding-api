@@ -1,5 +1,7 @@
 package no.nav.k9.inntektsmelding.api.tjenester.eksterne;
 
+import java.util.UUID;
+
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -14,6 +16,9 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -21,20 +26,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import no.nav.k9.inntektsmelding.api.inntektsmelding.InntektsmeldingMapper;
-import no.nav.k9.inntektsmelding.api.server.exceptions.ErrorResponse;
-
-import no.nav.k9.inntektsmelding.felles.FeilkodeDto;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.nav.foreldrepenger.konfig.Environment;
+import no.nav.k9.inntektsmelding.api.inntektsmelding.InntektsmeldingMapper;
 import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
 import no.nav.k9.inntektsmelding.api.server.auth.Tilgang;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
+import no.nav.k9.inntektsmelding.api.server.exceptions.ErrorResponse;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
-import java.util.UUID; 
+import no.nav.k9.inntektsmelding.felles.FeilkodeDto;
 
 @RequestScoped
 @Consumes(MediaType.APPLICATION_JSON)
@@ -60,7 +59,7 @@ public class InntektsmeldingRest {
     public InntektsmeldingRest(K9inntektsmeldingTjeneste k9inntektsmeldingTjeneste, Tilgang tilgang) {
         this.k9inntektsmeldingTjeneste = k9inntektsmeldingTjeneste;
         this.tilgang = tilgang;
-        this.apiEnabled = ENV.getProperty("inntektsmelding-api.enabled", Boolean.class, false);
+        this.apiEnabled = ENV.getProperty("inntektsmelding-api.enabled", Boolean.class, true);
     }
 
     @POST
