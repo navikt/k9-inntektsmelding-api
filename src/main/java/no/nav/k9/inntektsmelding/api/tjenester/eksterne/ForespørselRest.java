@@ -27,6 +27,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
 import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
 import no.nav.k9.inntektsmelding.api.server.auth.Tilgang;
@@ -44,8 +45,10 @@ public class ForespørselRest {
     private static final String HENT_FORESPØRSEL = "/{forespoerselId}";
     private static final String HENT_FLERE = "/forespoersler";
     private static final Logger LOG = LoggerFactory.getLogger(ForespørselRest.class);
+    private static final Environment ENV = Environment.current();
     private K9inntektsmeldingTjeneste k9inntektsmeldingTjeneste;
     private Tilgang tilgang;
+    private boolean apiEnabled;
 
     ForespørselRest() {
         // for CDI
@@ -55,6 +58,7 @@ public class ForespørselRest {
     public ForespørselRest(K9inntektsmeldingTjeneste k9inntektsmeldingTjeneste, Tilgang tilgang) {
         this.k9inntektsmeldingTjeneste = k9inntektsmeldingTjeneste;
         this.tilgang = tilgang;
+        this.apiEnabled = ENV.getProperty("inntektsmelding-api.enabled", Boolean.class, true);
     }
 
     @GET
@@ -75,6 +79,11 @@ public class ForespørselRest {
     public Response hentForespørsel(@NotNull @Valid @PathParam("forespoerselId")
                                     @Parameter(description = "UUID til forespørselen")
                                     @Pattern(regexp = "^[a-fA-F\\d]{8}(?:-[a-fA-F\\d]{4}){3}-[a-fA-F\\d]{12}$", message = "Ugyldig UUID-format") String forespoerselId) {
+        if (!apiEnabled) {
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                .entity(new ErrorResponse("API_IKKE_AKTIVERT", "API er ikke aktivert"))
+                .build();
+        }
         LOG.info("Innkomende kall på hent forespørsel {}", forespoerselId);
         var uuid = UUID.fromString(forespoerselId);
 
@@ -106,6 +115,11 @@ public class ForespørselRest {
     @ApiResponse(responseCode = "500", description = "Intern serverfeil",
         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public Response hentForespørsler(@NotNull @Valid ForespørselFilter filterRequest) {
+        if (!apiEnabled) {
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                .entity(new ErrorResponse("API_IKKE_AKTIVERT", "API er ikke aktivert"))
+                .build();
+        }
         LOG.info("Innkomende kall på søk etter forespørsler");
 
         // Det er spurt etter en spesifikk forespørsel, henter kun denne

@@ -1,5 +1,7 @@
 package no.nav.k9.inntektsmelding.api.tjenester.eksterne;
 
+import java.util.UUID;
+
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -14,6 +16,9 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -21,19 +26,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.k9.inntektsmelding.api.inntektsmelding.InntektsmeldingMapper;
-import no.nav.k9.inntektsmelding.api.server.exceptions.ErrorResponse;
-
-import no.nav.k9.inntektsmelding.felles.FeilkodeDto;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
 import no.nav.k9.inntektsmelding.api.server.auth.Tilgang;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
+import no.nav.k9.inntektsmelding.api.server.exceptions.ErrorResponse;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
-import java.util.UUID;
+import no.nav.k9.inntektsmelding.felles.FeilkodeDto;
 
 @RequestScoped
 @Consumes(MediaType.APPLICATION_JSON)
@@ -46,8 +46,10 @@ public class InntektsmeldingRest {
     private static final String SEND_INNTEKTSMELDING = "/send-inn";
     private static final String HENT_INNTEKTSMELDING = "/hent/{inntektsmeldingId}";
     private static final String HENT_INNTEKTSMELDINGER = "/hent/inntektsmeldinger";
+    private static final Environment ENV = Environment.current();
     private K9inntektsmeldingTjeneste k9inntektsmeldingTjeneste;
     private Tilgang tilgang;
+    private boolean apiEnabled;
 
     InntektsmeldingRest() {
         // for CDI proxy
@@ -57,6 +59,7 @@ public class InntektsmeldingRest {
     public InntektsmeldingRest(K9inntektsmeldingTjeneste k9inntektsmeldingTjeneste, Tilgang tilgang) {
         this.k9inntektsmeldingTjeneste = k9inntektsmeldingTjeneste;
         this.tilgang = tilgang;
+        this.apiEnabled = ENV.getProperty("inntektsmelding-api.enabled", Boolean.class, true);
     }
 
     @POST
@@ -81,6 +84,11 @@ public class InntektsmeldingRest {
     @ApiResponse(responseCode = "500", description = "Intern serverfeil",
         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public Response sendInntektsmelding(@Valid @NotNull InntektsmeldingRequest inntektsmeldingRequest) {
+        if (!apiEnabled) {
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                .entity(new ErrorResponse("API_IKKE_AKTIVERT", "API er ikke aktivert"))
+                .build();
+        }
         var forespørselUuid = inntektsmeldingRequest.forespoerselId();
         LOG.info("Mottatt inntektsmelding for forespørselUuid {} ", forespørselUuid);
         var forespørsel = k9inntektsmeldingTjeneste.hentForespørsel(forespørselUuid);
@@ -156,6 +164,11 @@ public class InntektsmeldingRest {
                                         @Parameter(description = "UUID til inntektsmeldingen (inntektsmeldingId)")
                                         @Pattern(regexp = "^[a-fA-F\\d]{8}(?:-[a-fA-F\\d]{4}){3}-[a-fA-F\\d]{12}$", message = "Ugyldig UUID-format")
                                         String inntektsmeldingId) {
+        if (!apiEnabled) {
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                .entity(new ErrorResponse("API_IKKE_AKTIVERT", "API er ikke aktivert"))
+                .build();
+        }
         LOG.info("Hent inntektsmelding med inntektsmeldingId {} ", inntektsmeldingId);
         var inntektsmelding = k9inntektsmeldingTjeneste.hentInntektsmelding(UUID.fromString(inntektsmeldingId));
 
@@ -190,6 +203,11 @@ public class InntektsmeldingRest {
     @ApiResponse(responseCode = "500", description = "Intern serverfeil",
         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public Response hentInntektsmeldinger(@NotNull @Valid InntektsmeldingFilter inntektsmeldingFilter) {
+        if (!apiEnabled) {
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                .entity(new ErrorResponse("API_IKKE_AKTIVERT", "API er ikke aktivert"))
+                .build();
+        }
         LOG.info("Innkomende kall på søk etter inntektsmeldinger");
         tilgang.sjekkAtSystemHarTilgangTilOrganisasjon(new Organisasjonsnummer(inntektsmeldingFilter.orgnr()));
         if (inntektsmeldingFilter.inntektsmeldingId() != null) {
