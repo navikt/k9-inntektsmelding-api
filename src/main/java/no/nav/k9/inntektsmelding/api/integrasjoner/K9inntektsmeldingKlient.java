@@ -15,6 +15,8 @@ import no.nav.k9.inntektsmelding.imapi.inntektsmelding.HentInntektsmeldingerResp
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.InntektsmeldingDto;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingRequest;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingResponse;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendRefusjonOmsorgspengerRequest;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendRefusjonOmsorgspengerResponse;
 import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 import org.slf4j.Logger;

@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektsmeldingRequest;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
 
 import org.junit.jupiter.api.Test;

@@ -10,7 +10,7 @@ import jakarta.inject.Inject;
 
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
 import no.nav.k9.inntektsmelding.api.inntektsmelding.Inntektsmelding;
-import no.nav.k9.inntektsmelding.api.tjenester.eksterne.InntektsmeldingRequest;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektsmeldingRequest;
 import no.nav.k9.inntektsmelding.api.typer.KodeverkMapper;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.Periode;

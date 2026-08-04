@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektsmeldingRequest;
 import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
 import no.nav.fpsak.tidsserie.LocalDateInterval;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
