@@ -47,6 +47,7 @@ public class K9inntektsmeldingKlient {
     private final URI uriHentForespørsler;
     private final URI uriHentInntektsmelding;
     private final URI uriHentInntektsmeldinger;
+    private final URI uriSendRefusjonskravOMS;
 
     public K9inntektsmeldingKlient() {
         this.restClient = RestClient.client();
@@ -56,6 +57,7 @@ public class K9inntektsmeldingKlient {
         this.uriSendInntektsmelding = toUri(restConfig.endpoint(), "api/imapi/inntektsmelding/send-inntektsmelding");
         this.uriHentInntektsmelding = toUri(restConfig.endpoint(), "api/imapi/inntektsmelding/hent");
         this.uriHentInntektsmeldinger = toUri(restConfig.endpoint(), "api/imapi/inntektsmelding/hent/inntektsmeldinger");
+        this.uriSendRefusjonskravOMS = toUri(restConfig.endpoint(), "api/imapi/inntektsmelding/send-refusjonskrav-omsorgspenger");
     }
 
     ForespørselDto hentForespørsel(UUID forespørselUuid) {
@@ -142,6 +144,18 @@ public class K9inntektsmeldingKlient {
                  filter.orgnr(), e.getMessage(), e);
              throw feilVedKallTilK9inntektsmelding();
          }
+    }
+
+    SendRefusjonOmsorgspengerResponse sendRefusjonOmsorgspenger(SendRefusjonOmsorgspengerRequest refusjonskrav) {
+        try {
+            LOG.info("Sender refusjonskrav for omsorgspenger til k9-inntektsmelding");
+            var request = RestRequest.newPOSTJson(refusjonskrav, uriSendRefusjonskravOMS, restConfig);
+            return restClient.send(request, SendRefusjonOmsorgspengerResponse.class);
+        } catch (Exception e) {
+            LOG.warn("K9-97215: Feil ved sending av refusjonskrav for omsorgspenger til k9-inntektsmelding. Feilmelding var {}", e.getMessage(), e);
+            SECURE_LOG.info("K9-97215: Feil ved sending av refusjonskrav for omsorgspenger til k9-inntektsmelding. RefusjonskravRequestDto er {}", refusjonskrav);
+            throw feilVedKallTilK9inntektsmelding();
+        }
     }
 
     private static TekniskException feilVedKallTilK9inntektsmelding() {

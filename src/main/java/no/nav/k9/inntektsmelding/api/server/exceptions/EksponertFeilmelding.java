@@ -36,6 +36,7 @@ public enum EksponertFeilmelding {
     OMSORGSPENGER_MANGLER_FRAVÆRSPERIODER("Omsorgspenger krever minst én fraværsperiode (hel dag eller del av dag)"),
     OMSORGSPENGER_DUPLIKAT_FRAVAR_DELER_AV_DAGEN("Fraværsdato kan ikke forekomme mer enn én gang i fraværDelerAvDager"),
     OMSORGSPENGER_FRAVAR_DELER_AV_DAGEN_OVERLAPPER_HEL_DAG("Fraværsdag (del av dag) kan ikke falle innenfor en fraværsperiode for hel dag"),
+    OMSORGSPENGER_TRUKKET_PERIODE_OVERLAPPER("Trukket periode kan ikke overlappe med andre trukkede perioder, fraværHeleDagenPerioder eller fraværDelerAvDager"),
     FRA_DATO_FOER_STARTDATO("Dato for varig lønnsendring må være før fraværsdato"),
     DUPLIKATER_IKKE_TILATT(
         "Duplikate endringsårsker er ikke tillatt for årsakene: NY_STILLING, NY_STILLINGSPROSENT, VARIG_LØNNSENDRING, BONUS, TARIFF_ENDRING, FERIETREKK_ELLER_UTBETALING_AV_FERIEPENGER, NYANSATT, MANGELFULL_RAPPORTERING_A-ORDNING, INNTEKT_IKKE_RAPPRTERT_ENDA_A-ORDNING"),

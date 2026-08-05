@@ -9,8 +9,12 @@ import no.nav.k9.inntektsmelding.api.server.auth.Tilgang;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
 import no.nav.k9.inntektsmelding.api.server.exceptions.ErrorResponse;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.dto.InntektsmeldingDto;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Avsender;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektInfo;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektsmeldingFilter;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektsmeldingRequest;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Kontaktinformasjon;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
 import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
@@ -65,11 +69,11 @@ class InntektsmeldingRestTest {
             fødselsnummer,
             LocalDate.now(),
             YtelseType.PLEIEPENGER_SYKT_BARN,
-            new InntektsmeldingRequest.InntektInfo(BigDecimal.valueOf(25000.00), List.of()),
-            new InntektsmeldingRequest.Refusjon(BigDecimal.valueOf(25000.00), List.of()),
+            new InntektInfo(BigDecimal.valueOf(25000.00), List.of()),
+            new Refusjon(BigDecimal.valueOf(25000.00), List.of()),
             List.of(),
-            new InntektsmeldingRequest.Kontaktinformasjon("Kontaktperson","12345678"),
-            new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0"),
+            new Kontaktinformasjon("Kontaktperson","12345678"),
+            new Avsender("TestSystem", "1.0.0"),
             null
         );
         when(k9inntektsmeldingTjeneste.hentForespørsel(forespørselUuid)).thenReturn(forespørsel);
@@ -94,11 +98,11 @@ class InntektsmeldingRestTest {
             "12345678901",
             LocalDate.now(),
             YtelseType.PLEIEPENGER_SYKT_BARN,
-            new InntektsmeldingRequest.InntektInfo(BigDecimal.valueOf(25000.00), List.of()),
-            new InntektsmeldingRequest.Refusjon(BigDecimal.valueOf(25000.00), List.of()),
+            new InntektInfo(BigDecimal.valueOf(25000.00), List.of()),
+            new Refusjon(BigDecimal.valueOf(25000.00), List.of()),
             List.of(),
-            new InntektsmeldingRequest.Kontaktinformasjon("Kontaktperson", "12345678"),
-            new InntektsmeldingRequest.Avsender("TestSystem", "1.0.0"),
+            new Kontaktinformasjon("Kontaktperson", "12345678"),
+            new Avsender("TestSystem", "1.0.0"),
             null
         );
 

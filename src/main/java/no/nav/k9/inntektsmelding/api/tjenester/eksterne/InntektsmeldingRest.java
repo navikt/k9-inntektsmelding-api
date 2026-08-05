@@ -35,6 +35,7 @@ import no.nav.k9.inntektsmelding.api.server.exceptions.ErrorResponse;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.dto.InntektsmeldingDto;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektsmeldingFilter;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektsmeldingRequest;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.RefusjonskravOmsorgspengerRequest;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.felles.FeilkodeDto;
 
@@ -47,6 +48,7 @@ public class InntektsmeldingRest {
     public static final String BASE_PATH = "/inntektsmelding";
     private static final Logger LOG = LoggerFactory.getLogger(InntektsmeldingRest.class);
     private static final String SEND_INNTEKTSMELDING = "/send-inn";
+    private static final String SEND_REFUSJONSKRAV_OMSORGSPENGER = "/refusjonskrav-omsorgspenger/send";
     private static final String HENT_INNTEKTSMELDING = "/hent/{inntektsmeldingId}";
     private static final String HENT_INNTEKTSMELDINGER = "/hent/inntektsmeldinger";
     private static final Environment ENV = Environment.current();
@@ -142,9 +144,72 @@ public class InntektsmeldingRest {
                     .entity(errorResponse)
                     .build();
             } else {
-            return Response.status(Response.Status.BAD_REQUEST)
-                .entity(errorResponse)
+                return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(errorResponse)
+                    .build();
+            }
+        }
+    }
+
+    @POST
+    @Path(SEND_REFUSJONSKRAV_OMSORGSPENGER)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Send inn refusjonskrav for omsorgspenger",
+        description = "Sender inn et refusjonskrav for omsorgspenger. Krever ingen forespørsel siden refusjonskrav for omsorgspenger ikke er knyttet til en forespørsel.")
+    @ApiResponse(responseCode = "200", description = "Refusjonskravet ble mottatt. Returnerer UUID til det innsendte refusjonskravet.",
+        content = @Content(schema = @Schema(implementation = java.util.UUID.class)))
+    @ApiResponse(responseCode = "400", description = "Valideringsfeil eller ugyldig refusjonskrav",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "401", description = "Mangler gyldig autentisering",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "403", description = "Ikke tilgang til oppgitt organisasjon")
+    @ApiResponse(responseCode = "409", description = "Duplikat – refusjonskrav er identisk med siste innsendte",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "503", description = "A-inntekt er midlertidig utilgjengelig. Prøv igjen om litt.",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = "500", description = "Intern serverfeil",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    public Response sendRefusjonskravOmsorgspenger(@Valid @NotNull RefusjonskravOmsorgspengerRequest refusjonskravRequest) {
+        if (!apiEnabled) {
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                .entity(new ErrorResponse("API_IKKE_AKTIVERT", "API er ikke aktivert"))
                 .build();
+        }
+        LOG.info("Mottatt refusjonskrav for omsorgspenger for orgnr {}", refusjonskravRequest.orgnr());
+
+        tilgang.sjekkAtSystemHarTilgangTilOrganisasjon(new Organisasjonsnummer(refusjonskravRequest.orgnr()));
+
+        var feilmelding = InntektsmeldingValidererUtil.validerRefusjonskravOmsorgspenger(refusjonskravRequest);
+        if (feilmelding.isPresent()) {
+            LOG.info("Avvist refusjonskrav for omsorgspenger for orgnr {}. Validering feilet. Feilmelding: {}",
+                refusjonskravRequest.orgnr(), feilmelding.get().getTekst());
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity(new ErrorResponse(feilmelding.get().name(), feilmelding.get().getTekst()))
+                .build();
+        }
+
+        var response = k9inntektsmeldingTjeneste.sendRefusjonOmsorgspenger(refusjonskravRequest);
+
+        if (response.success()) {
+            return Response.ok(response.inntektsmeldingUuid()).build();
+        } else {
+            var errorResponse = new ErrorResponse(response.feilinformasjon().feilkode().name(),
+                response.feilinformasjon().feilmelding(),
+                response.feilinformasjon().referanseId());
+
+            if (FeilkodeDto.DUPLIKAT.equals(response.feilinformasjon().feilkode())) {
+                return Response.status(Response.Status.CONFLICT)
+                    .entity(errorResponse)
+                    .build();
+            } else if (FeilkodeDto.NEDETID_AINNTEKT.equals(response.feilinformasjon().feilkode())) {
+                return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                    .entity(errorResponse)
+                    .build();
+            } else {
+                return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(errorResponse)
+                    .build();
             }
         }
     }
