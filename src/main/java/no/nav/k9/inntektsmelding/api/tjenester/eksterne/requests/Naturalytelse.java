@@ -12,6 +12,7 @@ public record Naturalytelse(@NotNull Naturalytelsetype naturalytelse,
                             @NotNull @Min(0) @Max(Integer.MAX_VALUE) @Digits(integer = 20, fraction = 2) BigDecimal beloepPerMaaned,
                             @NotNull LocalDate bortfallerFra,
                             LocalDate bortfallerTil) {
+
     public enum Naturalytelsetype {
         ELEKTRISK_KOMMUNIKASJON,
         AKSJER_GRUNNFONDSBEVIS_TIL_UNDERKURS,

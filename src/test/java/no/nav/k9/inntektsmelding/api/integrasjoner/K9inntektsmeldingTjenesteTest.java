@@ -24,6 +24,7 @@ import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Inntektsmelding
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Kontaktinformasjon;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Naturalytelse;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
+import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
 import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
@@ -179,7 +180,7 @@ class K9inntektsmeldingTjenesteTest {
         var forespørsel = new Forespørsel(uuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
             LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, List.of(), LocalDateTime.now());
         var endringsårsak = new InntektInfo.Endringsårsak(
-            InntektInfo.Endringsårsak.EndringsårsakType.PERMISJON,
+            EndringsårsakDto.PERMISJON,
             LocalDate.now(),
             LocalDate.now().plusDays(5),
             LocalDate.now().minusDays(1)

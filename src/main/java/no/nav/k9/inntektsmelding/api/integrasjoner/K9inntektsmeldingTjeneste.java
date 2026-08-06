@@ -227,8 +227,8 @@ public class K9inntektsmeldingTjeneste {
             new OrganisasjonsnummerDto(refusjonskravRequest.orgnr()),
             refusjonskravRequest.startdato(),
             mapKontaktPersonDto(refusjonskravRequest.kontaktinformasjon()),
-            refusjonskravRequest.beloepPerMaaned(),
-            mapEndringsårsakerDto(refusjonskravRequest.endringAarsaker()),
+            refusjonskravRequest.refusjon().beloepPerMaaned(),
+            mapEndringsårsakerDto(refusjonskravRequest.refusjon().endringAarsaker()),
             new AvsenderSystemDto(refusjonskravRequest.avsender().systemNavn(),
                 refusjonskravRequest.avsender().systemVersjon()),
             mapOmsorgspengerDto(refusjonskravRequest.omsorgspengerInfo())
@@ -246,7 +246,7 @@ public class K9inntektsmeldingTjeneste {
             .toList();
     }
 
-    private EndringsårsakDto mapÅrsakType(InntektInfo.Endringsårsak.EndringsårsakType årsakType) {
+    private EndringsårsakDto mapÅrsakType(no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto årsakType) {
         return switch (årsakType) {
             case PERMITTERING -> EndringsårsakDto.PERMITTERING;
             case NY_STILLING -> EndringsårsakDto.NY_STILLING;

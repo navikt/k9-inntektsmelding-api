@@ -17,6 +17,7 @@ import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Naturalytelse;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.OmsorgspengerInfo;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.RefusjonskravOmsorgspengerRequest;
+import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
 import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
 import no.nav.fpsak.tidsserie.LocalDateInterval;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
@@ -83,7 +84,7 @@ public class InntektsmeldingValidererUtil {
         if (feilmeldingOmsorgspengerInfo.isPresent()) {
             return feilmeldingOmsorgspengerInfo;
         }
-        return validerEndringsårsaker(refusjonskravRequest.endringAarsaker(), refusjonskravRequest.startdato());
+        return validerEndringsårsaker(refusjonskravRequest.refusjon().endringAarsaker(), refusjonskravRequest.startdato());
     }
 
     public static Optional<EksponertFeilmelding> validerOmsorgspengerInfo(OmsorgspengerInfo omsorgspengerInfo,
@@ -278,7 +279,7 @@ public class InntektsmeldingValidererUtil {
         }
 
         var feilmeldingTariffendring = endringsårsaker.stream()
-            .filter(årsak -> årsak.aarsak() == InntektInfo.Endringsårsak.EndringsårsakType.TARIFFENDRING)
+            .filter(årsak -> årsak.aarsak() == EndringsårsakDto.TARIFFENDRING)
             .findFirst()
             .flatMap(InntektsmeldingValidererUtil::valideringTariffendring);
         if (feilmeldingTariffendring.isPresent()) {
@@ -291,7 +292,7 @@ public class InntektsmeldingValidererUtil {
         }
 
         var varigLønnsendringFraDato = endringsårsaker.stream()
-            .filter(årsak -> årsak.aarsak() == InntektInfo.Endringsårsak.EndringsårsakType.VARIG_LØNNSENDRING)
+            .filter(årsak -> årsak.aarsak() == EndringsårsakDto.VARIG_LØNNSENDRING)
             .findFirst()
             .map(InntektInfo.Endringsårsak::fom);
 
@@ -418,23 +419,23 @@ public class InntektsmeldingValidererUtil {
         return false;
     }
 
-    private static boolean kreverFomDato(InntektInfo.Endringsårsak.EndringsårsakType årsakType) {
-        return InntektInfo.Endringsårsak.EndringsårsakType.NY_STILLING == årsakType
-            || InntektInfo.Endringsårsak.EndringsårsakType.NY_STILLINGSPROSENT == årsakType
-            || InntektInfo.Endringsårsak.EndringsårsakType.VARIG_LØNNSENDRING == årsakType;
+    private static boolean kreverFomDato(EndringsårsakDto årsakType) {
+        return EndringsårsakDto.NY_STILLING == årsakType
+            || EndringsårsakDto.NY_STILLINGSPROSENT == årsakType
+            || EndringsårsakDto.VARIG_LØNNSENDRING == årsakType;
     }
 
-    private static boolean kreverFomOgTomDato(InntektInfo.Endringsårsak.EndringsårsakType årsakType) {
-        return InntektInfo.Endringsårsak.EndringsårsakType.FERIE == årsakType
-            || InntektInfo.Endringsårsak.EndringsårsakType.PERMISJON == årsakType
-            || InntektInfo.Endringsårsak.EndringsårsakType.PERMITTERING == årsakType
-            || InntektInfo.Endringsårsak.EndringsårsakType.SYKEFRAVÆR == årsakType;
+    private static boolean kreverFomOgTomDato(EndringsårsakDto årsakType) {
+        return EndringsårsakDto.FERIE == årsakType
+            || EndringsårsakDto.PERMISJON == årsakType
+            || EndringsårsakDto.PERMITTERING == årsakType
+            || EndringsårsakDto.SYKEFRAVÆR == årsakType;
     }
 
-    private static boolean skalÅrsakVæreUnik(InntektInfo.Endringsårsak.EndringsårsakType årsakType) {
-        return !(InntektInfo.Endringsårsak.EndringsårsakType.FERIE == årsakType
-            || InntektInfo.Endringsårsak.EndringsårsakType.PERMISJON == årsakType
-            || InntektInfo.Endringsårsak.EndringsårsakType.PERMITTERING == årsakType
-            || InntektInfo.Endringsårsak.EndringsårsakType.SYKEFRAVÆR == årsakType);
+    private static boolean skalÅrsakVæreUnik(EndringsårsakDto årsakType) {
+        return !(EndringsårsakDto.FERIE == årsakType
+            || EndringsårsakDto.PERMISJON == årsakType
+            || EndringsårsakDto.PERMITTERING == årsakType
+            || EndringsårsakDto.SYKEFRAVÆR == årsakType);
     }
 }
