@@ -1,6 +1,6 @@
 package no.nav.k9.inntektsmelding.api.inntektsmelding;
 
-import no.nav.k9.inntektsmelding.api.tjenester.eksterne.dto.InntektsmeldingDto;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.responses.InntektsmeldingDto;
 import no.nav.vedtak.konfig.Tid;
 
 import java.math.BigDecimal;

@@ -8,7 +8,7 @@ import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
 import no.nav.k9.inntektsmelding.api.server.auth.Tilgang;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
 import no.nav.k9.inntektsmelding.api.server.exceptions.ErrorResponse;
-import no.nav.k9.inntektsmelding.api.tjenester.eksterne.dto.InntektsmeldingDto;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.responses.InntektsmeldingDto;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Avsender;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektInfo;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektsmeldingFilter;
