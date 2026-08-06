@@ -33,7 +33,7 @@ public enum EksponertFeilmelding {
     OMSORGSPENGER_INFO_UGYLDIG_FOR_YTELSE("OmsorgspengerInfo er kun gyldig for ytelsen Omsorgspenger"),
     OMSORGSPENGER_KREVER_OMSORGSPENGER_INFO("Omsorgspenger krever at omsorgspengerInfo er oppgitt"),
     OMSORGSPENGER_OVERLAPP_I_HELE_DAGER("Omsorgspenger kan ikke ha overlappende perioder for hele dager"),
-    OMSORGSPENGER_MANGLER_FRAVÆRSPERIODER("Omsorgspenger krever minst én fraværsperiode (hel dag eller del av dag)"),
+    OMSORGSPENGER_MANGLER_FRAVÆRSPERIODER("Omsorgspenger krever minst én fraværsperiode (hel dag, del av dag eller trukket dag)"),
     OMSORGSPENGER_DUPLIKAT_FRAVAR_DELER_AV_DAGEN("Fraværsdato kan ikke forekomme mer enn én gang i fraværDelerAvDager"),
     OMSORGSPENGER_FRAVAR_DELER_AV_DAGEN_OVERLAPPER_HEL_DAG("Fraværsdag (del av dag) kan ikke falle innenfor en fraværsperiode for hel dag"),
     OMSORGSPENGER_TRUKKET_PERIODE_OVERLAPPER("Trukket periode kan ikke overlappe med andre trukkede perioder, fraværHeleDagenPerioder eller fraværDelerAvDager"),

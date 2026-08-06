@@ -106,7 +106,9 @@ public class InntektsmeldingValidererUtil {
         var trukketPerioder = omsorgspengerInfo.trukketPerioder();
 
         // Må ha minst én fraværsperiode
-        if ((heleDagenPerioder == null || heleDagenPerioder.isEmpty()) && (delerAvDager == null || delerAvDager.isEmpty())) {
+        if ((heleDagenPerioder == null || heleDagenPerioder.isEmpty()) &&
+            (delerAvDager == null || delerAvDager.isEmpty()) &&
+            (trukketPerioder == null || trukketPerioder.isEmpty())) {
             LOG.warn("Omsorgspenger mangler fraværsperioder");
             return Optional.of(EksponertFeilmelding.OMSORGSPENGER_MANGLER_FRAVÆRSPERIODER);
         }
