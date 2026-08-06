@@ -180,6 +180,30 @@ class InntektsmeldingValidererUtilTest {
             .hasValue(EksponertFeilmelding.OMSORGSPENGER_FRAVAR_DELER_AV_DAGEN_OVERLAPPER_HEL_DAG);
     }
 
+    @Test
+    void skal_avvise_deler_av_dagen_med_0_timer() {
+        var omsorgspenger = new OmsorgspengerInfo(
+            false,
+            List.of(),
+            List.of(new OmsorgspengerInfo.FraværDelerAvDagen(STARTDATO, BigDecimal.ZERO)),
+            List.of()
+        );
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER))
+            .hasValue(EksponertFeilmelding.OMSORGSPENGER_FRAVAR_DELER_AV_DAGEN_UGYLDIG_ANTALL_TIMER);
+    }
+
+    @Test
+    void skal_avvise_deler_av_dagen_med_24_timer() {
+        var omsorgspenger = new OmsorgspengerInfo(
+            false,
+            List.of(),
+            List.of(new OmsorgspengerInfo.FraværDelerAvDagen(STARTDATO, BigDecimal.valueOf(24))),
+            List.of()
+        );
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER))
+            .hasValue(EksponertFeilmelding.OMSORGSPENGER_FRAVAR_DELER_AV_DAGEN_UGYLDIG_ANTALL_TIMER);
+    }
+
     // =====================================================================
     // validerOmsorgspenger - trukketPerioder
     // =====================================================================

@@ -30,16 +30,16 @@ public enum EksponertFeilmelding {
     AARSAK_KREVER_FRA_DATO("Endringsårskene NY_STILLING, NY_STILLINGSPROSENT og VARIG_LØNNSENDRING krever at det oppgis en fra dato"),
     AARSAK_KREVER_FRA_OG_TIL_DATO("Endringsårskene FERIE, PERMISJON, PERMITTERING og SYKEFRAVÆR krever at det oppgis en fra dato og en til dato"),
     KREVER_FRA_OG_BLE_KJENT_DATO("Endringsårsaken Tariffendring krever at fra dato og gjelder fra dato er oppgitt"),
+    FRA_DATO_FOER_STARTDATO("Dato for varig lønnsendring må være før fraværsdato"),
+    DUPLIKATER_IKKE_TILATT("Duplikate endringsårsker er ikke tillatt for årsakene: NY_STILLING, NY_STILLINGSPROSENT, VARIG_LØNNSENDRING, BONUS, TARIFF_ENDRING, FERIETREKK_ELLER_UTBETALING_AV_FERIEPENGER, NYANSATT, MANGELFULL_RAPPORTERING_A-ORDNING, INNTEKT_IKKE_RAPPRTERT_ENDA_A-ORDNING"),
     OMSORGSPENGER_INFO_UGYLDIG_FOR_YTELSE("OmsorgspengerInfo er kun gyldig for ytelsen Omsorgspenger"),
     OMSORGSPENGER_KREVER_OMSORGSPENGER_INFO("Omsorgspenger krever at omsorgspengerInfo er oppgitt"),
     OMSORGSPENGER_OVERLAPP_I_HELE_DAGER("Omsorgspenger kan ikke ha overlappende perioder for hele dager"),
     OMSORGSPENGER_MANGLER_FRAVÆRSPERIODER("Omsorgspenger krever minst én fraværsperiode (hel dag, del av dag eller trukket dag)"),
     OMSORGSPENGER_DUPLIKAT_FRAVAR_DELER_AV_DAGEN("Fraværsdato kan ikke forekomme mer enn én gang i fraværDelerAvDager"),
     OMSORGSPENGER_FRAVAR_DELER_AV_DAGEN_OVERLAPPER_HEL_DAG("Fraværsdag (del av dag) kan ikke falle innenfor en fraværsperiode for hel dag"),
+    OMSORGSPENGER_FRAVAR_DELER_AV_DAGEN_UGYLDIG_ANTALL_TIMER("Fraværsdag (del av dag) kan ikke ha 0 eller mer enn 24 timer"),
     OMSORGSPENGER_TRUKKET_PERIODE_OVERLAPPER("Trukket periode kan ikke overlappe med andre trukkede perioder, fraværHeleDagenPerioder eller fraværDelerAvDager"),
-    FRA_DATO_FOER_STARTDATO("Dato for varig lønnsendring må være før fraværsdato"),
-    DUPLIKATER_IKKE_TILATT(
-        "Duplikate endringsårsker er ikke tillatt for årsakene: NY_STILLING, NY_STILLINGSPROSENT, VARIG_LØNNSENDRING, BONUS, TARIFF_ENDRING, FERIETREKK_ELLER_UTBETALING_AV_FERIEPENGER, NYANSATT, MANGELFULL_RAPPORTERING_A-ORDNING, INNTEKT_IKKE_RAPPRTERT_ENDA_A-ORDNING"),
     // Default
     STANDARD_FEIL("Noe feilet.");
 

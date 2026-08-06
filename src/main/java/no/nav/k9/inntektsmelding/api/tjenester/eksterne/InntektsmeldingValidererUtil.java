@@ -151,6 +151,13 @@ public class InntektsmeldingValidererUtil {
                     }
                 }
             }
+
+            // Ingen fraværDelerAvDagen-timer er 0 eller mer enn 24
+            if (delerAvDager.stream().anyMatch(delAvDag -> delAvDag.timer().compareTo(java.math.BigDecimal.ZERO) <= 0
+                    || delAvDag.timer().compareTo(java.math.BigDecimal.valueOf(24)) >= 0)) {
+                LOG.warn("FraværDelerAvDagen har timer som er 0 eller mer enn 24");
+                return Optional.of(EksponertFeilmelding.OMSORGSPENGER_FRAVAR_DELER_AV_DAGEN_UGYLDIG_ANTALL_TIMER);
+            }
         }
 
         if (trukketPerioder != null && !trukketPerioder.isEmpty()) {
