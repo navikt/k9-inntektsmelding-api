@@ -26,6 +26,7 @@ import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Naturalytelse;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
 import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
 import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
+import no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
 import no.nav.k9.inntektsmelding.felles.AvsenderSystemDto;
@@ -147,7 +148,7 @@ class K9inntektsmeldingTjenesteTest {
         var forespørsel = new Forespørsel(uuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
             LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, List.of(), LocalDateTime.now());
         var bortfaltNaturalytelse = new Naturalytelse(
-            Naturalytelse.Naturalytelsetype.ELEKTRISK_KOMMUNIKASJON,
+            NaturalytelsetypeDto.ELEKTRISK_KOMMUNIKASJON,
             BigDecimal.valueOf(500.00),
             LocalDate.now(),
             LocalDate.now().plusDays(10)

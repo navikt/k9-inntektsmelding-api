@@ -22,6 +22,7 @@ import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.OmsorgspengerIn
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
 import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
 import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
+import no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
 
@@ -447,7 +448,7 @@ class InntektsmeldingValidererUtilTest {
     }
 
     private Naturalytelse lagNaturalytelse(LocalDate fom, LocalDate tom) {
-        return new Naturalytelse(Naturalytelse.Naturalytelsetype.ELEKTRISK_KOMMUNIKASJON, DEFAULT_BELØP,
+        return new Naturalytelse(NaturalytelsetypeDto.ELEKTRISK_KOMMUNIKASJON, DEFAULT_BELØP,
             fom, tom);
     }
 
@@ -797,7 +798,7 @@ class InntektsmeldingValidererUtilTest {
     void skal_returnere_feil_fra_naturalytelse_validering() {
         var request = lagRequest(YtelseType.PLEIEPENGER_SYKT_BARN,
             new Refusjon(DEFAULT_BELØP, List.of()),
-            List.of(new Naturalytelse(Naturalytelse.Naturalytelsetype.BIL, DEFAULT_BELØP,
+            List.of(new Naturalytelse(NaturalytelsetypeDto.BIL, DEFAULT_BELØP,
                 STARTDATO.plusDays(10), STARTDATO)),
             new InntektInfo(DEFAULT_BELØP, List.of()));
 

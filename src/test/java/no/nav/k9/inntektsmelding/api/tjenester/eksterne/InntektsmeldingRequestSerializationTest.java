@@ -14,6 +14,7 @@ import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Kontaktinformas
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Naturalytelse;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
 import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
+import no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
 
 import org.junit.jupiter.api.Test;
@@ -69,7 +70,7 @@ class InntektsmeldingRequestSerializationTest {
         var refusjon = new Refusjon( BigDecimal.valueOf(25000.00), List.of());
         var bortfaltNaturalytelse = List.of(
             new Naturalytelse(
-                Naturalytelse.Naturalytelsetype.ELEKTRISK_KOMMUNIKASJON,
+                NaturalytelsetypeDto.ELEKTRISK_KOMMUNIKASJON,
                 BigDecimal.valueOf(500.00),
                 LocalDate.of(2024, 2, 1),
                 LocalDate.of(2024, 2, 28)
@@ -166,7 +167,7 @@ class InntektsmeldingRequestSerializationTest {
             ))),
             new Refusjon(BigDecimal.valueOf(25000.00), List.of()),
             List.of(new Naturalytelse(
-                Naturalytelse.Naturalytelsetype.ELEKTRISK_KOMMUNIKASJON,
+                NaturalytelsetypeDto.ELEKTRISK_KOMMUNIKASJON,
                     BigDecimal.valueOf(500),
                     LocalDate.of(2024, 2, 1),
                     null)),
