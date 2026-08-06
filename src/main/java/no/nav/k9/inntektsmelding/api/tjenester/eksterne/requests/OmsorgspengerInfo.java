@@ -11,12 +11,12 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 public record OmsorgspengerInfo(@NotNull Boolean harUtbetaltPliktigeDager,
-                                List<@Valid FraværHeleDagenPeriode> fraværHeleDagenPerioder,
+                                List<@Valid Periode> fraværHeleDagenPerioder,
                                 List<@Valid FraværDelerAvDagen> fraværDelerAvDager,
-                                List<@Valid FraværHeleDagenPeriode> trukketPerioder) {
+                                List<@Valid Periode> trukketPerioder) {
 
-    public record FraværHeleDagenPeriode(@NotNull LocalDate fom,
-                                         @NotNull LocalDate tom) {}
+    public record Periode(@NotNull LocalDate fom,
+                          @NotNull LocalDate tom) {}
 
     public record FraværDelerAvDagen(@NotNull LocalDate dato,
                                      @NotNull @Min(0) @Max(24) @Digits(integer = 2, fraction = 2) BigDecimal timer) {}

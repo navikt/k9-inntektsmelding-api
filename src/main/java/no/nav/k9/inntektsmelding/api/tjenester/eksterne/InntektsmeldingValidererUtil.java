@@ -121,8 +121,8 @@ public class InntektsmeldingValidererUtil {
             }
             // Ingen overlappende perioder
             if (finnesOverlapp(heleDagenPerioder,
-                OmsorgspengerInfo.FraværHeleDagenPeriode::fom,
-                OmsorgspengerInfo.FraværHeleDagenPeriode::tom)) {
+                OmsorgspengerInfo.Periode::fom,
+                OmsorgspengerInfo.Periode::tom)) {
                 LOG.warn("FraværHeleDagenPerioder har overlappende perioder");
                 return Optional.of(EksponertFeilmelding.OMSORGSPENGER_OVERLAPP_I_HELE_DAGER);
             }
@@ -162,8 +162,8 @@ public class InntektsmeldingValidererUtil {
 
             // Ingen overlapp internt i trukketPerioder
             if (finnesOverlapp(trukketPerioder,
-                OmsorgspengerInfo.FraværHeleDagenPeriode::fom,
-                OmsorgspengerInfo.FraværHeleDagenPeriode::tom)) {
+                OmsorgspengerInfo.Periode::fom,
+                OmsorgspengerInfo.Periode::tom)) {
                 LOG.warn("Trukket perioder har overlappende perioder");
                 return Optional.of(EksponertFeilmelding.OMSORGSPENGER_TRUKKET_PERIODE_OVERLAPPER);
             }
@@ -171,7 +171,7 @@ public class InntektsmeldingValidererUtil {
             // Ingen overlapp mot fraværHeleDagenPerioder
             if (heleDagenPerioder != null && !heleDagenPerioder.isEmpty()
                 && finnesOverlappMellomTolister(trukketPerioder, heleDagenPerioder,
-                OmsorgspengerInfo.FraværHeleDagenPeriode::fom, OmsorgspengerInfo.FraværHeleDagenPeriode::tom)) {
+                OmsorgspengerInfo.Periode::fom, OmsorgspengerInfo.Periode::tom)) {
                 LOG.warn("Trukket periode overlapper med fraværHeleDagenPerioder");
                 return Optional.of(EksponertFeilmelding.OMSORGSPENGER_TRUKKET_PERIODE_OVERLAPPER);
             }

@@ -89,7 +89,7 @@ class InntektsmeldingValidererUtilTest {
     void skal_godkjenne_omsorgspenger_med_kun_hele_dager() {
         var omsorgspenger = new OmsorgspengerInfo(
             true,
-            List.of(new OmsorgspengerInfo.FraværHeleDagenPeriode(STARTDATO, STARTDATO.plusDays(2))),
+            List.of(new OmsorgspengerInfo.Periode(STARTDATO, STARTDATO.plusDays(2))),
             List.of(),
             List.of()
         );
@@ -111,7 +111,7 @@ class InntektsmeldingValidererUtilTest {
     void skal_avvise_andre_ytelser_enn_omsorgspenger_med_omsorgspenger_info() {
         var omsorgspenger = new OmsorgspengerInfo(
             false,
-            List.of(new OmsorgspengerInfo.FraværHeleDagenPeriode(STARTDATO, STARTDATO.plusDays(2))),
+            List.of(new OmsorgspengerInfo.Periode(STARTDATO, STARTDATO.plusDays(2))),
             List.of(),
             List.of()
         );
@@ -130,7 +130,7 @@ class InntektsmeldingValidererUtilTest {
     void skal_avvise_fom_etter_tom_i_hele_dager() {
         var omsorgspenger = new OmsorgspengerInfo(
             true,
-            List.of(new OmsorgspengerInfo.FraværHeleDagenPeriode(STARTDATO.plusDays(5), STARTDATO)),
+            List.of(new OmsorgspengerInfo.Periode(STARTDATO.plusDays(5), STARTDATO)),
             List.of(),
             List.of()
         );
@@ -143,8 +143,8 @@ class InntektsmeldingValidererUtilTest {
         var omsorgspenger = new OmsorgspengerInfo(
             true,
             List.of(
-                new OmsorgspengerInfo.FraværHeleDagenPeriode(STARTDATO, STARTDATO.plusDays(5)),
-                new OmsorgspengerInfo.FraværHeleDagenPeriode(STARTDATO.plusDays(3), STARTDATO.plusDays(8))
+                new OmsorgspengerInfo.Periode(STARTDATO, STARTDATO.plusDays(5)),
+                new OmsorgspengerInfo.Periode(STARTDATO.plusDays(3), STARTDATO.plusDays(8))
             ),
             List.of(),
             List.of()
@@ -172,7 +172,7 @@ class InntektsmeldingValidererUtilTest {
     void skal_avvise_deler_av_dagen_innenfor_hel_dag_periode() {
         var omsorgspenger = new OmsorgspengerInfo(
             true,
-            List.of(new OmsorgspengerInfo.FraværHeleDagenPeriode(STARTDATO, STARTDATO.plusDays(5))),
+            List.of(new OmsorgspengerInfo.Periode(STARTDATO, STARTDATO.plusDays(5))),
             List.of(new OmsorgspengerInfo.FraværDelerAvDagen(STARTDATO.plusDays(2), BigDecimal.valueOf(4))),
             List.of()
         );
