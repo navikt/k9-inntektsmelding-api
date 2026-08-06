@@ -313,17 +313,23 @@ public class K9inntektsmeldingTjeneste {
             return null;
         }
         List<PeriodeDto> fraværHeleDager = omsorgspengerInfo.fraværHeleDagenPerioder() == null ? List.of() :
-                                                                                                 omsorgspengerInfo.fraværHeleDagenPerioder().stream()
-                .map(f -> new PeriodeDto(f.fom(), f.tom()))
-                .toList();
+                                           omsorgspengerInfo.fraværHeleDagenPerioder()
+                                               .stream()
+                                               .map(f -> new PeriodeDto(f.fom(), f.tom()))
+                                               .toList();
+
         List<OmsorgspengerDto.FraværDelerAvDagenDto> fraværDelerAvDager = omsorgspengerInfo.fraværDelerAvDager() == null ? List.of() :
-                                                                                                       omsorgspengerInfo.fraværDelerAvDager().stream()
-                .map(f -> new OmsorgspengerDto.FraværDelerAvDagenDto(f.dato(), f.timer()))
-                .toList();
+                                                                          omsorgspengerInfo.fraværDelerAvDager()
+                                                                              .stream()
+                                                                              .map(f -> new OmsorgspengerDto.FraværDelerAvDagenDto(f.dato(), f.timer()))
+                                                                              .toList();
+
         List<PeriodeDto> trukketPerioder = omsorgspengerInfo.trukketPerioder() == null ? List.of() :
-                                                                                          omsorgspengerInfo.trukketPerioder().stream()
-                .map(f -> new PeriodeDto(f.fom(), f.tom()))
-                .toList();
+                                           omsorgspengerInfo.trukketPerioder()
+                                               .stream()
+                                               .map(f -> new PeriodeDto(f.fom(), f.tom()))
+                                               .toList();
+
         return new OmsorgspengerDto(omsorgspengerInfo.harUtbetaltPliktigeDager(), fraværHeleDager, fraværDelerAvDager, trukketPerioder);
     }
 
