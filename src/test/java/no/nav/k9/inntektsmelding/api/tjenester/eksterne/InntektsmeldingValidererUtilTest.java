@@ -181,6 +181,112 @@ class InntektsmeldingValidererUtilTest {
     }
 
     // =====================================================================
+    // validerOmsorgspenger - trukketPerioder
+    // =====================================================================
+
+    @Test
+    void skal_godkjenne_gyldig_trukket_periode() {
+        var omsorgspenger = new OmsorgspengerInfo(
+            true,
+            List.of(),
+            List.of(),
+            List.of(new OmsorgspengerInfo.Periode(STARTDATO, STARTDATO.plusDays(5)))
+        );
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER)).isEmpty();
+    }
+
+    @Test
+    void skal_godkjenne_trukket_periode_som_ikke_overlapper_hele_dager() {
+        var omsorgspenger = new OmsorgspengerInfo(
+            true,
+            List.of(new OmsorgspengerInfo.Periode(STARTDATO, STARTDATO.plusDays(5))),
+            List.of(),
+            List.of(new OmsorgspengerInfo.Periode(STARTDATO.plusDays(10), STARTDATO.plusDays(15)))
+        );
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER)).isEmpty();
+    }
+
+    @Test
+    void skal_avvise_trukket_periode_med_fom_etter_tom() {
+        var omsorgspenger = new OmsorgspengerInfo(
+            true,
+            List.of(),
+            List.of(),
+            List.of(new OmsorgspengerInfo.Periode(STARTDATO.plusDays(5), STARTDATO))
+        );
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER))
+            .hasValue(EksponertFeilmelding.FRA_DATO_ETTER_TOM);
+    }
+
+    @Test
+    void skal_avvise_overlappende_trukkede_perioder() {
+        var omsorgspenger = new OmsorgspengerInfo(
+            true,
+            List.of(),
+            List.of(),
+            List.of(
+                new OmsorgspengerInfo.Periode(STARTDATO, STARTDATO.plusDays(5)),
+                new OmsorgspengerInfo.Periode(STARTDATO.plusDays(3), STARTDATO.plusDays(8))
+            )
+        );
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER))
+            .hasValue(EksponertFeilmelding.OMSORGSPENGER_TRUKKET_PERIODE_OVERLAPPER);
+    }
+
+    @Test
+    void skal_avvise_trukket_periode_som_overlapper_hel_dag_periode() {
+        var omsorgspenger = new OmsorgspengerInfo(
+            true,
+            List.of(new OmsorgspengerInfo.Periode(STARTDATO, STARTDATO.plusDays(5))),
+            List.of(),
+            List.of(new OmsorgspengerInfo.Periode(STARTDATO.plusDays(3), STARTDATO.plusDays(8)))
+        );
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER))
+            .hasValue(EksponertFeilmelding.OMSORGSPENGER_TRUKKET_PERIODE_OVERLAPPER);
+    }
+
+    @Test
+    void skal_avvise_deler_av_dagen_innenfor_trukket_periode() {
+        var omsorgspenger = new OmsorgspengerInfo(
+            false,
+            List.of(),
+            List.of(new OmsorgspengerInfo.FraværDelerAvDagen(STARTDATO.plusDays(2), BigDecimal.valueOf(4))),
+            List.of(new OmsorgspengerInfo.Periode(STARTDATO, STARTDATO.plusDays(5)))
+        );
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER))
+            .hasValue(EksponertFeilmelding.OMSORGSPENGER_TRUKKET_PERIODE_OVERLAPPER);
+    }
+
+    @Test
+    void skal_godkjenne_deler_av_dagen_utenfor_trukket_periode() {
+        var omsorgspenger = new OmsorgspengerInfo(
+            false,
+            List.of(),
+            List.of(new OmsorgspengerInfo.FraværDelerAvDagen(STARTDATO.plusDays(10), BigDecimal.valueOf(4))),
+            List.of(new OmsorgspengerInfo.Periode(STARTDATO, STARTDATO.plusDays(5)))
+        );
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER)).isEmpty();
+    }
+
+    @Test
+    void skal_godkjenne_omsorgspenger_med_kun_trukket_periode_som_eneste_fraværsperiode() {
+        var omsorgspenger = new OmsorgspengerInfo(false, List.of(), List.of(),
+            List.of(new OmsorgspengerInfo.Periode(STARTDATO, STARTDATO.plusDays(3))));
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER)).isEmpty();
+    }
+
+    @Test
+    void skal_godkjenne_null_trukket_periode_liste() {
+        var omsorgspenger = new OmsorgspengerInfo(
+            true,
+            List.of(new OmsorgspengerInfo.Periode(STARTDATO, STARTDATO.plusDays(5))),
+            List.of(),
+            null
+        );
+        assertThat(InntektsmeldingValidererUtil.validerOmsorgspengerInfo(omsorgspenger, YtelseType.OMSORGSPENGER)).isEmpty();
+    }
+
+    // =====================================================================
     // validerRefusjon
     // =====================================================================
 
