@@ -33,6 +33,8 @@ import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
 import no.nav.k9.inntektsmelding.api.server.auth.Tilgang;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
 import no.nav.k9.inntektsmelding.api.server.exceptions.ErrorResponse;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.responses.ForespørselDto;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.ForespørselFilter;
 import no.nav.k9.inntektsmelding.api.typer.KodeverkMapper;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 

@@ -11,6 +11,13 @@ import org.slf4j.LoggerFactory;
 
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektInfo;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektsmeldingRequest;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Naturalytelse;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.OmsorgspengerInfo;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.RefusjonskravOmsorgspengerRequest;
+import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
 import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
 import no.nav.fpsak.tidsserie.LocalDateInterval;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
@@ -68,7 +75,19 @@ public class InntektsmeldingValidererUtil {
         return Optional.empty();
     }
 
-    public static Optional<EksponertFeilmelding> validerOmsorgspengerInfo(InntektsmeldingRequest.OmsorgspengerInfo omsorgspengerInfo,
+    /**
+     * Validerer et refusjonskrav for omsorgspenger. Krever ingen forespørsel siden refusjonskrav for
+     * omsorgspenger ikke er knyttet til en forespørsel.
+     */
+    public static Optional<EksponertFeilmelding> validerRefusjonskravOmsorgspenger(RefusjonskravOmsorgspengerRequest refusjonskravRequest) {
+        var feilmeldingOmsorgspengerInfo = validerOmsorgspengerInfo(refusjonskravRequest.omsorgspengerInfo(), YtelseType.OMSORGSPENGER);
+        if (feilmeldingOmsorgspengerInfo.isPresent()) {
+            return feilmeldingOmsorgspengerInfo;
+        }
+        return validerEndringsårsaker(refusjonskravRequest.refusjon().endringAarsaker(), refusjonskravRequest.startdato());
+    }
+
+    public static Optional<EksponertFeilmelding> validerOmsorgspengerInfo(OmsorgspengerInfo omsorgspengerInfo,
                                                                           YtelseType ytelseType) {
         if (!YtelseType.OMSORGSPENGER.equals(ytelseType)) {
             if (omsorgspengerInfo != null) {
@@ -85,9 +104,12 @@ public class InntektsmeldingValidererUtil {
 
         var heleDagenPerioder = omsorgspengerInfo.fraværHeleDagenPerioder();
         var delerAvDager = omsorgspengerInfo.fraværDelerAvDager();
+        var trukketPerioder = omsorgspengerInfo.trukketPerioder();
 
         // Må ha minst én fraværsperiode
-        if ((heleDagenPerioder == null || heleDagenPerioder.isEmpty()) && (delerAvDager == null || delerAvDager.isEmpty())) {
+        if ((heleDagenPerioder == null || heleDagenPerioder.isEmpty()) &&
+            (delerAvDager == null || delerAvDager.isEmpty()) &&
+            (trukketPerioder == null || trukketPerioder.isEmpty())) {
             LOG.warn("Omsorgspenger mangler fraværsperioder");
             return Optional.of(EksponertFeilmelding.OMSORGSPENGER_MANGLER_FRAVÆRSPERIODER);
         }
@@ -102,8 +124,8 @@ public class InntektsmeldingValidererUtil {
             }
             // Ingen overlappende perioder
             if (finnesOverlapp(heleDagenPerioder,
-                InntektsmeldingRequest.OmsorgspengerInfo.FraværHeleDagenPeriode::fom,
-                InntektsmeldingRequest.OmsorgspengerInfo.FraværHeleDagenPeriode::tom)) {
+                OmsorgspengerInfo.Periode::fom,
+                OmsorgspengerInfo.Periode::tom)) {
                 LOG.warn("FraværHeleDagenPerioder har overlappende perioder");
                 return Optional.of(EksponertFeilmelding.OMSORGSPENGER_OVERLAPP_I_HELE_DAGER);
             }
@@ -111,7 +133,7 @@ public class InntektsmeldingValidererUtil {
 
         if (delerAvDager != null && !delerAvDager.isEmpty()) {
             // Ingen duplikate datoer
-            var datoer = delerAvDager.stream().map(InntektsmeldingRequest.OmsorgspengerInfo.FraværDelerAvDagen::dato).toList();
+            var datoer = delerAvDager.stream().map(OmsorgspengerInfo.FraværDelerAvDagen::dato).toList();
             if (datoer.size() != new HashSet<>(datoer).size()) {
                 LOG.warn("FraværDelerAvDager har duplikate datoer");
                 return Optional.of(EksponertFeilmelding.OMSORGSPENGER_DUPLIKAT_FRAVAR_DELER_AV_DAGEN);
@@ -130,12 +152,59 @@ public class InntektsmeldingValidererUtil {
                     }
                 }
             }
+
+            // Ingen fraværDelerAvDagen-timer er 0 eller mer enn 24
+            if (delerAvDager.stream().anyMatch(delAvDag -> delAvDag.timer().compareTo(java.math.BigDecimal.ZERO) <= 0
+                    || delAvDag.timer().compareTo(java.math.BigDecimal.valueOf(24)) >= 0)) {
+                LOG.warn("FraværDelerAvDagen har timer som er 0 eller mer enn 24");
+                return Optional.of(EksponertFeilmelding.OMSORGSPENGER_FRAVAR_DELER_AV_DAGEN_UGYLDIG_ANTALL_TIMER);
+            }
+        }
+
+        if (trukketPerioder != null && !trukketPerioder.isEmpty()) {
+            // fom kan ikke være etter tom
+            for (var periode : trukketPerioder) {
+                if (periode.fom().isAfter(periode.tom())) {
+                    LOG.warn("Trukket periode har fom etter tom: {} > {}", periode.fom(), periode.tom());
+                    return Optional.of(EksponertFeilmelding.FRA_DATO_ETTER_TOM);
+                }
+            }
+
+            // Ingen overlapp internt i trukketPerioder
+            if (finnesOverlapp(trukketPerioder,
+                OmsorgspengerInfo.Periode::fom,
+                OmsorgspengerInfo.Periode::tom)) {
+                LOG.warn("Trukket perioder har overlappende perioder");
+                return Optional.of(EksponertFeilmelding.OMSORGSPENGER_TRUKKET_PERIODE_OVERLAPPER);
+            }
+
+            // Ingen overlapp mot fraværHeleDagenPerioder
+            if (heleDagenPerioder != null && !heleDagenPerioder.isEmpty()
+                && finnesOverlappMellomTolister(trukketPerioder, heleDagenPerioder,
+                OmsorgspengerInfo.Periode::fom, OmsorgspengerInfo.Periode::tom)) {
+                LOG.warn("Trukket periode overlapper med fraværHeleDagenPerioder");
+                return Optional.of(EksponertFeilmelding.OMSORGSPENGER_TRUKKET_PERIODE_OVERLAPPER);
+            }
+
+            // Ingen fraværDelerAvDager-dato innenfor en trukket periode
+            if (delerAvDager != null) {
+                for (var periode : trukketPerioder) {
+                    for (var delAvDag : delerAvDager) {
+                        var dato = delAvDag.dato();
+                        if (!dato.isBefore(periode.fom()) && !dato.isAfter(periode.tom())) {
+                            LOG.warn("FraværDelerAvDagen-dato {} faller innenfor trukket periode {} - {}",
+                                dato, periode.fom(), periode.tom());
+                            return Optional.of(EksponertFeilmelding.OMSORGSPENGER_TRUKKET_PERIODE_OVERLAPPER);
+                        }
+                    }
+                }
+            }
         }
 
         return Optional.empty();
     }
 
-    public static Optional<EksponertFeilmelding> validerRefusjon(InntektsmeldingRequest.Refusjon refusjon, LocalDate startdato) {
+    public static Optional<EksponertFeilmelding> validerRefusjon(Refusjon refusjon, LocalDate startdato) {
         if (refusjon == null) {
             return Optional.empty();
         }
@@ -143,7 +212,7 @@ public class InntektsmeldingValidererUtil {
         // Det fins tilfeller hvor arbeidsgiver ønsker å gjøre dette.
 
         var endringsListe = refusjon.endringer().stream()
-            .map(InntektsmeldingRequest.Refusjon.RefusjonEndring::stardato)
+            .map(Refusjon.RefusjonEndring::stardato)
             .toList();
         if (endringsListe.stream().anyMatch(stardato -> stardato.equals(startdato))) {
             LOG.info("Refusjon har en endring som starter på startdato for permisjonen, dette er ikke tillatt");
@@ -157,7 +226,7 @@ public class InntektsmeldingValidererUtil {
         return Optional.empty();
     }
 
-    public static Optional<EksponertFeilmelding> validerNaturalytelse(List<InntektsmeldingRequest.Naturalytelse> naturalytelsePerioder) {
+    public static Optional<EksponertFeilmelding> validerNaturalytelse(List<Naturalytelse> naturalytelsePerioder) {
         if (naturalytelsePerioder == null) {
             return Optional.empty();
         }
@@ -166,8 +235,8 @@ public class InntektsmeldingValidererUtil {
             .filter(periode -> periode.bortfallerFra() != null && periode.bortfallerTil() != null)
             .toList();
         if (finnesOverlapp(perioderMedFomOgTomDato,
-            InntektsmeldingRequest.Naturalytelse::bortfallerFra,
-            InntektsmeldingRequest.Naturalytelse::bortfallerTil)) {
+            Naturalytelse::bortfallerFra,
+            Naturalytelse::bortfallerTil)) {
             LOG.info("Bortfalt naturalytelse har overlappende perioder");
             return Optional.of(EksponertFeilmelding.OVERLAPP_I_PERIODER);
         }
@@ -185,21 +254,21 @@ public class InntektsmeldingValidererUtil {
 
         if (harDuplikater) {
             LOG.info("Bortfalt naturalytelse har duplikate fom-datoer for perioder uten tom-dato: {}",
-                perioderMedKunFomDato.stream().map(InntektsmeldingRequest.Naturalytelse::bortfallerFra).toList());
+                perioderMedKunFomDato.stream().map(Naturalytelse::bortfallerFra).toList());
             return Optional.of(EksponertFeilmelding.LIK_FOM_NATURALYTELSER);
         }
         return Optional.empty();
     }
 
 
-    public static Optional<EksponertFeilmelding> validerEndringsårsaker(List<InntektsmeldingRequest.InntektInfo.Endringsårsak> endringsårsaker,
+    public static Optional<EksponertFeilmelding> validerEndringsårsaker(List<InntektInfo.Endringsårsak> endringsårsaker,
                                                                         LocalDate startdato) {
         // Todo Tariffendring skal kun være tilgjengelig dersom man endrer en IM, ikke for førstegangs-innsendelse
         if (endringsårsaker == null) {
             return Optional.empty();
         }
 
-        var unikeÅrsakerListe = endringsårsaker.stream().map(InntektsmeldingRequest.InntektInfo.Endringsårsak::aarsak)
+        var unikeÅrsakerListe = endringsårsaker.stream().map(InntektInfo.Endringsårsak::aarsak)
             .filter(InntektsmeldingValidererUtil::skalÅrsakVæreUnik)
             .toList();
 
@@ -210,7 +279,7 @@ public class InntektsmeldingValidererUtil {
         }
 
         var feilmeldingTariffendring = endringsårsaker.stream()
-            .filter(årsak -> årsak.aarsak() == InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.TARIFFENDRING)
+            .filter(årsak -> årsak.aarsak() == EndringsårsakDto.TARIFFENDRING)
             .findFirst()
             .flatMap(InntektsmeldingValidererUtil::valideringTariffendring);
         if (feilmeldingTariffendring.isPresent()) {
@@ -223,9 +292,9 @@ public class InntektsmeldingValidererUtil {
         }
 
         var varigLønnsendringFraDato = endringsårsaker.stream()
-            .filter(årsak -> årsak.aarsak() == InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.VARIG_LØNNSENDRING)
+            .filter(årsak -> årsak.aarsak() == EndringsårsakDto.VARIG_LØNNSENDRING)
             .findFirst()
-            .map(InntektsmeldingRequest.InntektInfo.Endringsårsak::fom);
+            .map(InntektInfo.Endringsårsak::fom);
 
         if (varigLønnsendringFraDato.isPresent() && !varigLønnsendringFraDato.get().isBefore(startdato)) {
             LOG.info("Endringsårsak varig lønnsendring har ugyldig dato. Fra dato {} må være før fraværsdato {}",
@@ -250,8 +319,8 @@ public class InntektsmeldingValidererUtil {
             }
 
             if (finnesOverlapp(årsakerSomKreverFomOgTomDato,
-                InntektsmeldingRequest.InntektInfo.Endringsårsak::fom,
-                InntektsmeldingRequest.InntektInfo.Endringsårsak::tom)) {
+                InntektInfo.Endringsårsak::fom,
+                InntektInfo.Endringsårsak::tom)) {
                 LOG.info("Endringsårsak har overlappende perioder");
                 return Optional.of(EksponertFeilmelding.OVERLAPP_I_PERIODER);
             }
@@ -259,7 +328,7 @@ public class InntektsmeldingValidererUtil {
         return Optional.empty();
     }
 
-    private static Optional<EksponertFeilmelding> valideringTariffendring(InntektsmeldingRequest.InntektInfo.Endringsårsak endringsårsak) {
+    private static Optional<EksponertFeilmelding> valideringTariffendring(InntektInfo.Endringsårsak endringsårsak) {
         if (endringsårsak != null) {
             if (endringsårsak.fom() == null || endringsårsak.gjelderFra() == null) {
                 LOG.info("Endringsårsak tariffendring mangler fra dato eller ble gjelder fra dato");
@@ -316,23 +385,57 @@ public class InntektsmeldingValidererUtil {
         return false;
     }
 
-    private static boolean kreverFomDato(InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType årsakType) {
-        return InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.NY_STILLING == årsakType
-            || InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.NY_STILLINGSPROSENT == årsakType
-            || InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.VARIG_LØNNSENDRING == årsakType;
+    /**
+     * Sjekker om noen periode i den ene listen overlapper med noen periode i den andre listen.
+     *
+     * @param periodsA          første liste med perioder
+     * @param periodsB          andre liste med perioder
+     * @param fromDateExtractor funksjon for å hente 'fra'-dato fra en periode
+     * @param toDateExtractor   funksjon for å hente 'til'-dato fra en periode
+     * @param <T>               typen periodeobjekt (samme type for begge lister)
+     * @return true hvis det finnes overlapp mellom listene, false ellers
+     */
+    private static <T> boolean finnesOverlappMellomTolister(List<T> periodsA,
+                                                            List<T> periodsB,
+                                                            Function<T, LocalDate> fromDateExtractor,
+                                                            Function<T, LocalDate> toDateExtractor) {
+        if (periodsA == null || periodsB == null || periodsA.isEmpty() || periodsB.isEmpty()) {
+            return false;
+        }
+        var intervalsA = periodsA.stream()
+            .map(p -> new LocalDateInterval(fromDateExtractor.apply(p), toDateExtractor.apply(p)))
+            .toList();
+        var intervalsB = periodsB.stream()
+            .map(p -> new LocalDateInterval(fromDateExtractor.apply(p), toDateExtractor.apply(p)))
+            .toList();
+
+        for (var a : intervalsA) {
+            for (var b : intervalsB) {
+                if (a.overlaps(b)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
-    private static boolean kreverFomOgTomDato(InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType årsakType) {
-        return InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.FERIE == årsakType
-            || InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.PERMISJON == årsakType
-            || InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.PERMITTERING == årsakType
-            || InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.SYKEFRAVÆR == årsakType;
+    private static boolean kreverFomDato(EndringsårsakDto årsakType) {
+        return EndringsårsakDto.NY_STILLING == årsakType
+            || EndringsårsakDto.NY_STILLINGSPROSENT == årsakType
+            || EndringsårsakDto.VARIG_LØNNSENDRING == årsakType;
     }
 
-    private static boolean skalÅrsakVæreUnik(InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType årsakType) {
-        return !(InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.FERIE == årsakType
-            || InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.PERMISJON == årsakType
-            || InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.PERMITTERING == årsakType
-            || InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.SYKEFRAVÆR == årsakType);
+    private static boolean kreverFomOgTomDato(EndringsårsakDto årsakType) {
+        return EndringsårsakDto.FERIE == årsakType
+            || EndringsårsakDto.PERMISJON == årsakType
+            || EndringsårsakDto.PERMITTERING == årsakType
+            || EndringsårsakDto.SYKEFRAVÆR == årsakType;
+    }
+
+    private static boolean skalÅrsakVæreUnik(EndringsårsakDto årsakType) {
+        return !(EndringsårsakDto.FERIE == årsakType
+            || EndringsårsakDto.PERMISJON == årsakType
+            || EndringsårsakDto.PERMITTERING == årsakType
+            || EndringsårsakDto.SYKEFRAVÆR == årsakType);
     }
 }

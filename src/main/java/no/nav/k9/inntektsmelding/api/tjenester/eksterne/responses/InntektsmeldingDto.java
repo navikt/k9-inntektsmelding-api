@@ -1,4 +1,4 @@
-package no.nav.k9.inntektsmelding.api.tjenester.eksterne;
+package no.nav.k9.inntektsmelding.api.tjenester.eksterne.responses;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
