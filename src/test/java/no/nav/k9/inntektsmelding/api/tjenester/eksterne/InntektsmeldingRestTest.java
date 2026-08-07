@@ -14,12 +14,17 @@ import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektInfo;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektsmeldingFilter;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektsmeldingRequest;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Kontaktinformasjon;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.OmsorgspengerInfo;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.RefusjonskravOmsorgspengerRequest;
 import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
 import no.nav.k9.inntektsmelding.api.typer.YtelseTypeDto;
+import no.nav.k9.inntektsmelding.felles.FeilInfo;
+import no.nav.k9.inntektsmelding.felles.FeilkodeDto;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingResponse;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendRefusjonOmsorgspengerResponse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -115,6 +120,94 @@ class InntektsmeldingRestTest {
         assertThat(response.getStatus()).isEqualTo(Response.Status.NOT_FOUND.getStatusCode());
         var errorResponse = (ErrorResponse) response.getEntity();
         assertThat(errorResponse.feilmelding()).isEqualTo(EksponertFeilmelding.TOM_FORESPOERSEL.getTekst() + ": " + forespørselUuid);
+    }
+
+    @Test
+    void skal_sende_refusjonskrav_omsorgspenger_med_success() {
+        // Arrange
+        var orgnummer = "999999999";
+        var responseUuid = UUID.randomUUID();
+        var refusjonskravRequest = lagRefusjonskravOmsorgspengerRequest(orgnummer, gyldigOmsorgspengerInfo());
+
+        when(k9inntektsmeldingTjeneste.sendRefusjonOmsorgspenger(any()))
+            .thenReturn(new SendRefusjonOmsorgspengerResponse(true, responseUuid, null));
+
+        // Act
+        var response = inntektsmeldingRest.sendRefusjonskravOmsorgspenger(refusjonskravRequest);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
+        assertThat(response.getEntity()).isEqualTo(responseUuid);
+        verify(tilgang).sjekkAtSystemHarTilgangTilOrganisasjon(new Organisasjonsnummer(orgnummer));
+    }
+
+    @Test
+    void skal_returnere_bad_request_når_omsorgspenger_info_mangler_fraværsperioder() {
+        // Arrange
+        var orgnummer = "999999999";
+        var omsorgspengerInfoUtenFravær = new OmsorgspengerInfo(false, List.of(), List.of(), List.of());
+        var refusjonskravRequest = lagRefusjonskravOmsorgspengerRequest(orgnummer, omsorgspengerInfoUtenFravær);
+
+        // Act
+        var response = inntektsmeldingRest.sendRefusjonskravOmsorgspenger(refusjonskravRequest);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(Response.Status.BAD_REQUEST.getStatusCode());
+        var errorResponse = (ErrorResponse) response.getEntity();
+        assertThat(errorResponse.feilmelding()).isEqualTo(EksponertFeilmelding.OMSORGSPENGER_MANGLER_FRAVÆRSPERIODER.getTekst());
+    }
+
+    @Test
+    void skal_returnere_conflict_når_refusjonskrav_omsorgspenger_er_duplikat() {
+        // Arrange
+        var orgnummer = "999999999";
+        var refusjonskravRequest = lagRefusjonskravOmsorgspengerRequest(orgnummer, gyldigOmsorgspengerInfo());
+
+        when(k9inntektsmeldingTjeneste.sendRefusjonOmsorgspenger(any()))
+            .thenReturn(new SendRefusjonOmsorgspengerResponse(false, null,
+                new FeilInfo(FeilkodeDto.DUPLIKAT, "Duplikat innsending", "ref-1")));
+
+        // Act
+        var response = inntektsmeldingRest.sendRefusjonskravOmsorgspenger(refusjonskravRequest);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(Response.Status.CONFLICT.getStatusCode());
+    }
+
+    @Test
+    void skal_returnere_service_unavailable_når_nedetid_ainntekt_for_refusjonskrav_omsorgspenger() {
+        // Arrange
+        var orgnummer = "999999999";
+        var refusjonskravRequest = lagRefusjonskravOmsorgspengerRequest(orgnummer, gyldigOmsorgspengerInfo());
+
+        when(k9inntektsmeldingTjeneste.sendRefusjonOmsorgspenger(any()))
+            .thenReturn(new SendRefusjonOmsorgspengerResponse(false, null,
+                new FeilInfo(FeilkodeDto.NEDETID_AINNTEKT, "A-inntekt nede", "ref-2")));
+
+        // Act
+        var response = inntektsmeldingRest.sendRefusjonskravOmsorgspenger(refusjonskravRequest);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(Response.Status.SERVICE_UNAVAILABLE.getStatusCode());
+    }
+
+    private RefusjonskravOmsorgspengerRequest lagRefusjonskravOmsorgspengerRequest(String orgnummer, OmsorgspengerInfo omsorgspengerInfo) {
+        return new RefusjonskravOmsorgspengerRequest(
+            "12345678901",
+            orgnummer,
+            LocalDate.now(),
+            new InntektInfo(BigDecimal.valueOf(25000.00), List.of()),
+            new Kontaktinformasjon("Kontaktperson", "12345678"),
+            new Avsender("TestSystem", "1.0.0"),
+            omsorgspengerInfo
+        );
+    }
+
+    private OmsorgspengerInfo gyldigOmsorgspengerInfo() {
+        return new OmsorgspengerInfo(false,
+            List.of(new OmsorgspengerInfo.Periode(LocalDate.now(), LocalDate.now().plusDays(2))),
+            List.of(),
+            List.of());
     }
 
     @Test
