@@ -176,14 +176,14 @@ public class InntektsmeldingRest {
                 .entity(new ErrorResponse("API_IKKE_AKTIVERT", "API er ikke aktivert"))
                 .build();
         }
-        LOG.info("Mottatt refusjonskrav for omsorgspenger for orgnr {}", refusjonskravRequest.orgnr());
+        LOG.info("Mottatt refusjonskrav for omsorgspenger for orgnr {}", new Organisasjonsnummer(refusjonskravRequest.orgnr()));
 
         tilgang.sjekkAtSystemHarTilgangTilOrganisasjon(new Organisasjonsnummer(refusjonskravRequest.orgnr()));
 
         var feilmelding = InntektsmeldingValidererUtil.validerRefusjonskravOmsorgspenger(refusjonskravRequest);
         if (feilmelding.isPresent()) {
             LOG.info("Avvist refusjonskrav for omsorgspenger for orgnr {}. Validering feilet. Feilmelding: {}",
-                refusjonskravRequest.orgnr(), feilmelding.get().getTekst());
+                new Organisasjonsnummer(refusjonskravRequest.orgnr()), feilmelding.get().getTekst());
             return Response.status(Response.Status.BAD_REQUEST)
                 .entity(new ErrorResponse(feilmelding.get().name(), feilmelding.get().getTekst()))
                 .build();
