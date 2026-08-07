@@ -20,7 +20,7 @@ public record InntektsmeldingRequest(@NotNull @Valid UUID forespoerselId,
                                      @NotNull @Valid InntektInfo inntekt,
                                      @Valid Refusjon refusjon,
                                      @NotNull List<@Valid Naturalytelse> naturalytelser,
-                                     @NotNull Kontaktinformasjon kontaktinformasjon,
+                                     @NotNull @Valid Kontaktinformasjon kontaktinformasjon,
                                      @NotNull @Valid Avsender avsender,
                                      @Valid OmsorgspengerInfo omsorgspengerInfo) {
 }
