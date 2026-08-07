@@ -15,7 +15,7 @@ import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
 public record InntektInfo(@NotNull @Min(0) @Max(Integer.MAX_VALUE) @Digits(integer = 20, fraction = 2) BigDecimal beloepPerMaaned,
                           @NotNull List<@Valid Endringsårsak> endringAarsaker) {
 
-    public record Endringsårsak(@Valid EndringsårsakDto aarsak,
+    public record Endringsårsak(@Valid @NotNull EndringsårsakDto aarsak,
                                 LocalDate fom,
                                 LocalDate tom,
                                 LocalDate gjelderFra) {
