@@ -7,6 +7,14 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Avsender;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektInfo;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektsmeldingRequest;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Kontaktinformasjon;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Naturalytelse;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
+import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
+import no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
 
 import org.junit.jupiter.api.Test;
@@ -58,19 +66,19 @@ class InntektsmeldingRequestSerializationTest {
         var startdato = LocalDate.of(2024, 1, 15);
         var kontaktperson = "Ola Nordmann";
         var arbeidsgiverTlf = "98765432";
-        var avsenderSystem = new InntektsmeldingRequest.Avsender("SAP", "1.0.0");
-        var refusjon = new InntektsmeldingRequest.Refusjon( BigDecimal.valueOf(25000.00), List.of());
+        var avsenderSystem = new Avsender("SAP", "1.0.0");
+        var refusjon = new Refusjon( BigDecimal.valueOf(25000.00), List.of());
         var bortfaltNaturalytelse = List.of(
-            new InntektsmeldingRequest.Naturalytelse(
-                InntektsmeldingRequest.Naturalytelse.Naturalytelsetype.ELEKTRISK_KOMMUNIKASJON,
+            new Naturalytelse(
+                NaturalytelsetypeDto.ELEKTRISK_KOMMUNIKASJON,
                 BigDecimal.valueOf(500.00),
                 LocalDate.of(2024, 2, 1),
                 LocalDate.of(2024, 2, 28)
             )
         );
         var endringsårsaker = List.of(
-            new InntektsmeldingRequest.InntektInfo.Endringsårsak(
-                InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.PERMISJON,
+            new InntektInfo.Endringsårsak(
+                EndringsårsakDto.PERMISJON,
                 LocalDate.of(2024, 3, 1),
                 LocalDate.of(2024, 3, 15),
                 LocalDate.of(2024, 2, 15)
@@ -82,10 +90,10 @@ class InntektsmeldingRequestSerializationTest {
             fødselsnummer,
             startdato,
             YtelseType.PLEIEPENGER_SYKT_BARN,
-            new InntektsmeldingRequest.InntektInfo(BigDecimal.valueOf(25000.00), endringsårsaker),
+            new InntektInfo(BigDecimal.valueOf(25000.00), endringsårsaker),
             refusjon,
             bortfaltNaturalytelse,
-            new InntektsmeldingRequest.Kontaktinformasjon(kontaktperson, arbeidsgiverTlf),
+            new Kontaktinformasjon(kontaktperson, arbeidsgiverTlf),
             avsenderSystem,
             null
         );
@@ -138,7 +146,7 @@ class InntektsmeldingRequestSerializationTest {
             """;
 
         // Act
-        var avsenderSystem = DefaultJsonMapper.fromJson(json, InntektsmeldingRequest.Avsender.class);
+        var avsenderSystem = DefaultJsonMapper.fromJson(json, Avsender.class);
 
         // Assert
         assertThat(avsenderSystem.systemNavn()).isEqualTo("TestSystem");
@@ -151,20 +159,20 @@ class InntektsmeldingRequestSerializationTest {
             "12345678901",
             LocalDate.of(2024, 1, 15),
             YtelseType.PLEIEPENGER_SYKT_BARN,
-            new InntektsmeldingRequest.InntektInfo(BigDecimal.valueOf(25000.00), List.of(new InntektsmeldingRequest.InntektInfo.Endringsårsak(
-                InntektsmeldingRequest.InntektInfo.Endringsårsak.EndringsårsakType.PERMISJON,
+            new InntektInfo(BigDecimal.valueOf(25000.00), List.of(new InntektInfo.Endringsårsak(
+                EndringsårsakDto.PERMISJON,
                 LocalDate.of(2024, 3, 1),
                 LocalDate.of(2024, 3, 15),
                 LocalDate.of(2024, 2, 15)
             ))),
-            new InntektsmeldingRequest.Refusjon(BigDecimal.valueOf(25000.00), List.of()),
-            List.of(new InntektsmeldingRequest.Naturalytelse(
-                InntektsmeldingRequest.Naturalytelse.Naturalytelsetype.ELEKTRISK_KOMMUNIKASJON,
+            new Refusjon(BigDecimal.valueOf(25000.00), List.of()),
+            List.of(new Naturalytelse(
+                NaturalytelsetypeDto.ELEKTRISK_KOMMUNIKASJON,
                     BigDecimal.valueOf(500),
                     LocalDate.of(2024, 2, 1),
                     null)),
-            new InntektsmeldingRequest.Kontaktinformasjon("Test Kontaktperson","12345678"),
-            new InntektsmeldingRequest.Avsender("SAP", "1.0.0"),
+            new Kontaktinformasjon("Test Kontaktperson","12345678"),
+            new Avsender("SAP", "1.0.0"),
             null
         );
     }
