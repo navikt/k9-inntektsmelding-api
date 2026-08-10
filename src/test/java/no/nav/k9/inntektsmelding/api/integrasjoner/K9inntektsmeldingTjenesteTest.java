@@ -129,7 +129,7 @@ class K9inntektsmeldingTjenesteTest {
             new Refusjon(BigDecimal.valueOf(25000.00), List.of()),
             List.of(),
             new Kontaktinformasjon("Kontaktperson", "12345678"),
-            new Avsender("TestSystem", "1.0.0"), null
+            new Avsender("TestSystem", "1.0.0")
         );
         var responseUuid = UUID.randomUUID();
         when(k9inntektsmeldingKlient.sendInntektsmelding(any())).thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
@@ -162,7 +162,7 @@ class K9inntektsmeldingTjenesteTest {
             null,
             List.of(bortfaltNaturalytelse),
             new Kontaktinformasjon("Kontaktperson","12345678"),
-            new Avsender("TestSystem", "1.0.0"), null
+            new Avsender("TestSystem", "1.0.0")
         );
         var responseUuid = UUID.randomUUID();
         when(k9inntektsmeldingKlient.sendInntektsmelding(any())).thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
@@ -195,7 +195,7 @@ class K9inntektsmeldingTjenesteTest {
             new Refusjon(BigDecimal.valueOf(25000.00), List.of()),
             List.of(),
             new Kontaktinformasjon("Kontaktperson", "12345678"),
-            new Avsender("TestSystem", "1.0.0"), null
+            new Avsender("TestSystem", "1.0.0")
         );
         var responseUuid = UUID.randomUUID();
         when(k9inntektsmeldingKlient.sendInntektsmelding(any())).thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));
@@ -227,7 +227,7 @@ class K9inntektsmeldingTjenesteTest {
             refusjoner,
             List.of(),
             new Kontaktinformasjon("Kontaktperson", "12345678"),
-            new Avsender("TestSystem", "1.0.0"), null
+            new Avsender("TestSystem", "1.0.0")
         );
         var responseUuid = UUID.randomUUID();
         when(k9inntektsmeldingKlient.sendInntektsmelding(any())).thenReturn(new SendInntektsmeldingResponse(true, responseUuid, null));

@@ -825,7 +825,7 @@ class InntektsmeldingValidererUtilTest {
         return new InntektsmeldingRequest(
             DEFAULT_UUID, DEFAULT_FNR, InntektsmeldingValidererUtilTest.STARTDATO, ytelse, inntektInfo,
             refusjon, naturalytelser, new Kontaktinformasjon("Test Person", "99887766"),
-            new Avsender("TestSystem", "1.0"), null);
+            new Avsender("TestSystem", "1.0"));
     }
 
     private static InntektsmeldingRequest lagDefaultRequest() {

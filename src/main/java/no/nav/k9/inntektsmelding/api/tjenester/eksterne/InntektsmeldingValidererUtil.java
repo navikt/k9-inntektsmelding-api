@@ -36,11 +36,6 @@ public class InntektsmeldingValidererUtil {
             return feilmeldingForespørsel;
         }
 
-        var feilmeldingOmsorgspengerInfo = validerOmsorgspengerInfo(inntektsmeldingRequest.omsorgspengerInfo(), inntektsmeldingRequest.ytelse());
-        if (feilmeldingOmsorgspengerInfo.isPresent()) {
-            return feilmeldingOmsorgspengerInfo;
-        }
-
         var feilmeldingRefusjon = validerRefusjon(inntektsmeldingRequest.refusjon(), inntektsmeldingRequest.startdato());
         if (feilmeldingRefusjon.isPresent()) {
             return feilmeldingRefusjon;
