@@ -213,9 +213,7 @@ public class K9inntektsmeldingTjeneste {
             mapRefusjonDto(inntektsmeldingRequest.refusjon(), inntektsmeldingRequest.startdato()),
             mapNaturalYtelseDto(inntektsmeldingRequest.naturalytelser()),
             mapEndringsårsakerDto(inntektsmeldingRequest.inntekt().endringAarsaker()),
-            new AvsenderSystemDto(inntektsmeldingRequest.avsender().systemNavn(),
-                inntektsmeldingRequest.avsender().systemVersjon()),
-            mapOmsorgspengerDto(inntektsmeldingRequest.omsorgspengerInfo())
+            new AvsenderSystemDto(inntektsmeldingRequest.avsender().systemNavn(), inntektsmeldingRequest.avsender().systemVersjon())
         );
 
         return k9inntektsmeldingKlient.sendInntektsmelding(inntektsmeldingRequestDto);

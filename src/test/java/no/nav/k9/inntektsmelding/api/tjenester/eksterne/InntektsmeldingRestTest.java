@@ -78,8 +78,7 @@ class InntektsmeldingRestTest {
             new Refusjon(BigDecimal.valueOf(25000.00), List.of()),
             List.of(),
             new Kontaktinformasjon("Kontaktperson","12345678"),
-            new Avsender("TestSystem", "1.0.0"),
-            null
+            new Avsender("TestSystem", "1.0.0")
         );
         when(k9inntektsmeldingTjeneste.hentForespørsel(forespørselUuid)).thenReturn(forespørsel);
         when(k9inntektsmeldingTjeneste.sendInntektsmelding(any(), any()))
@@ -107,8 +106,7 @@ class InntektsmeldingRestTest {
             new Refusjon(BigDecimal.valueOf(25000.00), List.of()),
             List.of(),
             new Kontaktinformasjon("Kontaktperson", "12345678"),
-            new Avsender("TestSystem", "1.0.0"),
-            null
+            new Avsender("TestSystem", "1.0.0")
         );
 
         when(k9inntektsmeldingTjeneste.hentForespørsel(forespørselUuid)).thenReturn(null);
