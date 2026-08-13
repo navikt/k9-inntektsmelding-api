@@ -60,7 +60,7 @@ spec:
           enabled: true
           product: inntektsmelding
           separator: "/"
-          name: k9
+          name: sykdom-i-familien
       consumes:
         - name: "altinn:authorization/authorize"
   azure:

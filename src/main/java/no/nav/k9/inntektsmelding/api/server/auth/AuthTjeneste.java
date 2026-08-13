@@ -40,7 +40,7 @@ public class AuthTjeneste {
         }
 
         List<String> scopes = List.of(response.scope().split(" "));
-        var gyldigScope = "nav:inntektsmelding/foreldrepenger";
+        var gyldigScope = "nav:inntektsmelding/sykdom-i-familien";
         boolean harGyldigScope = scopes.stream().anyMatch(s -> s.equals(gyldigScope));
 
         if (!harGyldigScope) {
