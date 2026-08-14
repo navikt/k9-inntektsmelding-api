@@ -13,9 +13,9 @@ import jakarta.validation.constraints.NotNull;
 import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
 
 public record InntektInfo(@NotNull @Min(0) @Max(Integer.MAX_VALUE) @Digits(integer = 20, fraction = 2) BigDecimal beloepPerMaaned,
-                          @NotNull List<@Valid Endringsårsak> endringAarsaker) {
+                          @NotNull List<@Valid Endringsaarsak> endringAarsaker) {
 
-    public record Endringsårsak(@Valid @NotNull EndringsårsakDto aarsak,
+    public record Endringsaarsak(@Valid @NotNull EndringsårsakDto aarsak,
                                 LocalDate fom,
                                 LocalDate tom,
                                 LocalDate gjelderFra) {

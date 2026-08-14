@@ -148,7 +148,7 @@ class K9inntektsmeldingTjenesteTest {
         var forespørsel = new Forespørsel(uuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
             LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, List.of(), LocalDateTime.now());
         var bortfaltNaturalytelse = new Naturalytelse(
-            NaturalytelsetypeDto.ELEKTRISK_KOMMUNIKASJON,
+            NaturalytelsetypeDto.ElektroniskKommunikasjon,
             BigDecimal.valueOf(500.00),
             LocalDate.now(),
             LocalDate.now().plusDays(10)
@@ -180,8 +180,8 @@ class K9inntektsmeldingTjenesteTest {
         var uuid = UUID.randomUUID();
         var forespørsel = new Forespørsel(uuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
             LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, List.of(), LocalDateTime.now());
-        var endringsårsak = new InntektInfo.Endringsårsak(
-            EndringsårsakDto.PERMISJON,
+        var endringsårsak = new InntektInfo.Endringsaarsak(
+            EndringsårsakDto.Permisjon,
             LocalDate.now(),
             LocalDate.now().plusDays(5),
             LocalDate.now().minusDays(1)

@@ -152,51 +152,51 @@ public class K9inntektsmeldingTjeneste {
 
     private no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto mapNaturalytelseTypeTilApiType(NaturalytelsetypeDto naturalytelsetype) {
         return switch (naturalytelsetype) {
-            case ELEKTRISK_KOMMUNIKASJON -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.ELEKTRISK_KOMMUNIKASJON;
+            case ELEKTRISK_KOMMUNIKASJON -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.ElektroniskKommunikasjon;
             case AKSJER_GRUNNFONDSBEVIS_TIL_UNDERKURS ->
-                no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.AKSJER_GRUNNFONDSBEVIS_TIL_UNDERKURS;
-            case LOSJI -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.LOSJI;
-            case KOST_DOEGN -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.KOST_DOEGN;
-            case BESØKSREISER_HJEMMET_ANNET -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.BESØKSREISER_HJEMMET_ANNET;
-            case KOSTBESPARELSE_I_HJEMMET -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.KOSTBESPARELSE_I_HJEMMET;
-            case RENTEFORDEL_LÅN -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.RENTEFORDEL_LÅN;
-            case BIL -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.BIL;
-            case KOST_DAGER -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.KOST_DAGER;
-            case BOLIG -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.BOLIG;
+                no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.AksjerGrunnfondsbevisTilUnderkurs;
+            case LOSJI -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.Losji;
+            case KOST_DOEGN -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.KostDoegn;
+            case BESØKSREISER_HJEMMET_ANNET -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.BesoeksreiserHjemmetAnnet;
+            case KOSTBESPARELSE_I_HJEMMET -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.KostbesparelseIHjemmet;
+            case RENTEFORDEL_LÅN -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.RentefordelLaan;
+            case BIL -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.Bil;
+            case KOST_DAGER -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.KostDager;
+            case BOLIG -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.Bolig;
             case SKATTEPLIKTIG_DEL_FORSIKRINGER ->
-                no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.SKATTEPLIKTIG_DEL_FORSIKRINGER;
-            case FRI_TRANSPORT -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.FRI_TRANSPORT;
-            case OPSJONER -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.OPSJONER;
-            case TILSKUDD_BARNEHAGEPLASS -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.TILSKUDD_BARNEHAGEPLASS;
-            case ANNET -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.ANNET;
-            case BEDRIFTSBARNEHAGEPLASS -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.BEDRIFTSBARNEHAGEPLASS;
+                no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.SkattepliktigDelForsikringer;
+            case FRI_TRANSPORT -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.FriTransport;
+            case OPSJONER -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.Opsjoner;
+            case TILSKUDD_BARNEHAGEPLASS -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.TilskuddBarnehageplass;
+            case ANNET -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.Annet;
+            case BEDRIFTSBARNEHAGEPLASS -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.Bedriftsbarnehageplass;
             case YRKEBIL_TJENESTLIGBEHOV_KILOMETER ->
-                no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.YRKEBIL_TJENESTLIGBEHOV_KILOMETER;
+                no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.YrkebilTjenestligbehovKilometer;
             case YRKEBIL_TJENESTLIGBEHOV_LISTEPRIS ->
-                no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.YRKEBIL_TJENESTLIGBEHOV_LISTEPRIS;
+                no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.YrkebilTjenestligbehovListepris;
             case INNBETALING_TIL_UTENLANDSK_PENSJONSORDNING ->
-                no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.INNBETALING_TIL_UTENLANDSK_PENSJONSORDNING;
+                no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.InnbetalingTilUtenlandskPensjonsordning;
         };
     }
 
     private no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto mapEndringsårsakTilApiType(EndringsårsakDto årsak) {
         return switch (årsak) {
-            case PERMITTERING -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.PERMITTERING;
-            case NY_STILLING -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.NY_STILLING;
-            case NY_STILLINGSPROSENT -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.NY_STILLINGSPROSENT;
-            case SYKEFRAVÆR -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.SYKEFRAVÆR;
-            case BONUS -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.BONUS;
+            case PERMITTERING -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.Permittering;
+            case NY_STILLING -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.NyStilling;
+            case NY_STILLINGSPROSENT -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.NyStillingsprosent;
+            case SYKEFRAVÆR -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.Sykefravaer;
+            case BONUS -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.Bonus;
             case FERIETREKK_ELLER_UTBETALING_AV_FERIEPENGER ->
-                no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.FERIETREKK_ELLER_UTBETALING_AV_FERIEPENGER;
-            case NYANSATT -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.NYANSATT;
+                no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.Ferietrekk;
+            case NYANSATT -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.Nyansatt;
             case MANGELFULL_RAPPORTERING_AORDNING ->
-                no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.MANGELFULL_RAPPORTERING_AORDNING;
+                no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.MangelfullRapporteringAordning;
             case INNTEKT_IKKE_RAPPORTERT_ENDA_AORDNING ->
-                no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.INNTEKT_IKKE_RAPPORTERT_ENDA_AORDNING;
-            case TARIFFENDRING -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.TARIFFENDRING;
-            case FERIE -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.FERIE;
-            case VARIG_LØNNSENDRING -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.VARIG_LØNNSENDRING;
-            case PERMISJON -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.PERMISJON;
+                no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.InntektIkkeRapportertEndaAordning;
+            case TARIFFENDRING -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.Tariffendring;
+            case FERIE -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.Ferie;
+            case VARIG_LØNNSENDRING -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.VarigLoennsendring;
+            case PERMISJON -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.Permisjon;
         };
     }
 
@@ -235,7 +235,7 @@ public class K9inntektsmeldingTjeneste {
         return k9inntektsmeldingKlient.sendRefusjonOmsorgspenger(refusjonskravRequestDto);
     }
 
-    private List<EndringsårsakerDto> mapEndringsårsakerDto(List<InntektInfo.Endringsårsak> endringsårsak) {
+    private List<EndringsårsakerDto> mapEndringsårsakerDto(List<InntektInfo.Endringsaarsak> endringsårsak) {
         if (endringsårsak == null) {
             return List.of();
         }
@@ -246,19 +246,19 @@ public class K9inntektsmeldingTjeneste {
 
     private EndringsårsakDto mapÅrsakType(no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto årsakType) {
         return switch (årsakType) {
-            case PERMITTERING -> EndringsårsakDto.PERMITTERING;
-            case NY_STILLING -> EndringsårsakDto.NY_STILLING;
-            case NY_STILLINGSPROSENT -> EndringsårsakDto.NY_STILLINGSPROSENT;
-            case SYKEFRAVÆR -> EndringsårsakDto.SYKEFRAVÆR;
-            case BONUS -> EndringsårsakDto.BONUS;
-            case FERIETREKK_ELLER_UTBETALING_AV_FERIEPENGER -> EndringsårsakDto.FERIETREKK_ELLER_UTBETALING_AV_FERIEPENGER;
-            case NYANSATT -> EndringsårsakDto.NYANSATT;
-            case MANGELFULL_RAPPORTERING_AORDNING -> EndringsårsakDto.MANGELFULL_RAPPORTERING_AORDNING;
-            case INNTEKT_IKKE_RAPPORTERT_ENDA_AORDNING -> EndringsårsakDto.INNTEKT_IKKE_RAPPORTERT_ENDA_AORDNING;
-            case TARIFFENDRING -> EndringsårsakDto.TARIFFENDRING;
-            case FERIE -> EndringsårsakDto.FERIE;
-            case VARIG_LØNNSENDRING -> EndringsårsakDto.VARIG_LØNNSENDRING;
-            case PERMISJON -> EndringsårsakDto.PERMISJON;
+            case Permittering -> EndringsårsakDto.PERMITTERING;
+            case NyStilling -> EndringsårsakDto.NY_STILLING;
+            case NyStillingsprosent -> EndringsårsakDto.NY_STILLINGSPROSENT;
+            case Sykefravaer -> EndringsårsakDto.SYKEFRAVÆR;
+            case Bonus -> EndringsårsakDto.BONUS;
+            case Ferietrekk -> EndringsårsakDto.FERIETREKK_ELLER_UTBETALING_AV_FERIEPENGER;
+            case Nyansatt -> EndringsårsakDto.NYANSATT;
+            case MangelfullRapporteringAordning -> EndringsårsakDto.MANGELFULL_RAPPORTERING_AORDNING;
+            case InntektIkkeRapportertEndaAordning -> EndringsårsakDto.INNTEKT_IKKE_RAPPORTERT_ENDA_AORDNING;
+            case Tariffendring -> EndringsårsakDto.TARIFFENDRING;
+            case Ferie -> EndringsårsakDto.FERIE;
+            case VarigLoennsendring -> EndringsårsakDto.VARIG_LØNNSENDRING;
+            case Permisjon -> EndringsårsakDto.PERMISJON;
         };
     }
 
@@ -273,25 +273,25 @@ public class K9inntektsmeldingTjeneste {
 
     private NaturalytelsetypeDto mapNaturalYtelseType(no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto naturalytelsetype) {
         return switch (naturalytelsetype) {
-            case ELEKTRISK_KOMMUNIKASJON -> NaturalytelsetypeDto.ELEKTRISK_KOMMUNIKASJON;
-            case AKSJER_GRUNNFONDSBEVIS_TIL_UNDERKURS -> NaturalytelsetypeDto.AKSJER_GRUNNFONDSBEVIS_TIL_UNDERKURS;
-            case LOSJI -> NaturalytelsetypeDto.LOSJI;
-            case KOST_DOEGN -> NaturalytelsetypeDto.KOST_DOEGN;
-            case BESØKSREISER_HJEMMET_ANNET -> NaturalytelsetypeDto.BESØKSREISER_HJEMMET_ANNET;
-            case KOSTBESPARELSE_I_HJEMMET -> NaturalytelsetypeDto.KOSTBESPARELSE_I_HJEMMET;
-            case RENTEFORDEL_LÅN -> NaturalytelsetypeDto.RENTEFORDEL_LÅN;
-            case BIL -> NaturalytelsetypeDto.BIL;
-            case KOST_DAGER -> NaturalytelsetypeDto.KOST_DAGER;
-            case BOLIG -> NaturalytelsetypeDto.BOLIG;
-            case SKATTEPLIKTIG_DEL_FORSIKRINGER -> NaturalytelsetypeDto.SKATTEPLIKTIG_DEL_FORSIKRINGER;
-            case FRI_TRANSPORT -> NaturalytelsetypeDto.FRI_TRANSPORT;
-            case OPSJONER -> NaturalytelsetypeDto.OPSJONER;
-            case TILSKUDD_BARNEHAGEPLASS -> NaturalytelsetypeDto.TILSKUDD_BARNEHAGEPLASS;
-            case ANNET -> NaturalytelsetypeDto.ANNET;
-            case BEDRIFTSBARNEHAGEPLASS -> NaturalytelsetypeDto.BEDRIFTSBARNEHAGEPLASS;
-            case YRKEBIL_TJENESTLIGBEHOV_KILOMETER -> NaturalytelsetypeDto.YRKEBIL_TJENESTLIGBEHOV_KILOMETER;
-            case YRKEBIL_TJENESTLIGBEHOV_LISTEPRIS -> NaturalytelsetypeDto.YRKEBIL_TJENESTLIGBEHOV_LISTEPRIS;
-            case INNBETALING_TIL_UTENLANDSK_PENSJONSORDNING -> NaturalytelsetypeDto.INNBETALING_TIL_UTENLANDSK_PENSJONSORDNING;
+            case ElektroniskKommunikasjon -> NaturalytelsetypeDto.ELEKTRISK_KOMMUNIKASJON;
+            case AksjerGrunnfondsbevisTilUnderkurs -> NaturalytelsetypeDto.AKSJER_GRUNNFONDSBEVIS_TIL_UNDERKURS;
+            case Losji -> NaturalytelsetypeDto.LOSJI;
+            case KostDoegn -> NaturalytelsetypeDto.KOST_DOEGN;
+            case BesoeksreiserHjemmetAnnet -> NaturalytelsetypeDto.BESØKSREISER_HJEMMET_ANNET;
+            case KostbesparelseIHjemmet -> NaturalytelsetypeDto.KOSTBESPARELSE_I_HJEMMET;
+            case RentefordelLaan -> NaturalytelsetypeDto.RENTEFORDEL_LÅN;
+            case Bil -> NaturalytelsetypeDto.BIL;
+            case KostDager -> NaturalytelsetypeDto.KOST_DAGER;
+            case Bolig -> NaturalytelsetypeDto.BOLIG;
+            case SkattepliktigDelForsikringer -> NaturalytelsetypeDto.SKATTEPLIKTIG_DEL_FORSIKRINGER;
+            case FriTransport -> NaturalytelsetypeDto.FRI_TRANSPORT;
+            case Opsjoner -> NaturalytelsetypeDto.OPSJONER;
+            case TilskuddBarnehageplass -> NaturalytelsetypeDto.TILSKUDD_BARNEHAGEPLASS;
+            case Annet -> NaturalytelsetypeDto.ANNET;
+            case Bedriftsbarnehageplass -> NaturalytelsetypeDto.BEDRIFTSBARNEHAGEPLASS;
+            case YrkebilTjenestligbehovKilometer -> NaturalytelsetypeDto.YRKEBIL_TJENESTLIGBEHOV_KILOMETER;
+            case YrkebilTjenestligbehovListepris -> NaturalytelsetypeDto.YRKEBIL_TJENESTLIGBEHOV_LISTEPRIS;
+            case InnbetalingTilUtenlandskPensjonsordning -> NaturalytelsetypeDto.INNBETALING_TIL_UTENLANDSK_PENSJONSORDNING;
         };
     }
 
@@ -301,7 +301,7 @@ public class K9inntektsmeldingTjeneste {
         }
         List<RefusjonDto> refusjonDtoListe = new ArrayList<>();
         refusjonDtoListe.add(new RefusjonDto(startdato, refusjon.beloepPerMaaned()));
-        refusjon.endringer().forEach(r -> refusjonDtoListe.add(new RefusjonDto(r.stardato(), r.beloepPerMaaned())));
+        refusjon.endringer().forEach(r -> refusjonDtoListe.add(new RefusjonDto(r.startdato(), r.beloepPerMaaned())));
         return refusjonDtoListe;
     }
 
