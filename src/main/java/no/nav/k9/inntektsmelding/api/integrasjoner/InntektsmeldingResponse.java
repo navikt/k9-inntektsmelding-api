@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 
 import jakarta.validation.constraints.Pattern;
 
-import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
+import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
 import no.nav.k9.inntektsmelding.api.typer.KildesystemDto;
 import no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
@@ -48,7 +48,7 @@ record InntektsmeldingResponse(
                                  @NotNull @Min(0) @Max(Integer.MAX_VALUE) @Digits(integer = 20, fraction = 2) BigDecimal beløp) {
     }
 
-    record Endringsårsaker(@NotNull EndringsårsakDto årsak,
+    record Endringsårsaker(@NotNull EndringsaarsakDto årsak,
                            LocalDate fom,
                            LocalDate tom,
                            LocalDate bleKjentFom) {

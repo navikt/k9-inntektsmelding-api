@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotNull;
 
 import jakarta.validation.constraints.Pattern;
 
-import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
+import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
 import no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto;
 import no.nav.k9.inntektsmelding.api.typer.YtelseTypeDto;
 
@@ -36,7 +36,7 @@ public record InntektsmeldingDto(@NotNull UUID inntektsmeldingId,
     public record Refusjon(@NotNull BigDecimal beloepPerMaaned, @NotNull List<RefusjonEndring> endringer) {
     }
 
-    public record InntektEndringsårsaker(@NotNull EndringsårsakDto aarsak, LocalDate fom, LocalDate tom, LocalDate bleKjentFom) {
+    public record InntektEndringsårsaker(@NotNull EndringsaarsakDto aarsak, LocalDate fom, LocalDate tom, LocalDate bleKjentFom) {
     }
 
     public record RefusjonEndring(@NotNull BigDecimal beloepPerMaaned, @NotNull LocalDate fom) {

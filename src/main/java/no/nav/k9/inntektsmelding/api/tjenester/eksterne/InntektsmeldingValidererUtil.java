@@ -17,7 +17,7 @@ import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Naturalytelse;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.OmsorgspengerInfo;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.RefusjonskravOmsorgspengerRequest;
-import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
+import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
 import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
 import no.nav.fpsak.tidsserie.LocalDateInterval;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
@@ -207,9 +207,9 @@ public class InntektsmeldingValidererUtil {
         // Det fins tilfeller hvor arbeidsgiver ønsker å gjøre dette.
 
         var endringsListe = refusjon.endringer().stream()
-            .map(Refusjon.RefusjonEndring::stardato)
+            .map(Refusjon.RefusjonEndring::startdato)
             .toList();
-        if (endringsListe.stream().anyMatch(stardato -> stardato.equals(startdato))) {
+        if (endringsListe.stream().anyMatch(startdatoEndring -> startdatoEndring.equals(startdato))) {
             LOG.info("Refusjon har en endring som starter på startdato for permisjonen, dette er ikke tillatt");
             return Optional.of(EksponertFeilmelding.REFUSJON_ENDRING_LIK_STARTDATO);
         }
@@ -256,14 +256,14 @@ public class InntektsmeldingValidererUtil {
     }
 
 
-    public static Optional<EksponertFeilmelding> validerEndringsårsaker(List<InntektInfo.Endringsårsak> endringsårsaker,
+    public static Optional<EksponertFeilmelding> validerEndringsårsaker(List<InntektInfo.Endringsaarsak> endringsårsaker,
                                                                         LocalDate startdato) {
         // Todo Tariffendring skal kun være tilgjengelig dersom man endrer en IM, ikke for førstegangs-innsendelse
         if (endringsårsaker == null) {
             return Optional.empty();
         }
 
-        var unikeÅrsakerListe = endringsårsaker.stream().map(InntektInfo.Endringsårsak::aarsak)
+        var unikeÅrsakerListe = endringsårsaker.stream().map(InntektInfo.Endringsaarsak::aarsak)
             .filter(InntektsmeldingValidererUtil::skalÅrsakVæreUnik)
             .toList();
 
@@ -274,7 +274,7 @@ public class InntektsmeldingValidererUtil {
         }
 
         var feilmeldingTariffendring = endringsårsaker.stream()
-            .filter(årsak -> årsak.aarsak() == EndringsårsakDto.TARIFFENDRING)
+            .filter(årsak -> årsak.aarsak() == EndringsaarsakDto.Tariffendring)
             .findFirst()
             .flatMap(InntektsmeldingValidererUtil::valideringTariffendring);
         if (feilmeldingTariffendring.isPresent()) {
@@ -287,9 +287,9 @@ public class InntektsmeldingValidererUtil {
         }
 
         var varigLønnsendringFraDato = endringsårsaker.stream()
-            .filter(årsak -> årsak.aarsak() == EndringsårsakDto.VARIG_LØNNSENDRING)
+            .filter(årsak -> årsak.aarsak() == EndringsaarsakDto.VarigLoennsendring)
             .findFirst()
-            .map(InntektInfo.Endringsårsak::fom);
+            .map(InntektInfo.Endringsaarsak::fom);
 
         if (varigLønnsendringFraDato.isPresent() && !varigLønnsendringFraDato.get().isBefore(startdato)) {
             LOG.info("Endringsårsak varig lønnsendring har ugyldig dato. Fra dato {} må være før fraværsdato {}",
@@ -314,8 +314,8 @@ public class InntektsmeldingValidererUtil {
             }
 
             if (finnesOverlapp(årsakerSomKreverFomOgTomDato,
-                InntektInfo.Endringsårsak::fom,
-                InntektInfo.Endringsårsak::tom)) {
+                InntektInfo.Endringsaarsak::fom,
+                InntektInfo.Endringsaarsak::tom)) {
                 LOG.info("Endringsårsak har overlappende perioder");
                 return Optional.of(EksponertFeilmelding.OVERLAPP_I_PERIODER);
             }
@@ -323,7 +323,7 @@ public class InntektsmeldingValidererUtil {
         return Optional.empty();
     }
 
-    private static Optional<EksponertFeilmelding> valideringTariffendring(InntektInfo.Endringsårsak endringsårsak) {
+    private static Optional<EksponertFeilmelding> valideringTariffendring(InntektInfo.Endringsaarsak endringsårsak) {
         if (endringsårsak != null) {
             if (endringsårsak.fom() == null || endringsårsak.gjelderFra() == null) {
                 LOG.info("Endringsårsak tariffendring mangler fra dato eller ble gjelder fra dato");
@@ -414,23 +414,23 @@ public class InntektsmeldingValidererUtil {
         return false;
     }
 
-    private static boolean kreverFomDato(EndringsårsakDto årsakType) {
-        return EndringsårsakDto.NY_STILLING == årsakType
-            || EndringsårsakDto.NY_STILLINGSPROSENT == årsakType
-            || EndringsårsakDto.VARIG_LØNNSENDRING == årsakType;
+    private static boolean kreverFomDato(EndringsaarsakDto årsakType) {
+        return EndringsaarsakDto.NyStilling == årsakType
+            || EndringsaarsakDto.NyStillingsprosent == årsakType
+            || EndringsaarsakDto.VarigLoennsendring == årsakType;
     }
 
-    private static boolean kreverFomOgTomDato(EndringsårsakDto årsakType) {
-        return EndringsårsakDto.FERIE == årsakType
-            || EndringsårsakDto.PERMISJON == årsakType
-            || EndringsårsakDto.PERMITTERING == årsakType
-            || EndringsårsakDto.SYKEFRAVÆR == årsakType;
+    private static boolean kreverFomOgTomDato(EndringsaarsakDto årsakType) {
+        return EndringsaarsakDto.Ferie == årsakType
+            || EndringsaarsakDto.Permisjon == årsakType
+            || EndringsaarsakDto.Permittering == årsakType
+            || EndringsaarsakDto.Sykefravaer == årsakType;
     }
 
-    private static boolean skalÅrsakVæreUnik(EndringsårsakDto årsakType) {
-        return !(EndringsårsakDto.FERIE == årsakType
-            || EndringsårsakDto.PERMISJON == årsakType
-            || EndringsårsakDto.PERMITTERING == årsakType
-            || EndringsårsakDto.SYKEFRAVÆR == årsakType);
+    private static boolean skalÅrsakVæreUnik(EndringsaarsakDto årsakType) {
+        return !(EndringsaarsakDto.Ferie == årsakType
+            || EndringsaarsakDto.Permisjon == årsakType
+            || EndringsaarsakDto.Permittering == årsakType
+            || EndringsaarsakDto.Sykefravaer == årsakType);
     }
 }
