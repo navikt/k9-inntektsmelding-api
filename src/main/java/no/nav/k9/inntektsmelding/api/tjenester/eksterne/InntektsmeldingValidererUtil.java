@@ -17,7 +17,7 @@ import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Naturalytelse;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.OmsorgspengerInfo;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.RefusjonskravOmsorgspengerRequest;
-import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
+import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
 import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
 import no.nav.fpsak.tidsserie.LocalDateInterval;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
@@ -274,7 +274,7 @@ public class InntektsmeldingValidererUtil {
         }
 
         var feilmeldingTariffendring = endringsårsaker.stream()
-            .filter(årsak -> årsak.aarsak() == EndringsårsakDto.Tariffendring)
+            .filter(årsak -> årsak.aarsak() == EndringsaarsakDto.Tariffendring)
             .findFirst()
             .flatMap(InntektsmeldingValidererUtil::valideringTariffendring);
         if (feilmeldingTariffendring.isPresent()) {
@@ -287,7 +287,7 @@ public class InntektsmeldingValidererUtil {
         }
 
         var varigLønnsendringFraDato = endringsårsaker.stream()
-            .filter(årsak -> årsak.aarsak() == EndringsårsakDto.VarigLoennsendring)
+            .filter(årsak -> årsak.aarsak() == EndringsaarsakDto.VarigLoennsendring)
             .findFirst()
             .map(InntektInfo.Endringsaarsak::fom);
 
@@ -414,23 +414,23 @@ public class InntektsmeldingValidererUtil {
         return false;
     }
 
-    private static boolean kreverFomDato(EndringsårsakDto årsakType) {
-        return EndringsårsakDto.NyStilling == årsakType
-            || EndringsårsakDto.NyStillingsprosent == årsakType
-            || EndringsårsakDto.VarigLoennsendring == årsakType;
+    private static boolean kreverFomDato(EndringsaarsakDto årsakType) {
+        return EndringsaarsakDto.NyStilling == årsakType
+            || EndringsaarsakDto.NyStillingsprosent == årsakType
+            || EndringsaarsakDto.VarigLoennsendring == årsakType;
     }
 
-    private static boolean kreverFomOgTomDato(EndringsårsakDto årsakType) {
-        return EndringsårsakDto.Ferie == årsakType
-            || EndringsårsakDto.Permisjon == årsakType
-            || EndringsårsakDto.Permittering == årsakType
-            || EndringsårsakDto.Sykefravaer == årsakType;
+    private static boolean kreverFomOgTomDato(EndringsaarsakDto årsakType) {
+        return EndringsaarsakDto.Ferie == årsakType
+            || EndringsaarsakDto.Permisjon == årsakType
+            || EndringsaarsakDto.Permittering == årsakType
+            || EndringsaarsakDto.Sykefravaer == årsakType;
     }
 
-    private static boolean skalÅrsakVæreUnik(EndringsårsakDto årsakType) {
-        return !(EndringsårsakDto.Ferie == årsakType
-            || EndringsårsakDto.Permisjon == årsakType
-            || EndringsårsakDto.Permittering == årsakType
-            || EndringsårsakDto.Sykefravaer == årsakType);
+    private static boolean skalÅrsakVæreUnik(EndringsaarsakDto årsakType) {
+        return !(EndringsaarsakDto.Ferie == årsakType
+            || EndringsaarsakDto.Permisjon == årsakType
+            || EndringsaarsakDto.Permittering == årsakType
+            || EndringsaarsakDto.Sykefravaer == årsakType);
     }
 }

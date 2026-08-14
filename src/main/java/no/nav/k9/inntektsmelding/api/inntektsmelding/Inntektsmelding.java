@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
+import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
 import no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.YtelseTypeDto;
@@ -39,7 +39,7 @@ public record Inntektsmelding(
                                         BigDecimal beløp) {
     }
 
-    public record Endringsårsaker(EndringsårsakDto årsak,
+    public record Endringsårsaker(EndringsaarsakDto årsak,
                                   LocalDate fom,
                                   LocalDate tom,
                                   LocalDate bleKjentFom) {

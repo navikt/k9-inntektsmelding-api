@@ -3,7 +3,7 @@ package no.nav.k9.inntektsmelding.api.typer;
 /**
  * Hvorfor inntekt i inntektsmeldingen er endret fra snittet de siste tre måneder
  */
-public enum EndringsårsakDto {
+public enum EndringsaarsakDto {
     Permittering,
     NyStilling,
     NyStillingsprosent,

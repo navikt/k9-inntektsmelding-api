@@ -10,12 +10,12 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
+import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
 
 public record InntektInfo(@NotNull @Min(0) @Max(Integer.MAX_VALUE) @Digits(integer = 20, fraction = 2) BigDecimal beloepPerMaaned,
                           @NotNull List<@Valid Endringsaarsak> endringAarsaker) {
 
-    public record Endringsaarsak(@Valid @NotNull EndringsårsakDto aarsak,
+    public record Endringsaarsak(@Valid @NotNull EndringsaarsakDto aarsak,
                                 LocalDate fom,
                                 LocalDate tom,
                                 LocalDate gjelderFra) {

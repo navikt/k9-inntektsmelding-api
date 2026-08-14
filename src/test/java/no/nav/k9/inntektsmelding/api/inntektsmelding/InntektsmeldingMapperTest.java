@@ -10,7 +10,7 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
-import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
+import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
 import no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.YtelseTypeDto;
@@ -52,7 +52,7 @@ class InntektsmeldingMapperTest {
     @Test
     void skal_mappe_inntekt_endringsårsaker() {
         var endringsårsak = new Inntektsmelding.Endringsårsaker(
-            EndringsårsakDto.Bonus,
+            EndringsaarsakDto.Bonus,
             LocalDate.of(2024, 1, 1),
             LocalDate.of(2024, 1, 31),
             LocalDate.of(2024, 1, 15)
@@ -63,7 +63,7 @@ class InntektsmeldingMapperTest {
 
         assertThat(dto.inntekt().endringAarsaker()).hasSize(1);
         var mappetÅrsak = dto.inntekt().endringAarsaker().getFirst();
-        assertThat(mappetÅrsak.aarsak()).isEqualTo(EndringsårsakDto.Bonus);
+        assertThat(mappetÅrsak.aarsak()).isEqualTo(EndringsaarsakDto.Bonus);
         assertThat(mappetÅrsak.fom()).isEqualTo(LocalDate.of(2024, 1, 1));
         assertThat(mappetÅrsak.tom()).isEqualTo(LocalDate.of(2024, 1, 31));
         assertThat(mappetÅrsak.bleKjentFom()).isEqualTo(LocalDate.of(2024, 1, 15));

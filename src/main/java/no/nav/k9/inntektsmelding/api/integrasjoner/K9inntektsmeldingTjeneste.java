@@ -17,6 +17,7 @@ import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Naturalytelse;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.OmsorgspengerInfo;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.RefusjonskravOmsorgspengerRequest;
+import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
 import no.nav.k9.inntektsmelding.api.typer.KodeverkMapper;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.Periode;
@@ -179,24 +180,24 @@ public class K9inntektsmeldingTjeneste {
         };
     }
 
-    private no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto mapEndringsårsakTilApiType(EndringsårsakDto årsak) {
+    private EndringsaarsakDto mapEndringsårsakTilApiType(EndringsårsakDto årsak) {
         return switch (årsak) {
-            case PERMITTERING -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.Permittering;
-            case NY_STILLING -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.NyStilling;
-            case NY_STILLINGSPROSENT -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.NyStillingsprosent;
-            case SYKEFRAVÆR -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.Sykefravaer;
-            case BONUS -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.Bonus;
+            case PERMITTERING -> EndringsaarsakDto.Permittering;
+            case NY_STILLING -> EndringsaarsakDto.NyStilling;
+            case NY_STILLINGSPROSENT -> EndringsaarsakDto.NyStillingsprosent;
+            case SYKEFRAVÆR -> EndringsaarsakDto.Sykefravaer;
+            case BONUS -> EndringsaarsakDto.Bonus;
             case FERIETREKK_ELLER_UTBETALING_AV_FERIEPENGER ->
-                no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.Ferietrekk;
-            case NYANSATT -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.Nyansatt;
+                EndringsaarsakDto.Ferietrekk;
+            case NYANSATT -> EndringsaarsakDto.Nyansatt;
             case MANGELFULL_RAPPORTERING_AORDNING ->
-                no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.MangelfullRapporteringAordning;
+                EndringsaarsakDto.MangelfullRapporteringAordning;
             case INNTEKT_IKKE_RAPPORTERT_ENDA_AORDNING ->
-                no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.InntektIkkeRapportertEndaAordning;
-            case TARIFFENDRING -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.Tariffendring;
-            case FERIE -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.Ferie;
-            case VARIG_LØNNSENDRING -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.VarigLoennsendring;
-            case PERMISJON -> no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto.Permisjon;
+                EndringsaarsakDto.InntektIkkeRapportertEndaAordning;
+            case TARIFFENDRING -> EndringsaarsakDto.Tariffendring;
+            case FERIE -> EndringsaarsakDto.Ferie;
+            case VARIG_LØNNSENDRING -> EndringsaarsakDto.VarigLoennsendring;
+            case PERMISJON -> EndringsaarsakDto.Permisjon;
         };
     }
 
@@ -244,7 +245,7 @@ public class K9inntektsmeldingTjeneste {
             .toList();
     }
 
-    private EndringsårsakDto mapÅrsakType(no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto årsakType) {
+    private EndringsårsakDto mapÅrsakType(EndringsaarsakDto årsakType) {
         return switch (årsakType) {
             case Permittering -> EndringsårsakDto.PERMITTERING;
             case NyStilling -> EndringsårsakDto.NY_STILLING;

@@ -13,7 +13,7 @@ import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Inntektsmelding
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Kontaktinformasjon;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Naturalytelse;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
-import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
+import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
 import no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
 
@@ -78,7 +78,7 @@ class InntektsmeldingRequestSerializationTest {
         );
         var endringsårsaker = List.of(
             new InntektInfo.Endringsaarsak(
-                EndringsårsakDto.Permisjon,
+                EndringsaarsakDto.Permisjon,
                 LocalDate.of(2024, 3, 1),
                 LocalDate.of(2024, 3, 15),
                 LocalDate.of(2024, 2, 15)
@@ -159,7 +159,7 @@ class InntektsmeldingRequestSerializationTest {
             LocalDate.of(2024, 1, 15),
             YtelseType.PLEIEPENGER_SYKT_BARN,
             new InntektInfo(BigDecimal.valueOf(25000.00), List.of(new InntektInfo.Endringsaarsak(
-                EndringsårsakDto.Permisjon,
+                EndringsaarsakDto.Permisjon,
                 LocalDate.of(2024, 3, 1),
                 LocalDate.of(2024, 3, 15),
                 LocalDate.of(2024, 2, 15)
