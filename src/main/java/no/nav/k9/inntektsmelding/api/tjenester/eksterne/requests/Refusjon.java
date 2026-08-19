@@ -14,5 +14,5 @@ public record Refusjon(@NotNull @Min(0) @Max(Integer.MAX_VALUE) @Digits(integer 
                        @NotNull List<@Valid RefusjonEndring> endringer) {
 
     public record RefusjonEndring(@NotNull @Min(0) @Max(Integer.MAX_VALUE) @Digits(integer = 20, fraction = 2) BigDecimal beloepPerMaaned,
-                                  @NotNull LocalDate stardato) {}
+                                  @NotNull LocalDate startdato) {}
 }

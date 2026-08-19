@@ -20,7 +20,7 @@ import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Kontaktinformas
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Naturalytelse;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.OmsorgspengerInfo;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
-import no.nav.k9.inntektsmelding.api.typer.EndringsårsakDto;
+import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
 import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
 import no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
@@ -448,7 +448,7 @@ class InntektsmeldingValidererUtilTest {
     }
 
     private Naturalytelse lagNaturalytelse(LocalDate fom, LocalDate tom) {
-        return new Naturalytelse(NaturalytelsetypeDto.ELEKTRISK_KOMMUNIKASJON, DEFAULT_BELØP,
+        return new Naturalytelse(NaturalytelsetypeDto.ElektroniskKommunikasjon, DEFAULT_BELØP,
             fom, tom);
     }
 
@@ -471,8 +471,8 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_avvise_duplikate_unike_årsaker() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.NY_STILLING, STARTDATO.minusDays(5), null, null),
-            lagEndringsårsak(EndringsårsakDto.NY_STILLING, STARTDATO.minusDays(3), null, null)
+            lagEndringsårsak(EndringsaarsakDto.NyStilling, STARTDATO.minusDays(5), null, null),
+            lagEndringsårsak(EndringsaarsakDto.NyStilling, STARTDATO.minusDays(3), null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.DUPLIKATER_IKKE_TILATT);
@@ -482,8 +482,8 @@ class InntektsmeldingValidererUtilTest {
     void skal_godkjenne_duplikate_ikke_unike_årsaker() {
         // FERIE, PERMISJON, PERMITTERING, SYKEFRAVÆR er lov å ha flere av
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.FERIE, STARTDATO, STARTDATO.plusDays(5), null),
-            lagEndringsårsak(EndringsårsakDto.FERIE, STARTDATO.plusDays(10), STARTDATO.plusDays(15), null)
+            lagEndringsårsak(EndringsaarsakDto.Ferie, STARTDATO, STARTDATO.plusDays(5), null),
+            lagEndringsårsak(EndringsaarsakDto.Ferie, STARTDATO.plusDays(10), STARTDATO.plusDays(15), null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).isEmpty();
@@ -492,8 +492,8 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_godkjenne_duplikate_permisjon_årsaker() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.PERMISJON, STARTDATO, STARTDATO.plusDays(5), null),
-            lagEndringsårsak(EndringsårsakDto.PERMISJON, STARTDATO.plusDays(10), STARTDATO.plusDays(15), null)
+            lagEndringsårsak(EndringsaarsakDto.Permisjon, STARTDATO, STARTDATO.plusDays(5), null),
+            lagEndringsårsak(EndringsaarsakDto.Permisjon, STARTDATO.plusDays(10), STARTDATO.plusDays(15), null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).isEmpty();
@@ -502,8 +502,8 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_avvise_duplikat_bonus() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.BONUS, null, null, null),
-            lagEndringsårsak(EndringsårsakDto.BONUS, null, null, null)
+            lagEndringsårsak(EndringsaarsakDto.Bonus, null, null, null),
+            lagEndringsårsak(EndringsaarsakDto.Bonus, null, null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.DUPLIKATER_IKKE_TILATT);
@@ -512,7 +512,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_avvise_tariffendring_uten_fom() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.TARIFFENDRING, null, null, STARTDATO)
+            lagEndringsårsak(EndringsaarsakDto.Tariffendring, null, null, STARTDATO)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.KREVER_FRA_OG_BLE_KJENT_DATO);
@@ -521,7 +521,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_avvise_tariffendring_uten_ble_kjent_fom() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.TARIFFENDRING, STARTDATO, null, null)
+            lagEndringsårsak(EndringsaarsakDto.Tariffendring, STARTDATO, null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.KREVER_FRA_OG_BLE_KJENT_DATO);
@@ -530,7 +530,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_avvise_tariffendring_ble_kjent_før_fom() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.TARIFFENDRING, STARTDATO, null, STARTDATO.minusDays(1))
+            lagEndringsårsak(EndringsaarsakDto.Tariffendring, STARTDATO, null, STARTDATO.minusDays(1))
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.KREVER_FRA_OG_BLE_KJENT_DATO);
@@ -539,7 +539,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_godkjenne_gyldig_tariffendring() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.TARIFFENDRING, STARTDATO, null, STARTDATO.plusDays(5))
+            lagEndringsårsak(EndringsaarsakDto.Tariffendring, STARTDATO, null, STARTDATO.plusDays(5))
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).isEmpty();
@@ -548,7 +548,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_godkjenne_tariffendring_ble_kjent_lik_fom() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.TARIFFENDRING, STARTDATO, null, STARTDATO)
+            lagEndringsårsak(EndringsaarsakDto.Tariffendring, STARTDATO, null, STARTDATO)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).isEmpty();
@@ -558,7 +558,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_avvise_ny_stilling_uten_fom() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.NY_STILLING, null, null, null)
+            lagEndringsårsak(EndringsaarsakDto.NyStilling, null, null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.AARSAK_KREVER_FRA_DATO);
@@ -567,7 +567,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_avvise_ny_stillingsprosent_uten_fom() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.NY_STILLINGSPROSENT, null, null, null)
+            lagEndringsårsak(EndringsaarsakDto.NyStillingsprosent, null, null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.AARSAK_KREVER_FRA_DATO);
@@ -576,7 +576,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_avvise_varig_lønnsendring_uten_fom() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.VARIG_LØNNSENDRING, null, null, null)
+            lagEndringsårsak(EndringsaarsakDto.VarigLoennsendring, null, null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.AARSAK_KREVER_FRA_DATO);
@@ -585,7 +585,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_godkjenne_ny_stilling_med_fom() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.NY_STILLING, STARTDATO.minusDays(10), null, null)
+            lagEndringsårsak(EndringsaarsakDto.NyStilling, STARTDATO.minusDays(10), null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).isEmpty();
@@ -594,7 +594,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_avvise_varig_lønnsendring_fom_etter_startdato() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.VARIG_LØNNSENDRING, STARTDATO.plusDays(1), null, null)
+            lagEndringsårsak(EndringsaarsakDto.VarigLoennsendring, STARTDATO.plusDays(1), null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.FRA_DATO_FOER_STARTDATO);
@@ -603,7 +603,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_avvise_varig_lønnsendring_fom_lik_startdato() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.VARIG_LØNNSENDRING, STARTDATO, null, null)
+            lagEndringsårsak(EndringsaarsakDto.VarigLoennsendring, STARTDATO, null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.FRA_DATO_FOER_STARTDATO);
@@ -612,7 +612,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_godkjenne_varig_lønnsendring_fom_før_startdato() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.VARIG_LØNNSENDRING, STARTDATO.minusDays(10), null, null)
+            lagEndringsårsak(EndringsaarsakDto.VarigLoennsendring, STARTDATO.minusDays(10), null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).isEmpty();
@@ -621,7 +621,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_avvise_ferie_uten_fom() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.FERIE, null, STARTDATO.plusDays(5), null)
+            lagEndringsårsak(EndringsaarsakDto.Ferie, null, STARTDATO.plusDays(5), null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.AARSAK_KREVER_FRA_OG_TIL_DATO);
@@ -630,7 +630,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_avvise_ferie_uten_tom() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.FERIE, STARTDATO, null, null)
+            lagEndringsårsak(EndringsaarsakDto.Ferie, STARTDATO, null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.AARSAK_KREVER_FRA_OG_TIL_DATO);
@@ -639,7 +639,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_avvise_permittering_uten_datoer() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.PERMITTERING, null, null, null)
+            lagEndringsårsak(EndringsaarsakDto.Permittering, null, null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.AARSAK_KREVER_FRA_OG_TIL_DATO);
@@ -648,7 +648,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_avvise_sykefravær_uten_tom() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.SYKEFRAVÆR, STARTDATO, null, null)
+            lagEndringsårsak(EndringsaarsakDto.Sykefravaer, STARTDATO, null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.AARSAK_KREVER_FRA_OG_TIL_DATO);
@@ -657,7 +657,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_godkjenne_ferie_med_fom_og_tom() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.FERIE, STARTDATO, STARTDATO.plusDays(5), null)
+            lagEndringsårsak(EndringsaarsakDto.Ferie, STARTDATO, STARTDATO.plusDays(5), null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).isEmpty();
@@ -666,7 +666,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_godkjenne_permisjon_med_fom_og_tom() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.PERMISJON, STARTDATO, STARTDATO.plusDays(10), null)
+            lagEndringsårsak(EndringsaarsakDto.Permisjon, STARTDATO, STARTDATO.plusDays(10), null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).isEmpty();
@@ -675,7 +675,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_avvise_fom_etter_tom_for_endringsårsaker() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.FERIE, STARTDATO.plusDays(10), STARTDATO, null)
+            lagEndringsårsak(EndringsaarsakDto.Ferie, STARTDATO.plusDays(10), STARTDATO, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.FRA_DATO_ETTER_TOM);
@@ -684,7 +684,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_godkjenne_fom_lik_tom() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.FERIE, STARTDATO, STARTDATO, null)
+            lagEndringsårsak(EndringsaarsakDto.Ferie, STARTDATO, STARTDATO, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).isEmpty();
@@ -693,8 +693,8 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_avvise_overlappende_perioder_for_endringsårsaker() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.FERIE, STARTDATO, STARTDATO.plusDays(10), null),
-            lagEndringsårsak(EndringsårsakDto.PERMISJON, STARTDATO.plusDays(5), STARTDATO.plusDays(15), null)
+            lagEndringsårsak(EndringsaarsakDto.Ferie, STARTDATO, STARTDATO.plusDays(10), null),
+            lagEndringsårsak(EndringsaarsakDto.Permisjon, STARTDATO.plusDays(5), STARTDATO.plusDays(15), null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.OVERLAPP_I_PERIODER);
@@ -703,8 +703,8 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_godkjenne_ikke_overlappende_perioder_for_endringsårsaker() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.FERIE, STARTDATO, STARTDATO.plusDays(5), null),
-            lagEndringsårsak(EndringsårsakDto.PERMISJON, STARTDATO.plusDays(7), STARTDATO.plusDays(15), null)
+            lagEndringsårsak(EndringsaarsakDto.Ferie, STARTDATO, STARTDATO.plusDays(5), null),
+            lagEndringsårsak(EndringsaarsakDto.Permisjon, STARTDATO.plusDays(7), STARTDATO.plusDays(15), null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).isEmpty();
@@ -713,7 +713,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_godkjenne_bonus_uten_datoer() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.BONUS, null, null, null)
+            lagEndringsårsak(EndringsaarsakDto.Bonus, null, null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).isEmpty();
@@ -722,7 +722,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_godkjenne_nyansatt_uten_datoer() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.NYANSATT, null, null, null)
+            lagEndringsårsak(EndringsaarsakDto.Nyansatt, null, null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).isEmpty();
@@ -731,7 +731,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_godkjenne_ferietrekk_uten_datoer() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.FERIETREKK_ELLER_UTBETALING_AV_FERIEPENGER, null, null, null)
+            lagEndringsårsak(EndringsaarsakDto.Ferietrekk, null, null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).isEmpty();
@@ -744,7 +744,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_godkjenne_mangelfull_rapportering_uten_datoer() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.MANGELFULL_RAPPORTERING_AORDNING, null, null, null)
+            lagEndringsårsak(EndringsaarsakDto.MangelfullRapporteringAordning, null, null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).isEmpty();
@@ -753,7 +753,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_godkjenne_inntekt_ikke_rapportert_uten_datoer() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.INNTEKT_IKKE_RAPPORTERT_ENDA_AORDNING, null, null, null)
+            lagEndringsårsak(EndringsaarsakDto.InntektIkkeRapportertEndaAordning, null, null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).isEmpty();
@@ -762,9 +762,9 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_godkjenne_flere_ulike_årsaker_med_gyldige_datoer() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.NY_STILLING, STARTDATO.minusDays(5), null, null),
-            lagEndringsårsak(EndringsårsakDto.BONUS, null, null, null),
-            lagEndringsårsak(EndringsårsakDto.FERIE, STARTDATO, STARTDATO.plusDays(5), null)
+            lagEndringsårsak(EndringsaarsakDto.NyStilling, STARTDATO.minusDays(5), null, null),
+            lagEndringsårsak(EndringsaarsakDto.Bonus, null, null, null),
+            lagEndringsårsak(EndringsaarsakDto.Ferie, STARTDATO, STARTDATO.plusDays(5), null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).isEmpty();
@@ -773,18 +773,18 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_ikke_godkjenne_flere_ulike_årsaker_hvor_en_har_ugyldig_dato() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsårsakDto.NY_STILLING, STARTDATO.minusDays(5), null, null),
-            lagEndringsårsak(EndringsårsakDto.BONUS, null, null, null),
-            lagEndringsårsak(EndringsårsakDto.FERIE, STARTDATO.minusDays(5), STARTDATO.plusDays(5), null),
-            lagEndringsårsak(EndringsårsakDto.FERIE, STARTDATO.minusDays(4), STARTDATO.plusDays(5), null)
+            lagEndringsårsak(EndringsaarsakDto.NyStilling, STARTDATO.minusDays(5), null, null),
+            lagEndringsårsak(EndringsaarsakDto.Bonus, null, null, null),
+            lagEndringsårsak(EndringsaarsakDto.Ferie, STARTDATO.minusDays(5), STARTDATO.plusDays(5), null),
+            lagEndringsårsak(EndringsaarsakDto.Ferie, STARTDATO.minusDays(4), STARTDATO.plusDays(5), null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.OVERLAPP_I_PERIODER);
     }
 
-    private InntektInfo.Endringsårsak lagEndringsårsak(EndringsårsakDto årsak,
-                                                       LocalDate fom, LocalDate tom, LocalDate bleKjentFom) {
-        return new InntektInfo.Endringsårsak(årsak, fom, tom, bleKjentFom);
+    private InntektInfo.Endringsaarsak lagEndringsårsak(EndringsaarsakDto årsak,
+                                                        LocalDate fom, LocalDate tom, LocalDate bleKjentFom) {
+        return new InntektInfo.Endringsaarsak(årsak, fom, tom, bleKjentFom);
     }
 
     @Test
@@ -798,7 +798,7 @@ class InntektsmeldingValidererUtilTest {
     void skal_returnere_feil_fra_naturalytelse_validering() {
         var request = lagRequest(YtelseType.PLEIEPENGER_SYKT_BARN,
             new Refusjon(DEFAULT_BELØP, List.of()),
-            List.of(new Naturalytelse(NaturalytelsetypeDto.BIL, DEFAULT_BELØP,
+            List.of(new Naturalytelse(NaturalytelsetypeDto.Bil, DEFAULT_BELØP,
                 STARTDATO.plusDays(10), STARTDATO)),
             new InntektInfo(DEFAULT_BELØP, List.of()));
 
@@ -810,8 +810,8 @@ class InntektsmeldingValidererUtilTest {
     void skal_returnere_feil_fra_endringsårsak_validering() {
         var request = lagRequest(YtelseType.PLEIEPENGER_SYKT_BARN,
             new Refusjon(DEFAULT_BELØP, List.of()),
-            List.of(), new InntektInfo(DEFAULT_BELØP, List.of(new InntektInfo.Endringsårsak(
-                EndringsårsakDto.NY_STILLING, null, null, null))));
+            List.of(), new InntektInfo(DEFAULT_BELØP, List.of(new InntektInfo.Endringsaarsak(
+                EndringsaarsakDto.NyStilling, null, null, null))));
 
         var result = InntektsmeldingValidererUtil.validerInntektsmelding(request, lagDefaultForespørsel());
         assertThat(result).hasValue(EksponertFeilmelding.AARSAK_KREVER_FRA_DATO);

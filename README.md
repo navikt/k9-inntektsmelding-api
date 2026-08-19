@@ -36,13 +36,14 @@ Scopes (`exposes`/`consumes`) og Altinn-host er konfigurert i [`.deploy/naiserat
 Basesti: `/v1`. Alle endepunkter krever et gyldig Maskinporten-token (`Authorization: Bearer <JWT>`)
 og at det kallende systemet har Altinn-rettighet for organisasjonen i forespørselen.
 
-| Metode | Sti                                            | Beskrivelse                                                                          |
-|--------|------------------------------------------------|--------------------------------------------------------------------------------------|
-| `GET`  | `/v1/forespoersel/{forespoerselId}`            | Hent én forespørsel (UUID)                                                           |
-| `POST` | `/v1/forespoersel/forespoersler`               | Søk/filtrer forespørsler (orgnr, søker-fnr, forespørselId, status, ytelsetype, dato) |
-| `POST` | `/v1/inntektsmelding/send-inn`                 | Send inn inntektsmelding for en forespørsel                                          |
-| `GET`  | `/v1/inntektsmelding/hent/{inntektsmeldingId}` | Hent én inntektsmelding                                                              |
-| `POST` | `/v1/inntektsmelding/hent/inntektsmeldinger`   | Søk/filtrer inntektsmeldinger                                                        |
+| Metode | Sti                                                    | Beskrivelse                                                                          |
+|--------|--------------------------------------------------------|--------------------------------------------------------------------------------------|
+| `GET`  | `/v1/forespoersel/{forespoerselId}`                    | Hent én forespørsel (UUID)                                                           |
+| `POST` | `/v1/forespoersel/forespoersler`                       | Søk/filtrer forespørsler (orgnr, søker-fnr, forespørselId, status, ytelsetype, dato) |
+| `POST` | `/v1/inntektsmelding/send-inn`                         | Send inn inntektsmelding for en forespørsel                                          |
+| `POST` | `/v1/inntektsmelding/refusjonskrav-omsorgspenger/send` | Send inn refusjonskrav for omsorgspenger (krever ingen forespørsel)                  |
+| `GET`  | `/v1/inntektsmelding/hent/{inntektsmeldingId}`         | Hent én inntektsmelding                                                              |
+| `POST` | `/v1/inntektsmelding/hent/inntektsmeldinger`           | Søk/filtrer inntektsmeldinger                                                        |
 
 DTO-kontrakten er definert i `inntektsmelding-kontrakt` (releaset av `k9-inntektsmelding`). Brudd på API-kontrakten krever versjonering — OpenAPI-spec
 er kontrakten mot LPS-konsumenter.
