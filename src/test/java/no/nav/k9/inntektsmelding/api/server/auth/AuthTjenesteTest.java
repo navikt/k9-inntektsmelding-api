@@ -24,7 +24,7 @@ import no.nav.vedtak.sikkerhet.oidc.token.TokenString;
 
 @ExtendWith(MockitoExtension.class)
 class AuthTjenesteTest {
-    private static final String KORREKT_SCOPE = "nav:inntektsmelding/sykdom-i-familien";
+    private static final String KORREKT_SCOPE = "nav:inntektsmelding/sif";
     @Mock
     private TexasTokenKlient authKlient;
 

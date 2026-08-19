@@ -13,7 +13,7 @@ interne backenden `k9-inntektsmelding`.
 
 ```
 LPS (Lønns- og personalsystem)
-  │  Maskinporten-token (scope: nav:inntektsmelding/sykdom-i-familien)
+  │  Maskinporten-token (scope: nav:inntektsmelding/sif)
   ▼
 k9-inntektsmelding-api  ──(Altinn token exchange + PDP authorize)──▶ Altinn 3
   │  Azure AD (maskin-til-maskin)
@@ -25,7 +25,7 @@ k9-inntektsmelding  ─▶  k9-sak
 
 | Steg         | Mekanisme                                                                                                                                          |
 |--------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Innkommende  | Maskinporten system-token, eksponert scope `nav:inntektsmelding/sykdom-i-familien`                                                                 |
+| Innkommende  | Maskinporten system-token, eksponert scope `nav:inntektsmelding/sif`                                                                 |
 | Autorisasjon | Altinn 3: token exchange (`altinn:authorization/authorize`) + PDP (XACML authorize) — sjekker at systemet har rettighet på vegne av organisasjonen |
 | Til backend  | Azure AD client credentials mot `k9-inntektsmelding`                                                                                               |
 
