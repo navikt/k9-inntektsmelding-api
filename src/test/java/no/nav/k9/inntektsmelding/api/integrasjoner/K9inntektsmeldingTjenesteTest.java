@@ -59,7 +59,7 @@ class K9inntektsmeldingTjenesteTest {
         var orgnummer = "999999999";
         var uuid = UUID.randomUUID();
         var fødselsnummer = "123";
-        var response = new ForespørselDto(uuid, new OrganisasjonsnummerDto(orgnummer), new FødselsnummerDto(fødselsnummer),
+        var response = new ForespørselDto(1L, uuid, new OrganisasjonsnummerDto(orgnummer), new FødselsnummerDto(fødselsnummer),
             LocalDate.now(), YtelseTypeDto.PLEIEPENGER_SYKT_BARN, ForespørselStatusDto.UNDER_BEHANDLING, List.of(), LocalDateTime.now());
         when(k9inntektsmeldingKlient.hentForespørsel(uuid)).thenReturn(response);
         var forespørsel = k9inntektsmeldingTjeneste.hentForespørsel(uuid);
@@ -76,9 +76,10 @@ class K9inntektsmeldingTjenesteTest {
             null,
             null,
             null,
+            null,
             null))).thenReturn(
             new HentForespørslerResponse(List.of()));
-        var forespørsler = k9inntektsmeldingTjeneste.hentForespørsler(orgnummer, null, null, null, null, null);
+        var forespørsler = k9inntektsmeldingTjeneste.hentForespørsler(orgnummer, null, null, null, null, null, null);
         assertThat(forespørsler).isEmpty();
     }
 
@@ -86,9 +87,9 @@ class K9inntektsmeldingTjenesteTest {
     void skal_hente_liste_forespørsler() {
         var orgnummer = "999999999";
         var fødselsnummer = "123";
-        var response1 = new ForespørselDto(UUID.randomUUID(), new OrganisasjonsnummerDto(orgnummer), new FødselsnummerDto(fødselsnummer),
+        var response1 = new ForespørselDto(1L, UUID.randomUUID(), new OrganisasjonsnummerDto(orgnummer), new FødselsnummerDto(fødselsnummer),
             LocalDate.now(), YtelseTypeDto.PLEIEPENGER_SYKT_BARN, ForespørselStatusDto.UNDER_BEHANDLING, List.of(), LocalDateTime.now());
-        var response2 = new ForespørselDto(UUID.randomUUID(), new OrganisasjonsnummerDto(orgnummer), new FødselsnummerDto(fødselsnummer),
+        var response2 = new ForespørselDto(2L, UUID.randomUUID(), new OrganisasjonsnummerDto(orgnummer), new FødselsnummerDto(fødselsnummer),
             LocalDate.now(), YtelseTypeDto.OMSORGSPENGER, ForespørselStatusDto.UTGÅTT, List.of(), LocalDateTime.now());
 
         when(k9inntektsmeldingKlient.hentForespørsler(new HentForespørselerRequest(new OrganisasjonsnummerDto(orgnummer),
@@ -96,9 +97,10 @@ class K9inntektsmeldingTjenesteTest {
             null,
             null,
             null,
+            null,
             null))).thenReturn(
             new HentForespørslerResponse(List.of(response1, response2)));
-        var forespørsler = k9inntektsmeldingTjeneste.hentForespørsler(orgnummer, null, null, null, null, null);
+        var forespørsler = k9inntektsmeldingTjeneste.hentForespørsler(orgnummer, null, null, null, null, null, null);
         assertThat(forespørsler).hasSize(2);
         var forespørsel1 = forespørsler.stream().filter(f -> f.ytelseType().equals(YtelseType.PLEIEPENGER_SYKT_BARN)).findFirst().orElseThrow();
         var forespørsel2 = forespørsler.stream().filter(f -> f.ytelseType().equals(YtelseType.OMSORGSPENGER)).findFirst().orElseThrow();
@@ -118,7 +120,7 @@ class K9inntektsmeldingTjenesteTest {
         var orgnummer = "999999999";
         var fødselsnummer = "12345678901";
         var uuid = UUID.randomUUID();
-        var forespørsel = new Forespørsel(uuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
+        var forespørsel = new Forespørsel(1L, uuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
             LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, List.of(), LocalDateTime.now());
         var inntektsmeldingRequest = new InntektsmeldingRequest(
             uuid,
@@ -145,7 +147,7 @@ class K9inntektsmeldingTjenesteTest {
         var orgnummer = "777777777";
         var fødselsnummer = "11111111111";
         var uuid = UUID.randomUUID();
-        var forespørsel = new Forespørsel(uuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
+        var forespørsel = new Forespørsel(1L, uuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
             LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, List.of(), LocalDateTime.now());
         var bortfaltNaturalytelse = new Naturalytelse(
             NaturalytelsetypeDto.ElektroniskKommunikasjon,
@@ -178,7 +180,7 @@ class K9inntektsmeldingTjenesteTest {
         var orgnummer = "666666666";
         var fødselsnummer = "22222222222";
         var uuid = UUID.randomUUID();
-        var forespørsel = new Forespørsel(uuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
+        var forespørsel = new Forespørsel(1L, uuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
             LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, List.of(), LocalDateTime.now());
         var endringsårsak = new InntektInfo.Endringsaarsak(
             EndringsaarsakDto.Permisjon,
@@ -211,7 +213,7 @@ class K9inntektsmeldingTjenesteTest {
         var orgnummer = "555555555";
         var fødselsnummer = "33333333333";
         var uuid = UUID.randomUUID();
-        var forespørsel = new Forespørsel(uuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
+        var forespørsel = new Forespørsel(1L, uuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
             LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN, List.of(), LocalDateTime.now());
         var refusjoner =
             new Refusjon(BigDecimal.valueOf(25000.00), List.of(
@@ -258,7 +260,7 @@ class K9inntektsmeldingTjenesteTest {
         var dto = lagInntektsmeldingDtoMedNullLister(UUID.randomUUID());
         when(k9inntektsmeldingKlient.hentInntektsmeldinger(any())).thenReturn(new HentInntektsmeldingerResponse(List.of(dto)));
 
-        var inntektsmeldinger = k9inntektsmeldingTjeneste.hentInntektsmeldinger(orgnr, null, null, YtelseType.PLEIEPENGER_SYKT_BARN, null, null);
+        var inntektsmeldinger = k9inntektsmeldingTjeneste.hentInntektsmeldinger(orgnr, null, null, YtelseType.PLEIEPENGER_SYKT_BARN, null, null, null);
 
         assertThat(inntektsmeldinger).hasSize(1);
         var inntektsmelding = inntektsmeldinger.getFirst();
@@ -271,7 +273,7 @@ class K9inntektsmeldingTjenesteTest {
     void skal_returnere_tom_liste_naar_hentForespørsler_klient_svarer_null() {
         when(k9inntektsmeldingKlient.hentForespørsler(any())).thenReturn(null);
 
-        var forespørsler = k9inntektsmeldingTjeneste.hentForespørsler("999999999", null, null, null, null, null);
+        var forespørsler = k9inntektsmeldingTjeneste.hentForespørsler("999999999", null, null, null, null, null, null);
 
         assertThat(forespørsler).isEmpty();
     }
@@ -280,13 +282,14 @@ class K9inntektsmeldingTjenesteTest {
     void skal_returnere_tom_liste_naar_hentInntektsmeldinger_klient_svarer_null() {
         when(k9inntektsmeldingKlient.hentInntektsmeldinger(any())).thenReturn(null);
 
-        var inntektsmeldinger = k9inntektsmeldingTjeneste.hentInntektsmeldinger("999999999", null, null, YtelseType.PLEIEPENGER_SYKT_BARN, null, null);
+        var inntektsmeldinger = k9inntektsmeldingTjeneste.hentInntektsmeldinger("999999999", null, null, YtelseType.PLEIEPENGER_SYKT_BARN, null, null, null);
 
         assertThat(inntektsmeldinger).isEmpty();
     }
 
     private static InntektsmeldingDto lagInntektsmeldingDtoMedNullLister(UUID inntektsmeldingUuid) {
         return new InntektsmeldingDto(
+            1L,
             inntektsmeldingUuid,
             UUID.randomUUID(),
             new FødselsnummerDto("12345678901"),

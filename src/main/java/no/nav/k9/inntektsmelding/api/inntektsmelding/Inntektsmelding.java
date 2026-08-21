@@ -12,6 +12,7 @@ import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.YtelseTypeDto;
 
 public record Inntektsmelding(
+    Long fraLoepenr,
     UUID inntektsmeldingUuid,
     String fnr,
     YtelseTypeDto ytelse,

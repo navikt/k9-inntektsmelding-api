@@ -68,13 +68,15 @@ public class K9inntektsmeldingTjeneste {
                                               StatusDto status,
                                               YtelseType ytelseType,
                                               LocalDate fom,
-                                              LocalDate tom) {
+                                              LocalDate tom,
+                                              Long fraLoepenr) {
         var filter = new HentForespørselerRequest(new OrganisasjonsnummerDto(orgnr),
             fnr == null ? null : new FødselsnummerDto(fnr),
             status == null ? null : KodeverkMapper.mapApiStatusTilForespørselStatus(status),
             ytelseType == null ? null : mapYtelseType(ytelseType),
             fom,
-            tom);
+            tom,
+            fraLoepenr);
         var response = k9inntektsmeldingKlient.hentForespørsler(filter);
         if (response == null || response.forespørsler() == null) {
             return List.of();
@@ -92,13 +94,15 @@ public class K9inntektsmeldingTjeneste {
                                                        UUID uuid,
                                                        YtelseType ytelseType,
                                                        LocalDate fom,
-                                                       LocalDate tom) {
+                                                       LocalDate tom,
+                                                       Long fraLoepenr) {
         var request = new HentInntektsmeldingerRequest(new OrganisasjonsnummerDto(orgnr),
             fnr == null ? null : new FødselsnummerDto(fnr),
             ytelseType == null ? null : mapYtelseType(ytelseType),
             uuid,
             fom,
-            tom);
+            tom,
+            fraLoepenr);
         var response = k9inntektsmeldingKlient.hentInntektsmeldinger(request);
         if (response == null || response.inntektsmeldinger() == null) {
             return List.of();
@@ -108,6 +112,7 @@ public class K9inntektsmeldingTjeneste {
 
     private Inntektsmelding mapInntektsmeldingResponseTilDomeneobjekt(InntektsmeldingDto response) {
         return new Inntektsmelding(
+            response.loepenr(),
             response.inntektsmeldingUuid(),
             response.fnr().fnr(),
             KodeverkMapper.mapTilDto(KodeverkMapper.mapYtelseType(response.ytelseType())),
@@ -346,7 +351,9 @@ public class K9inntektsmeldingTjeneste {
     }
 
     private Forespørsel mapResponseTilDomeneobjekt(ForespørselDto response) {
-        return new Forespørsel(response.forespørselUuid(),
+        return new Forespørsel(
+            response.loepenr(),
+            response.forespørselUuid(),
             new Organisasjonsnummer(response.orgnummer().orgnr()),
             response.fødselsnummer().fnr(),
             response.skjæringstidspunkt(),

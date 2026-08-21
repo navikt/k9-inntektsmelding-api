@@ -65,7 +65,7 @@ class InntektsmeldingRestTest {
         var forespørselUuid = UUID.randomUUID();
         var responseUuid = UUID.randomUUID();
 
-        var forespørsel = new Forespørsel(forespørselUuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
+        var forespørsel = new Forespørsel(1L, forespørselUuid, new Organisasjonsnummer(orgnummer), fødselsnummer,
             LocalDate.now(), ForespørselStatus.UNDER_BEHANDLING, YtelseType.PLEIEPENGER_SYKT_BARN,
             List.of(), LocalDateTime.now());
 
@@ -213,10 +213,10 @@ class InntektsmeldingRestTest {
         var orgnr = "999999999";
         var fnr = "12345678901";
         var forespørselId = UUID.randomUUID();
-        var filter = new InntektsmeldingFilter(orgnr, fnr, forespørselId, null, YtelseType.PLEIEPENGER_SYKT_BARN, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31));
+        var filter = new InntektsmeldingFilter(orgnr, fnr, forespørselId, null, YtelseType.PLEIEPENGER_SYKT_BARN, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31), null);
 
         var inntektsmelding = lagInntektsmelding(orgnr);
-        when(k9inntektsmeldingTjeneste.hentInntektsmeldinger(orgnr, fnr, forespørselId, YtelseType.PLEIEPENGER_SYKT_BARN, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31)))
+        when(k9inntektsmeldingTjeneste.hentInntektsmeldinger(orgnr, fnr, forespørselId, YtelseType.PLEIEPENGER_SYKT_BARN, LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31), null))
             .thenReturn(List.of(inntektsmelding));
 
         var response = inntektsmeldingRest.hentInntektsmeldinger(filter);
@@ -232,7 +232,7 @@ class InntektsmeldingRestTest {
     void skal_returnere_bad_request_når_fom_er_etter_tom_med_innsendingId() {
         var orgnr = "999999999";
         var innsendingId = UUID.randomUUID();
-        var filter = new InntektsmeldingFilter(orgnr, null, null, innsendingId, null, LocalDate.of(2025, 12, 31), LocalDate.of(2025, 1, 1));
+        var filter = new InntektsmeldingFilter(orgnr, null, null, innsendingId, null, LocalDate.of(2025, 12, 31), LocalDate.of(2025, 1, 1), null);
 
         var inntektsmelding = lagInntektsmelding(orgnr);
         when(k9inntektsmeldingTjeneste.hentInntektsmelding(innsendingId)).thenReturn(inntektsmelding);
@@ -246,6 +246,7 @@ class InntektsmeldingRestTest {
 
     private Inntektsmelding lagInntektsmelding(String orgnr) {
         return new Inntektsmelding(
+            1L,
             UUID.randomUUID(), "12345678901", YtelseTypeDto.PLEIEPENGER_SYKT_BARN,
             new Organisasjonsnummer(orgnr),
             new Inntektsmelding.Kontaktperson("Test", "12345678"),

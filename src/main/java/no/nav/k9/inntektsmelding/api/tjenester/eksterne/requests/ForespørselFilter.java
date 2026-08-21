@@ -16,4 +16,5 @@ public record ForespørselFilter(@NotNull @Pattern(regexp = "^\\d{9}$") String o
                                 @Valid StatusDto status,
                                 @Valid YtelseType ytelseType,
                                 LocalDate fom,
-                                LocalDate tom) {}
+                                LocalDate tom,
+                                Long fraLoepenr) {}

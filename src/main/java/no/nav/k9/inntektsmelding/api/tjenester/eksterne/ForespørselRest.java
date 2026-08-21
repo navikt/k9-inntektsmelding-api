@@ -146,7 +146,8 @@ public class ForespørselRest {
             filterRequest.status(),
             filterRequest.ytelseType(),
             filterRequest.fom(),
-            filterRequest.tom());
+            filterRequest.tom(),
+            filterRequest.fraLoepenr());
 
         var dtoer = forespørsler.stream().map(this::mapTilDto).toList();
 
