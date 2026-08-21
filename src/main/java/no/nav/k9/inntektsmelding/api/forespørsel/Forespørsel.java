@@ -10,7 +10,7 @@ import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.Periode;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
 
-public record Forespørsel(Long fraLoepenr,
+public record Forespørsel(Long loepenr,
                           UUID forespørselUuid,
                           Organisasjonsnummer orgnummer,
                           String fødselsnummer,
