@@ -15,7 +15,8 @@ import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
 import no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto;
 import no.nav.k9.inntektsmelding.api.typer.YtelseTypeDto;
 
-public record InntektsmeldingDto(@NotNull UUID inntektsmeldingId,
+public record InntektsmeldingDto(@NotNull Long loepenr,
+                                 @NotNull UUID inntektsmeldingId,
                                  @NotNull @Pattern(regexp = "^\\d{11}$") String soekerFnr,
                                  @NotNull YtelseTypeDto ytelse,
                                  @NotNull InntektsmeldingArbeidsgiver arbeidsgiver,

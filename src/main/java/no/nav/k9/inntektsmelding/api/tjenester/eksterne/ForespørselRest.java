@@ -159,7 +159,9 @@ public class ForespørselRest {
     }
 
     private ForespørselDto mapTilDto(Forespørsel forespørsel) {
-        return new ForespørselDto(forespørsel.forespørselUuid(),
+        return new ForespørselDto(
+            forespørsel.loepenr(),
+            forespørsel.forespørselUuid(),
             forespørsel.orgnummer().orgnr(),
             forespørsel.fødselsnummer(),
             forespørsel.skjæringstidspunkt(),
