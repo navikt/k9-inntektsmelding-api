@@ -44,6 +44,7 @@ public class AuthTjeneste {
         boolean harGyldigScope = scopes.stream().anyMatch(s -> s.equals(gyldigScope));
 
         if (!harGyldigScope) {
+            LOG.info("Token har ikke gyldig scope. Token introspect respons: {}", response.error());
             throw new InntektsmeldingAPIException(EksponertFeilmelding.FEIL_SCOPE, Response.Status.UNAUTHORIZED);
         }
 
