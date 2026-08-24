@@ -32,14 +32,15 @@ public class TilgangTjeneste implements Tilgang {
         }
         var ressurs = ENV.getRequiredProperty("altinn.tre.inntektsmelding.ressurs");
 
+        boolean harTilgang;
         try {
-            var harTilgang = PdpKlient.instance().systemHarRettighetForOrganisasjon(systemId, orgnummerFraForespørsel.orgnr(), ressurs);
-            if (!harTilgang) {
-                throw new InntektsmeldingAPIException(EksponertFeilmelding.IKKE_TILGANG_ALTINN, Response.Status.UNAUTHORIZED);
-            }
+            harTilgang = PdpKlient.instance().systemHarRettighetForOrganisasjon(systemId, orgnummerFraForespørsel.orgnr(), ressurs);
         } catch (Exception e) {
             LOG.warn(e.toString());
             throw new InntektsmeldingAPIException(EksponertFeilmelding.FEIL_OPPSLAG_ALTINN, Response.Status.INTERNAL_SERVER_ERROR, e);
+        }
+        if (!harTilgang) {
+            throw new InntektsmeldingAPIException(EksponertFeilmelding.IKKE_TILGANG_ALTINN, Response.Status.UNAUTHORIZED);
         }
     }
 
