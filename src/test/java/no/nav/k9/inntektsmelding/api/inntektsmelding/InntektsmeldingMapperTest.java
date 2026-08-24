@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
+import no.nav.k9.inntektsmelding.api.typer.InntektsmeldingStatus;
 import no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.YtelseTypeDto;
@@ -209,6 +210,7 @@ class InntektsmeldingMapperTest {
             refusjonsendringer,
             naturalytelser,
             endringsårsaker,
+            InntektsmeldingStatus.GODKJENT,
             null
         );
     }

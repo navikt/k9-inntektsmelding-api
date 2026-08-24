@@ -32,6 +32,7 @@ import no.nav.k9.inntektsmelding.api.typer.YtelseType;
 import no.nav.k9.inntektsmelding.felles.AvsenderSystemDto;
 import no.nav.k9.inntektsmelding.felles.ForespørselStatusDto;
 import no.nav.k9.inntektsmelding.felles.FødselsnummerDto;
+import no.nav.k9.inntektsmelding.felles.InntektsmeldingStatusDto;
 import no.nav.k9.inntektsmelding.felles.KontaktpersonDto;
 import no.nav.k9.inntektsmelding.felles.OrganisasjonsnummerDto;
 import no.nav.k9.inntektsmelding.felles.YtelseTypeDto;
@@ -260,7 +261,7 @@ class K9inntektsmeldingTjenesteTest {
         var dto = lagInntektsmeldingDtoMedNullLister(UUID.randomUUID());
         when(k9inntektsmeldingKlient.hentInntektsmeldinger(any())).thenReturn(new HentInntektsmeldingerResponse(List.of(dto)));
 
-        var inntektsmeldinger = k9inntektsmeldingTjeneste.hentInntektsmeldinger(orgnr, null, null, YtelseType.PLEIEPENGER_SYKT_BARN, null, null, null);
+        var inntektsmeldinger = k9inntektsmeldingTjeneste.hentInntektsmeldinger(orgnr, null, null, YtelseType.PLEIEPENGER_SYKT_BARN, null, null, null, null);
 
         assertThat(inntektsmeldinger).hasSize(1);
         var inntektsmelding = inntektsmeldinger.getFirst();
@@ -282,7 +283,7 @@ class K9inntektsmeldingTjenesteTest {
     void skal_returnere_tom_liste_naar_hentInntektsmeldinger_klient_svarer_null() {
         when(k9inntektsmeldingKlient.hentInntektsmeldinger(any())).thenReturn(null);
 
-        var inntektsmeldinger = k9inntektsmeldingTjeneste.hentInntektsmeldinger("999999999", null, null, YtelseType.PLEIEPENGER_SYKT_BARN, null, null, null);
+        var inntektsmeldinger = k9inntektsmeldingTjeneste.hentInntektsmeldinger("999999999", null, null, YtelseType.PLEIEPENGER_SYKT_BARN, null, null, null, null);
 
         assertThat(inntektsmeldinger).isEmpty();
     }
@@ -305,6 +306,7 @@ class K9inntektsmeldingTjenesteTest {
             null,  // refusjonsendringer
             null,  // bortfaltNaturalytelsePerioder
             null,  // endringAvInntektÅrsaker
+            InntektsmeldingStatusDto.GODKJENT,
             null   // omsorgspenger
         );
     }

@@ -35,6 +35,7 @@ public class InntektsmeldingMapper {
             avsendersystemDto,
             refusjon,
             naturalytelser,
+            inntektsmelding.status(),
             omsorgspengerInfo);
     }
 
