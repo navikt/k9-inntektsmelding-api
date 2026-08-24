@@ -193,6 +193,7 @@ class InntektsmeldingMapperTest {
         BigDecimal refusjonPrMnd
     ) {
         return new Inntektsmelding(
+            1L,
             TEST_UUID,
             FNR,
             YtelseTypeDto.PLEIEPENGER_SYKT_BARN,

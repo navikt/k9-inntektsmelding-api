@@ -836,7 +836,7 @@ class InntektsmeldingValidererUtilTest {
     }
 
     private static Forespørsel lagForespørsel(ForespørselStatus status, LocalDate skjæringstidspunkt, YtelseType ytelseType) {
-        return new Forespørsel(DEFAULT_UUID, new Organisasjonsnummer("999999999"), DEFAULT_FNR, skjæringstidspunkt,
+        return new Forespørsel(1L, DEFAULT_UUID, new Organisasjonsnummer("999999999"), DEFAULT_FNR, skjæringstidspunkt,
             status, ytelseType, List.of(), LocalDateTime.now());
     }
 

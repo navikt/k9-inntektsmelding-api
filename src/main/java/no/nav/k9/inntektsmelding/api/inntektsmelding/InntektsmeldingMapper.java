@@ -23,7 +23,9 @@ public class InntektsmeldingMapper {
         var naturalytelser = mapNaturalytelser(inntektsmelding);
         var refusjon = new InntektsmeldingDto.Refusjon(inntektsmelding.månedRefusjon(), alleRefusjonsendringer);
         var omsorgspengerInfo = mapOmsorgspengerInfo(inntektsmelding.omsorgspengerInfo());
-        return new InntektsmeldingDto(inntektsmelding.inntektsmeldingUuid(),
+        return new InntektsmeldingDto(
+            inntektsmelding.loepenr(),
+            inntektsmelding.inntektsmeldingUuid(),
             inntektsmelding.fnr(),
             inntektsmelding.ytelse(),
             new InntektsmeldingDto.InntektsmeldingArbeidsgiver(inntektsmelding.orgnr().orgnr(), kontakpersonDto),

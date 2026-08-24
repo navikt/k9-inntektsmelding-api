@@ -15,4 +15,5 @@ public record InntektsmeldingFilter(@NotNull @Pattern(regexp = "^\\d{9}$") Strin
                                     @Valid UUID inntektsmeldingId,
                                     @Valid YtelseType ytelseType,
                                     LocalDate fom,
-                                    LocalDate tom) {}
+                                    LocalDate tom,
+                                    Long fraLoepenr) {}

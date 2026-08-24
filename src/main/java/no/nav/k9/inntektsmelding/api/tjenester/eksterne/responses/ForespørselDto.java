@@ -12,7 +12,8 @@ import jakarta.validation.constraints.Pattern;
 import no.nav.k9.inntektsmelding.api.typer.StatusDto;
 import no.nav.k9.inntektsmelding.api.typer.YtelseTypeDto;
 
-public record ForespørselDto(@NotNull UUID forespoerselId,
+public record ForespørselDto(@NotNull Long loepenr,
+                             @NotNull UUID forespoerselId,
                              @NotNull @Pattern(regexp = "^\\d{9}$") String orgnr,
                              @NotNull @Pattern(regexp = "^\\d{11}$") String soekerFnr,
                              @NotNull LocalDate startdato,
