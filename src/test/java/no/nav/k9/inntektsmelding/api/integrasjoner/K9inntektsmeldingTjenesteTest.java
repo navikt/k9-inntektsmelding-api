@@ -14,9 +14,9 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Avsender;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektInfo;
@@ -26,6 +26,7 @@ import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Naturalytelse;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
 import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
 import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
+import no.nav.k9.inntektsmelding.api.typer.InntektsmeldingStatus;
 import no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
@@ -39,6 +40,7 @@ import no.nav.k9.inntektsmelding.felles.YtelseTypeDto;
 import no.nav.k9.inntektsmelding.imapi.forespørsel.ForespørselDto;
 import no.nav.k9.inntektsmelding.imapi.forespørsel.HentForespørselerRequest;
 import no.nav.k9.inntektsmelding.imapi.forespørsel.HentForespørslerResponse;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.HentInntektsmeldingerRequest;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.HentInntektsmeldingerResponse;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.InntektsmeldingDto;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingResponse;
@@ -277,6 +279,19 @@ class K9inntektsmeldingTjenesteTest {
         var forespørsler = k9inntektsmeldingTjeneste.hentForespørsler("999999999", null, null, null, null, null, null);
 
         assertThat(forespørsler).isEmpty();
+    }
+
+    @Test
+    void skal_mappe_status_til_hentInntektsmeldingerRequest() {
+        var orgnr = "999999999";
+        var dto = lagInntektsmeldingDtoMedNullLister(UUID.randomUUID());
+        var requestCaptor = ArgumentCaptor.forClass(HentInntektsmeldingerRequest.class);
+        when(k9inntektsmeldingKlient.hentInntektsmeldinger(requestCaptor.capture())).thenReturn(new HentInntektsmeldingerResponse(List.of(dto)));
+
+        k9inntektsmeldingTjeneste.hentInntektsmeldinger(orgnr, null, null, YtelseType.PLEIEPENGER_SYKT_BARN, null, null, null,
+            InntektsmeldingStatus.AVVIST);
+
+        assertThat(requestCaptor.getValue().status()).isEqualTo(InntektsmeldingStatusDto.AVVIST);
     }
 
     @Test
