@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
+import no.nav.k9.inntektsmelding.api.typer.InntektsmeldingStatus;
 import no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.YtelseTypeDto;
@@ -28,6 +29,7 @@ public record Inntektsmelding(
     List<Refusjon> refusjon,
     List<BortfaltNaturalytelse> bortfaltNaturalytelsePerioder,
     List<Endringsårsaker> endringAvInntektÅrsaker,
+    InntektsmeldingStatus status,
     OmsorgspengerInfo omsorgspengerInfo) {
 
     public record Refusjon(LocalDate fom,

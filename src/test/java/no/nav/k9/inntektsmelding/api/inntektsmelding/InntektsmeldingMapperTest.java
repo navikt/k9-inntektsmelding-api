@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
+import no.nav.k9.inntektsmelding.api.typer.InntektsmeldingStatus;
 import no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.YtelseTypeDto;
@@ -46,7 +47,17 @@ class InntektsmeldingMapperTest {
         assertThat(dto.inntekt().beloep()).isEqualByComparingTo(MÅNEDS_INNTEKT);
         assertThat(dto.inntekt().inntektsdato()).isEqualTo(SKJÆRINGSTIDSPUNKT);
         assertThat(dto.inntekt().endringAarsaker()).isEmpty();
+        assertThat(dto.status()).isEqualTo(InntektsmeldingStatus.GODKJENT);
+    }
 
+    @Test
+    void skal_mappe_status_som_ikke_er_godkjent() {
+        var inntektsmelding = lagInntektsmeldingBuilder(List.of(), List.of(), List.of(), Tid.TIDENES_ENDE, MÅNEDS_REFUSJON,
+            InntektsmeldingStatus.AVVIST);
+
+        var dto = InntektsmeldingMapper.mapTilDto(inntektsmelding);
+
+        assertThat(dto.status()).isEqualTo(InntektsmeldingStatus.AVVIST);
     }
 
     @Test
@@ -192,6 +203,18 @@ class InntektsmeldingMapperTest {
         LocalDate opphørsdatoRefusjon,
         BigDecimal refusjonPrMnd
     ) {
+        return lagInntektsmeldingBuilder(endringsårsaker, refusjonsendringer, naturalytelser, opphørsdatoRefusjon, refusjonPrMnd,
+            InntektsmeldingStatus.GODKJENT);
+    }
+
+    private Inntektsmelding lagInntektsmeldingBuilder(
+        List<Inntektsmelding.Endringsårsaker> endringsårsaker,
+        List<Inntektsmelding.Refusjon> refusjonsendringer,
+        List<Inntektsmelding.BortfaltNaturalytelse> naturalytelser,
+        LocalDate opphørsdatoRefusjon,
+        BigDecimal refusjonPrMnd,
+        InntektsmeldingStatus status
+    ) {
         return new Inntektsmelding(
             1L,
             TEST_UUID,
@@ -209,6 +232,7 @@ class InntektsmeldingMapperTest {
             refusjonsendringer,
             naturalytelser,
             endringsårsaker,
+            status,
             null
         );
     }

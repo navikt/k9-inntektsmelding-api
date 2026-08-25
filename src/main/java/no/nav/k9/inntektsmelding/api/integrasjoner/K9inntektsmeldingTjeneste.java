@@ -8,6 +8,8 @@ import java.util.UUID;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 
+import jakarta.validation.constraints.NotNull;
+
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
 import no.nav.k9.inntektsmelding.api.inntektsmelding.Inntektsmelding;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektInfo;
@@ -18,6 +20,7 @@ import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.OmsorgspengerIn
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.RefusjonskravOmsorgspengerRequest;
 import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
+import no.nav.k9.inntektsmelding.api.typer.InntektsmeldingStatus;
 import no.nav.k9.inntektsmelding.api.typer.KodeverkMapper;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.Periode;
@@ -28,6 +31,7 @@ import no.nav.k9.inntektsmelding.felles.BortfaltNaturalytelseDto;
 import no.nav.k9.inntektsmelding.felles.EndringsårsakDto;
 import no.nav.k9.inntektsmelding.felles.EndringsårsakerDto;
 import no.nav.k9.inntektsmelding.felles.FødselsnummerDto;
+import no.nav.k9.inntektsmelding.felles.InntektsmeldingStatusDto;
 import no.nav.k9.inntektsmelding.felles.KontaktpersonDto;
 import no.nav.k9.inntektsmelding.felles.NaturalytelsetypeDto;
 import no.nav.k9.inntektsmelding.felles.OmsorgspengerDto;
@@ -95,14 +99,16 @@ public class K9inntektsmeldingTjeneste {
                                                        YtelseType ytelseType,
                                                        LocalDate fom,
                                                        LocalDate tom,
-                                                       Long fraLoepenr) {
+                                                       Long fraLoepenr,
+                                                       InntektsmeldingStatus status) {
         var request = new HentInntektsmeldingerRequest(new OrganisasjonsnummerDto(orgnr),
             fnr == null ? null : new FødselsnummerDto(fnr),
             ytelseType == null ? null : mapYtelseType(ytelseType),
             uuid,
             fom,
             tom,
-            fraLoepenr);
+            fraLoepenr,
+            status == null ? null : mapInntektsmeldingStatus(status));
         var response = k9inntektsmeldingKlient.hentInntektsmeldinger(request);
         if (response == null || response.inntektsmeldinger() == null) {
             return List.of();
@@ -137,6 +143,7 @@ public class K9inntektsmeldingTjeneste {
             response.endringAvInntektÅrsaker() == null ? List.of() : response.endringAvInntektÅrsaker().stream()
                 .map(e -> new Inntektsmelding.Endringsårsaker(mapEndringsårsakTilApiType(e.årsak()), e.fom(), e.tom(), e.bleKjentFom()))
                 .toList(),
+            mapInntektsmeldingStatusDto(response.status()),
             mapOmsorgspengerTilDomeneobjekt(response.omsorgspenger())
         );
     }
@@ -343,6 +350,22 @@ public class K9inntektsmeldingTjeneste {
             case PLEIEPENGER_I_LIVETS_SLUTTFASE -> YtelseTypeDto.PLEIEPENGER_I_LIVETS_SLUTTFASE;
             case OPPLÆRINGSPENGER -> YtelseTypeDto.OPPLÆRINGSPENGER;
             case OMSORGSPENGER -> YtelseTypeDto.OMSORGSPENGER;
+        };
+    }
+
+    private InntektsmeldingStatusDto mapInntektsmeldingStatus(InntektsmeldingStatus status) {
+        return switch (status) {
+            case AVVIST -> InntektsmeldingStatusDto.AVVIST;
+            case MOTTATT -> InntektsmeldingStatusDto.MOTTATT;
+            case GODKJENT -> InntektsmeldingStatusDto.GODKJENT;
+        };
+    }
+
+    private InntektsmeldingStatus mapInntektsmeldingStatusDto(InntektsmeldingStatusDto status) {
+        return switch (status) {
+            case AVVIST -> InntektsmeldingStatus.AVVIST;
+            case MOTTATT -> InntektsmeldingStatus.MOTTATT;
+            case GODKJENT -> InntektsmeldingStatus.GODKJENT;
         };
     }
 

@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
+import no.nav.k9.inntektsmelding.api.typer.InntektsmeldingStatus;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
 
 public record InntektsmeldingFilter(@NotNull @Pattern(regexp = "^\\d{9}$") String orgnr,
@@ -16,4 +17,5 @@ public record InntektsmeldingFilter(@NotNull @Pattern(regexp = "^\\d{9}$") Strin
                                     @Valid YtelseType ytelseType,
                                     LocalDate fom,
                                     LocalDate tom,
-                                    Long fraLoepenr) {}
+                                    Long fraLoepenr,
+                                    InntektsmeldingStatus status) {}

@@ -14,9 +14,9 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Avsender;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektInfo;
@@ -26,18 +26,21 @@ import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Naturalytelse;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
 import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
 import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
+import no.nav.k9.inntektsmelding.api.typer.InntektsmeldingStatus;
 import no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto;
 import no.nav.k9.inntektsmelding.api.typer.Organisasjonsnummer;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
 import no.nav.k9.inntektsmelding.felles.AvsenderSystemDto;
 import no.nav.k9.inntektsmelding.felles.ForespørselStatusDto;
 import no.nav.k9.inntektsmelding.felles.FødselsnummerDto;
+import no.nav.k9.inntektsmelding.felles.InntektsmeldingStatusDto;
 import no.nav.k9.inntektsmelding.felles.KontaktpersonDto;
 import no.nav.k9.inntektsmelding.felles.OrganisasjonsnummerDto;
 import no.nav.k9.inntektsmelding.felles.YtelseTypeDto;
 import no.nav.k9.inntektsmelding.imapi.forespørsel.ForespørselDto;
 import no.nav.k9.inntektsmelding.imapi.forespørsel.HentForespørselerRequest;
 import no.nav.k9.inntektsmelding.imapi.forespørsel.HentForespørslerResponse;
+import no.nav.k9.inntektsmelding.imapi.inntektsmelding.HentInntektsmeldingerRequest;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.HentInntektsmeldingerResponse;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.InntektsmeldingDto;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingResponse;
@@ -260,7 +263,7 @@ class K9inntektsmeldingTjenesteTest {
         var dto = lagInntektsmeldingDtoMedNullLister(UUID.randomUUID());
         when(k9inntektsmeldingKlient.hentInntektsmeldinger(any())).thenReturn(new HentInntektsmeldingerResponse(List.of(dto)));
 
-        var inntektsmeldinger = k9inntektsmeldingTjeneste.hentInntektsmeldinger(orgnr, null, null, YtelseType.PLEIEPENGER_SYKT_BARN, null, null, null);
+        var inntektsmeldinger = k9inntektsmeldingTjeneste.hentInntektsmeldinger(orgnr, null, null, YtelseType.PLEIEPENGER_SYKT_BARN, null, null, null, null);
 
         assertThat(inntektsmeldinger).hasSize(1);
         var inntektsmelding = inntektsmeldinger.getFirst();
@@ -279,10 +282,23 @@ class K9inntektsmeldingTjenesteTest {
     }
 
     @Test
+    void skal_mappe_status_til_hentInntektsmeldingerRequest() {
+        var orgnr = "999999999";
+        var dto = lagInntektsmeldingDtoMedNullLister(UUID.randomUUID());
+        var requestCaptor = ArgumentCaptor.forClass(HentInntektsmeldingerRequest.class);
+        when(k9inntektsmeldingKlient.hentInntektsmeldinger(requestCaptor.capture())).thenReturn(new HentInntektsmeldingerResponse(List.of(dto)));
+
+        k9inntektsmeldingTjeneste.hentInntektsmeldinger(orgnr, null, null, YtelseType.PLEIEPENGER_SYKT_BARN, null, null, null,
+            InntektsmeldingStatus.AVVIST);
+
+        assertThat(requestCaptor.getValue().status()).isEqualTo(InntektsmeldingStatusDto.AVVIST);
+    }
+
+    @Test
     void skal_returnere_tom_liste_naar_hentInntektsmeldinger_klient_svarer_null() {
         when(k9inntektsmeldingKlient.hentInntektsmeldinger(any())).thenReturn(null);
 
-        var inntektsmeldinger = k9inntektsmeldingTjeneste.hentInntektsmeldinger("999999999", null, null, YtelseType.PLEIEPENGER_SYKT_BARN, null, null, null);
+        var inntektsmeldinger = k9inntektsmeldingTjeneste.hentInntektsmeldinger("999999999", null, null, YtelseType.PLEIEPENGER_SYKT_BARN, null, null, null, null);
 
         assertThat(inntektsmeldinger).isEmpty();
     }
@@ -305,6 +321,7 @@ class K9inntektsmeldingTjenesteTest {
             null,  // refusjonsendringer
             null,  // bortfaltNaturalytelsePerioder
             null,  // endringAvInntektÅrsaker
+            InntektsmeldingStatusDto.GODKJENT,
             null   // omsorgspenger
         );
     }
