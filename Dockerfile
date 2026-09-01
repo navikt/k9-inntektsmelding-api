@@ -1,4 +1,4 @@
-FROM ghcr.io/navikt/sif-baseimages/java-25:2026.08.31.0909Z
+FROM ghcr.io/navikt/sif-baseimages/java-25:2026.09.01.1219Z
 LABEL org.opencontainers.image.source=https://github.com/navikt/k9-inntektsmelding-api
 
 COPY target/classes/logback*.xml conf/
