@@ -276,7 +276,7 @@ public class InntektsmeldingValidererUtil {
         var feilmeldingTariffendring = endringsårsaker.stream()
             .filter(årsak -> årsak.aarsak() == EndringsaarsakDto.Tariffendring)
             .findFirst()
-            .flatMap(InntektsmeldingValidererUtil::valideringTariffendring);
+            .flatMap(tariffendring ->  valideringTariffendring(tariffendring, startdato));
         if (feilmeldingTariffendring.isPresent()) {
             return feilmeldingTariffendring;
         }
@@ -323,7 +323,7 @@ public class InntektsmeldingValidererUtil {
         return Optional.empty();
     }
 
-    private static Optional<EksponertFeilmelding> valideringTariffendring(InntektInfo.Endringsaarsak endringsårsak) {
+    private static Optional<EksponertFeilmelding> valideringTariffendring(InntektInfo.Endringsaarsak endringsårsak, LocalDate startdato) {
         if (endringsårsak != null) {
             if (endringsårsak.fom() == null || endringsårsak.gjelderFra() == null) {
                 LOG.info("Endringsårsak tariffendring mangler fra dato eller ble gjelder fra dato");
@@ -334,6 +334,12 @@ public class InntektsmeldingValidererUtil {
                     endringsårsak.gjelderFra(),
                     endringsårsak.fom());
                 return Optional.of(EksponertFeilmelding.KREVER_FRA_OG_BLE_KJENT_DATO);
+            }
+            if (!endringsårsak.fom().isBefore(startdato)) {
+                LOG.info("Endringsårsak tariffendring har ugyldig dato. Fra dato {} må være før fraværsdato {}",
+                    endringsårsak.fom(),
+                    startdato);
+                return Optional.of(EksponertFeilmelding.FRA_DATO_FOER_STARTDATO);
             }
         }
         return Optional.empty();
