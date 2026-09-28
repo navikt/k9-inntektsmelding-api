@@ -13,16 +13,15 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 
-import no.nav.vedtak.log.mdc.MDCOperations;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.k9.inntektsmelding.api.server.app.api.OpenApiRest;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
 import no.nav.k9.inntektsmelding.api.server.exceptions.InntektsmeldingAPIException;
-import no.nav.foreldrepenger.konfig.Environment;
+import no.nav.vedtak.log.mdc.MDCOperations;
 import no.nav.vedtak.sikkerhet.jaxrs.AuthenticationFilterDelegate;
 import no.nav.vedtak.sikkerhet.kontekst.KontekstHolder;
 import no.nav.vedtak.sikkerhet.oidc.token.TokenString;
@@ -30,11 +29,11 @@ import no.nav.vedtak.sikkerhet.oidc.token.TokenString;
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class AutentiseringFilter implements ContainerRequestFilter, ContainerResponseFilter {
+    public static final String X_CORRELATION_ID = "X-Correlation-Id";
 
     private static final Logger LOG = LoggerFactory.getLogger(AutentiseringFilter.class);
     private static final Environment ENV = Environment.current();
     private final AuthTjeneste authTjeneste;
-    private static final String X_CORRELATION_ID = "X-Correlation-Id";
 
     @Context
     private ResourceInfo resourceinfo;

@@ -32,6 +32,10 @@ import no.nav.vedtak.server.rest.RestSecureLogFeature;
 import no.nav.vedtak.server.rest.jackson.Jackson3ContextResolver;
 import no.nav.vedtak.server.rest.jackson.Jackson3ProviderFeature;
 
+import static no.nav.k9.inntektsmelding.api.server.app.api.CorrelationIdHeaderOpenApiFilter.CORRELATION_BESKRIVELSE;
+import static no.nav.k9.inntektsmelding.api.server.app.api.CorrelationIdHeaderOpenApiFilter.CORRELATION_HEADER_NAME;
+import static no.nav.k9.inntektsmelding.api.server.app.api.CorrelationIdHeaderOpenApiFilter.CORRELATION_PARAMETER_COMPONENT;
+
 @ApplicationPath(ApiConfig.API_URI)
 public class ApiConfig extends ResourceConfig {
 
@@ -61,6 +65,17 @@ public class ApiConfig extends ResourceConfig {
             .version("1.0.0")
             .description("API for inntektsmelding for pleiepenger, omsorgspenger og opplæringspenger");
 
+        var correlationHeader = new io.swagger.v3.oas.models.parameters.HeaderParameter()
+            .name(CORRELATION_HEADER_NAME)
+            .description(CORRELATION_BESKRIVELSE)
+            .required(false)
+            .schema(new io.swagger.v3.oas.models.media.UUIDSchema());
+
+        if (oas.getComponents() == null) {
+            oas.setComponents(new io.swagger.v3.oas.models.Components());
+        }
+        oas.getComponents().addParameters(CORRELATION_PARAMETER_COMPONENT, correlationHeader);
+
         oas.info(info).addServersItem(new Server())
             .addTagsItem(new Tag().name("Forespørsel om inntektsmelding").description("Endepunkter for å hente forespørsler NAV har sendt til arbeidsgiver"))
             .addTagsItem(new Tag().name("Inntektsmelding").description("Endepunkter for å sende inn og hente inntektsmeldinger"))
@@ -71,6 +86,7 @@ public class ApiConfig extends ResourceConfig {
             .addSecurityItem(new SecurityRequirement().addList("bearer"));
         var oasConfig = new SwaggerConfiguration().openAPI(oas)
             .prettyPrint(true)
+            .filterClass(CorrelationIdHeaderOpenApiFilter.class.getName())
             .resourceClasses(getApplicationClasses().stream().map(Class::getName).collect(Collectors.toSet()));
         try {
             new GenericOpenApiContextBuilder<>().openApiConfiguration(oasConfig).buildContext(true).read();
