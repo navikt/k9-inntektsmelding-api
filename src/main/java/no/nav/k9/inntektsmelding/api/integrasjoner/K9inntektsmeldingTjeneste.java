@@ -8,9 +8,8 @@ import java.util.UUID;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 
-import jakarta.validation.constraints.NotNull;
-
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
+import no.nav.k9.inntektsmelding.api.inntekt.Inntekt;
 import no.nav.k9.inntektsmelding.api.inntektsmelding.Inntektsmelding;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektInfo;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektsmeldingRequest;
@@ -65,6 +64,11 @@ public class K9inntektsmeldingTjeneste {
     public Forespørsel hentForespørsel(UUID forespørselUuid) {
         var response = k9inntektsmeldingKlient.hentForespørsel(forespørselUuid);
         return response != null ? mapResponseTilDomeneobjekt(response) : null;
+    }
+
+    public Inntekt hentInntekt(UUID forespørselUuid) {
+        var response = k9inntektsmeldingKlient.hentInntekt(forespørselUuid);
+        return response != null ? new Inntekt(response.inntektPerMåned(), response.gjennomsnitt()) : null;
     }
 
     public List<Forespørsel> hentForespørsler(String orgnr,

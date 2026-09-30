@@ -7,9 +7,15 @@ import jakarta.enterprise.context.Dependent;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
+import no.nav.k9.inntektsmelding.api.server.exceptions.InntektsmeldingAPIException;
 import no.nav.k9.inntektsmelding.imapi.forespørsel.ForespørselDto;
 import no.nav.k9.inntektsmelding.imapi.forespørsel.HentForespørselerRequest;
 import no.nav.k9.inntektsmelding.imapi.forespørsel.HentForespørslerResponse;
+import no.nav.k9.inntektsmelding.imapi.inntekt.InntektResponse;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.HentInntektsmeldingerRequest;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.HentInntektsmeldingerResponse;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.InntektsmeldingDto;
@@ -17,19 +23,13 @@ import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingReques
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingResponse;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendRefusjonOmsorgspengerRequest;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendRefusjonOmsorgspengerResponse;
-import no.nav.vedtak.mapper.json.DefaultJsonMapper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
-import no.nav.k9.inntektsmelding.api.server.exceptions.InntektsmeldingAPIException;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
+import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 @Dependent
 @RestClientConfig(
@@ -48,6 +48,7 @@ public class K9inntektsmeldingKlient {
     private final URI uriHentInntektsmelding;
     private final URI uriHentInntektsmeldinger;
     private final URI uriSendRefusjonskravOMS;
+    private final URI uriHentInntekt;
 
     public K9inntektsmeldingKlient() {
         this.restClient = RestClient.client();
@@ -58,6 +59,7 @@ public class K9inntektsmeldingKlient {
         this.uriHentInntektsmelding = toUri(restConfig.endpoint(), "api/imapi/inntektsmelding/hent");
         this.uriHentInntektsmeldinger = toUri(restConfig.endpoint(), "api/imapi/inntektsmelding/hent/inntektsmeldinger");
         this.uriSendRefusjonskravOMS = toUri(restConfig.endpoint(), "api/imapi/inntektsmelding/send-refusjonskrav-omsorgspenger");
+        this.uriHentInntekt = toUri(restConfig.fpContextPath(), "api/imapi/inntekt");
     }
 
     ForespørselDto hentForespørsel(UUID forespørselUuid) {
@@ -80,6 +82,31 @@ public class K9inntektsmeldingKlient {
         } catch (Exception e) {
             LOG.warn("K9-97215: Feil ved henting av forespørsel fra k9-inntektsmelding for uuid: {}. Feilmelding var {}",
                 forespørselUuid, e.getMessage(), e);
+            throw feilVedKallTilK9inntektsmelding();
+        }
+    }
+
+    InntektResponse hentInntekt(UUID forespørselUuid) {
+        try {
+            LOG.info("Sender request til k9-inntektsmelding for å hente inntekt for forespørselUuid {} ", forespørselUuid);
+            var request = RestRequest.newGET(toUri(uriHentInntekt, "/" + forespørselUuid), restConfig);
+            var response = restClient.sendReturnUnhandled(request);
+            if (response.statusCode() == 404) {
+                LOG.info("Forespørsel ikke funnet i k9-inntektsmelding for uuid: {}", forespørselUuid);
+                return null;
+            }
+            if (response.statusCode() >= 400) {
+                LOG.warn("K9-97215: Uventet respons {} ved henting av inntekt fra k9-inntektsmelding for uuid: {}",
+                    response.statusCode(), forespørselUuid);
+                throw feilVedKallTilK9inntektsmelding();
+            }
+            return DefaultJsonMapper.fromJson(response.body(), InntektResponse.class);
+        } catch (InntektsmeldingAPIException e) {
+            throw e;
+        } catch (Exception e) {
+            LOG.warn("K9-97215: Feil ved henting av inntekt fra k9-inntektsmelding for uuid: {}. Feilmelding var {}",
+                forespørselUuid,
+                e.getMessage());
             throw feilVedKallTilK9inntektsmelding();
         }
     }
