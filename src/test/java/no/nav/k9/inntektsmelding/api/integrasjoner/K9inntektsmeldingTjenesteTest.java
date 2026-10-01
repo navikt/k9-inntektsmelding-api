@@ -91,7 +91,7 @@ class K9inntektsmeldingTjenesteTest {
     @Test
     void skal_returnere_null_om_inntekt_ikke_finnes() {
         var uuid = UUID.randomUUID();
-        when(k9inntektsmeldingTjeneste.hentInntekt(uuid)).thenReturn(null);
+        when(k9inntektsmeldingKlient.hentInntekt(uuid)).thenReturn(null);
 
         var inntekt = k9inntektsmeldingTjeneste.hentInntekt(uuid);
 
