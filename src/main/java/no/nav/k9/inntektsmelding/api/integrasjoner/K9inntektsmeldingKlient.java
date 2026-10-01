@@ -59,7 +59,7 @@ public class K9inntektsmeldingKlient {
         this.uriHentInntektsmelding = toUri(restConfig.endpoint(), "api/imapi/inntektsmelding/hent");
         this.uriHentInntektsmeldinger = toUri(restConfig.endpoint(), "api/imapi/inntektsmelding/hent/inntektsmeldinger");
         this.uriSendRefusjonskravOMS = toUri(restConfig.endpoint(), "api/imapi/inntektsmelding/send-refusjonskrav-omsorgspenger");
-        this.uriHentInntekt = toUri(restConfig.fpContextPath(), "api/imapi/inntekt");
+        this.uriHentInntekt = toUri(restConfig.endpoint(), "api/imapi/inntekt");
     }
 
     ForespørselDto hentForespørsel(UUID forespørselUuid) {
