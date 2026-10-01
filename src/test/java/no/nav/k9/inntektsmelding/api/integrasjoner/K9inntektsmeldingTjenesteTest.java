@@ -8,7 +8,9 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Avsender;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektInfo;
@@ -40,6 +43,7 @@ import no.nav.k9.inntektsmelding.felles.YtelseTypeDto;
 import no.nav.k9.inntektsmelding.imapi.forespørsel.ForespørselDto;
 import no.nav.k9.inntektsmelding.imapi.forespørsel.HentForespørselerRequest;
 import no.nav.k9.inntektsmelding.imapi.forespørsel.HentForespørslerResponse;
+import no.nav.k9.inntektsmelding.imapi.inntekt.InntektResponse;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.HentInntektsmeldingerRequest;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.HentInntektsmeldingerResponse;
 import no.nav.k9.inntektsmelding.imapi.inntektsmelding.InntektsmeldingDto;
@@ -69,6 +73,29 @@ class K9inntektsmeldingTjenesteTest {
         assertThat(forespørsel.orgnummer().orgnr()).isEqualTo(orgnummer);
         assertThat(forespørsel.ytelseType()).isEqualTo(YtelseType.PLEIEPENGER_SYKT_BARN);
         assertThat(forespørsel.fødselsnummer()).isEqualTo(fødselsnummer);
+    }
+
+    @Test
+    void skal_hente_inntekt() {
+        var uuid = UUID.randomUUID();
+        var inntektPerMåned = Map.of(YearMonth.of(2025, 3), BigDecimal.valueOf(30000));
+        var response = new InntektResponse(inntektPerMåned, BigDecimal.valueOf(30000));
+        when(k9inntektsmeldingKlient.hentInntekt(uuid)).thenReturn(response);
+
+        var inntekt = k9inntektsmeldingTjeneste.hentInntekt(uuid);
+
+        assertThat(inntekt.gjennomsnitt()).isEqualByComparingTo(BigDecimal.valueOf(30000));
+        assertThat(inntekt.inntektPerMåned()).isEqualTo(inntektPerMåned);
+    }
+
+    @Test
+    void skal_returnere_null_om_inntekt_ikke_finnes() {
+        var uuid = UUID.randomUUID();
+        when(k9inntektsmeldingTjeneste.hentInntekt(uuid)).thenReturn(null);
+
+        var inntekt = k9inntektsmeldingTjeneste.hentInntekt(uuid);
+
+        assertThat(inntekt).isNull();
     }
 
     @Test
