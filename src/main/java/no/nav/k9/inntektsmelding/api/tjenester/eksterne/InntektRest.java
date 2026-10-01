@@ -15,14 +15,6 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
-import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
-import no.nav.k9.inntektsmelding.api.server.auth.Tilgang;
-
-import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
-import no.nav.k9.inntektsmelding.api.server.exceptions.ErrorResponse;
-import no.nav.k9.inntektsmelding.api.tjenester.eksterne.responses.InntektDto;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +24,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
+import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
+import no.nav.k9.inntektsmelding.api.server.auth.Tilgang;
+import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
+import no.nav.k9.inntektsmelding.api.server.exceptions.ErrorResponse;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.responses.InntektDto;
 
 @RequestScoped
 @Consumes(MediaType.APPLICATION_JSON)
@@ -58,7 +56,7 @@ public class InntektRest {
     @Path(HENT_INNTEKT)
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Operation(summary = "Hent inntekt", description = """
-        Henter innrapportert inntekt for de siste tre månedene (basert på skjæringstidspunktet til forespørselen) og beregnet         gjennomsnittsinntekt, gitt en forespørselId.
+        Henter innrapportert inntekt for de siste tre månedene (basert på skjæringstidspunktet til forespørselen) og beregnet gjennomsnittsinntekt, gitt en forespørselId.
 
         Skille mellom `0` og `null` i `inntektPerMaaned`:
         - `0` betyr at arbeidsgiver har rapportert en inntekt på 0 kr for måneden.
