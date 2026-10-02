@@ -15,6 +15,7 @@ public enum EksponertFeilmelding {
     VALIDERINGSFEIL("Valideringsfeil"),
     TOM_FORESPOERSEL("Finner ikke forespørsel"),
     TOM_INNTEKTSMELDING("Finner ikke inntektsmelding"),
+    INNTEKT_IKKE_TILGJENGELIG("Inntekt kunne ikke hentes fra A-ordningen for forespørselen. Prøv igjen senere"),
     UGYLDIG_PERIODE("Oppgitt periode er ugyldig, fom kan ikke være etter tom"),
     MISMATCH_ORGNR("Organisasjonsnummer fra token og organisasjonsnummer fra etterspurt forespørsel matcher ikke"),
     MISMATCH_SKJAERINGSTIDSPUNKT("Skjæringstidspunkt fra inntektsmelding og skjæringstidspunkt fra etterspurt forespørsel matcher ikke"),

@@ -1,6 +1,10 @@
 package no.nav.k9.inntektsmelding.api.server.app.api;
 
 
+import static no.nav.k9.inntektsmelding.api.server.app.api.CorrelationIdHeaderOpenApiFilter.CORRELATION_BESKRIVELSE;
+import static no.nav.k9.inntektsmelding.api.server.app.api.CorrelationIdHeaderOpenApiFilter.CORRELATION_HEADER_NAME;
+import static no.nav.k9.inntektsmelding.api.server.app.api.CorrelationIdHeaderOpenApiFilter.CORRELATION_PARAMETER_COMPONENT;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -26,15 +30,12 @@ import no.nav.k9.inntektsmelding.api.server.auth.AutentiseringFilter;
 import no.nav.k9.inntektsmelding.api.server.exceptions.ConstraintViolationMapper;
 import no.nav.k9.inntektsmelding.api.server.exceptions.LokalRestExceptionMapper;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.ForespørselRest;
+import no.nav.k9.inntektsmelding.api.tjenester.eksterne.InntektRest;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.InntektsmeldingRest;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.server.rest.RestSecureLogFeature;
 import no.nav.vedtak.server.rest.jackson.Jackson3ContextResolver;
 import no.nav.vedtak.server.rest.jackson.Jackson3ProviderFeature;
-
-import static no.nav.k9.inntektsmelding.api.server.app.api.CorrelationIdHeaderOpenApiFilter.CORRELATION_BESKRIVELSE;
-import static no.nav.k9.inntektsmelding.api.server.app.api.CorrelationIdHeaderOpenApiFilter.CORRELATION_HEADER_NAME;
-import static no.nav.k9.inntektsmelding.api.server.app.api.CorrelationIdHeaderOpenApiFilter.CORRELATION_PARAMETER_COMPONENT;
 
 @ApplicationPath(ApiConfig.API_URI)
 public class ApiConfig extends ResourceConfig {
@@ -79,6 +80,7 @@ public class ApiConfig extends ResourceConfig {
         oas.info(info).addServersItem(new Server())
             .addTagsItem(new Tag().name("Forespørsel om inntektsmelding").description("Endepunkter for å hente forespørsler NAV har sendt til arbeidsgiver"))
             .addTagsItem(new Tag().name("Inntektsmelding").description("Endepunkter for å sende inn og hente inntektsmeldinger"))
+            .addTagsItem(new Tag().name("Inntekt").description("Endepunkter for å hente forslag til inntekt for en forespørsel"))
             .schemaRequirement("bearer", new SecurityScheme()
                 .type(SecurityScheme.Type.HTTP)
                 .scheme("bearer")
@@ -105,7 +107,7 @@ public class ApiConfig extends ResourceConfig {
     }
 
     private Set<Class<?>> getApplicationClasses() {
-        return Set.of(ForespørselRest.class, InntektsmeldingRest.class);
+        return Set.of(ForespørselRest.class, InntektsmeldingRest.class, InntektRest.class);
     }
 
     private Map<String, Object> getApplicationProperties() {
