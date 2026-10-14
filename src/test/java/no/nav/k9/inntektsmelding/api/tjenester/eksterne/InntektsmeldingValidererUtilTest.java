@@ -610,18 +610,18 @@ class InntektsmeldingValidererUtilTest {
     }
 
     @Test
-    void skal_avvise_varig_lønnsendring_fom_etter_startdato() {
+    void skal_godkjenne_varig_lønnsendring_fom_27_dager_etter_startdato() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsaarsakDto.VarigLoennsendring, STARTDATO.plusDays(1), null, null)
+            lagEndringsårsak(EndringsaarsakDto.VarigLoennsendring, STARTDATO.plusDays(27), null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
-        assertThat(result).hasValue(EksponertFeilmelding.FRA_DATO_FOER_STARTDATO);
+        assertThat(result).isEmpty();
     }
 
     @Test
-    void skal_avvise_varig_lønnsendring_fom_lik_startdato() {
+    void skal_avvise_varig_lønnsendring_fom_28_dager_etter_startdato() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsaarsakDto.VarigLoennsendring, STARTDATO, null, null)
+            lagEndringsårsak(EndringsaarsakDto.VarigLoennsendring, STARTDATO.plusDays(28), null, null)
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.FRA_DATO_FOER_STARTDATO);
