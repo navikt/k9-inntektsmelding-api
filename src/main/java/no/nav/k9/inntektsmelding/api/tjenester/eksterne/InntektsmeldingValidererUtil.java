@@ -9,6 +9,7 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import no.nav.fpsak.tidsserie.LocalDateInterval;
 import no.nav.k9.inntektsmelding.api.forespørsel.Forespørsel;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.InntektInfo;
@@ -19,7 +20,6 @@ import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.Refusjon;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.RefusjonskravOmsorgspengerRequest;
 import no.nav.k9.inntektsmelding.api.typer.EndringsaarsakDto;
 import no.nav.k9.inntektsmelding.api.typer.ForespørselStatus;
-import no.nav.fpsak.tidsserie.LocalDateInterval;
 import no.nav.k9.inntektsmelding.api.typer.YtelseType;
 
 public class InntektsmeldingValidererUtil {
@@ -335,7 +335,7 @@ public class InntektsmeldingValidererUtil {
                     endringsårsak.fom());
                 return Optional.of(EksponertFeilmelding.KREVER_FRA_OG_BLE_KJENT_DATO);
             }
-            if (!endringsårsak.fom().isBefore(startdato)) {
+            if (!endringsårsak.fom().isBefore(startdato.plusDays(30))) {
                 LOG.info("Endringsårsak tariffendring har ugyldig dato. Fra dato {} må være før fraværsdato {}",
                     endringsårsak.fom(),
                     startdato);
