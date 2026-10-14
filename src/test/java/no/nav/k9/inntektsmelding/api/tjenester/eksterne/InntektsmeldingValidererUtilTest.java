@@ -557,7 +557,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_godkjenne_tariffendring_fom_28_dager_etter_startdato() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsaarsakDto.Tariffendring, STARTDATO.plusDays(28), null, STARTDATO.plusDays(29))
+            lagEndringsårsak(EndringsaarsakDto.Tariffendring, STARTDATO.plusDays(27), null, STARTDATO.plusDays(28))
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).isEmpty();
@@ -566,7 +566,7 @@ class InntektsmeldingValidererUtilTest {
     @Test
     void skal_avvise_tariffendring_fom_29_dager_etter_startdato() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsaarsakDto.Tariffendring, STARTDATO.plusDays(29), null, STARTDATO.plusDays(29))
+            lagEndringsårsak(EndringsaarsakDto.Tariffendring, STARTDATO.plusDays(28), null, STARTDATO.plusDays(28))
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.FRA_DATO_FOER_STARTDATO);

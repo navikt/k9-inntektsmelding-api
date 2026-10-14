@@ -335,7 +335,7 @@ public class InntektsmeldingValidererUtil {
                     endringsårsak.fom());
                 return Optional.of(EksponertFeilmelding.KREVER_FRA_OG_BLE_KJENT_DATO);
             }
-            if (endringsårsak.fom().isAfter(startdato.plusDays(28))) {
+            if (!endringsårsak.fom().isBefore(startdato.plusDays(28))) {
                 LOG.info("Endringsårsak tariffendring har ugyldig dato. Fra dato {} må være før fraværsdato {} pluss 28 dager",
                     endringsårsak.fom(),
                     startdato);
