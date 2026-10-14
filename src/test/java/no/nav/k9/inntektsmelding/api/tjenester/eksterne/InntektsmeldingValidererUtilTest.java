@@ -555,18 +555,18 @@ class InntektsmeldingValidererUtilTest {
     }
 
     @Test
-    void skal_avvise_tariffendring_fom_lik_startdato() {
+    void skal_godkjenne_tariffendring_fom_28_dager_etter_startdato() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsaarsakDto.Tariffendring, STARTDATO, null, STARTDATO.plusDays(5))
+            lagEndringsårsak(EndringsaarsakDto.Tariffendring, STARTDATO.plusDays(28), null, STARTDATO.plusDays(29))
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
-        assertThat(result).hasValue(EksponertFeilmelding.FRA_DATO_FOER_STARTDATO);
+        assertThat(result).isEmpty();
     }
 
     @Test
-    void skal_avvise_tariffendring_fom_etter_startdato() {
+    void skal_avvise_tariffendring_fom_29_dager_etter_startdato() {
         var årsaker = List.of(
-            lagEndringsårsak(EndringsaarsakDto.Tariffendring, STARTDATO.plusDays(1), null, STARTDATO.plusDays(5))
+            lagEndringsårsak(EndringsaarsakDto.Tariffendring, STARTDATO.plusDays(29), null, STARTDATO.plusDays(29))
         );
         var result = InntektsmeldingValidererUtil.validerEndringsårsaker(årsaker, STARTDATO);
         assertThat(result).hasValue(EksponertFeilmelding.FRA_DATO_FOER_STARTDATO);
