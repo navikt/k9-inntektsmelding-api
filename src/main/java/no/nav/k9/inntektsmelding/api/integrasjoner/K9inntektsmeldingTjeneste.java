@@ -143,6 +143,7 @@ public class K9inntektsmeldingTjeneste {
                     b.tom(),
                     mapNaturalytelseTypeTilApiType(b.naturalytelsetype()),
                     b.beløp()))
+                .distinct()
                 .toList(),
             response.endringAvInntektÅrsaker() == null ? List.of() : response.endringAvInntektÅrsaker().stream()
                 .map(e -> new Inntektsmelding.Endringsårsaker(mapEndringsårsakTilApiType(e.årsak()), e.fom(), e.tom(), e.bleKjentFom()))
@@ -169,7 +170,7 @@ public class K9inntektsmeldingTjeneste {
 
     private no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto mapNaturalytelseTypeTilApiType(NaturalytelsetypeDto naturalytelsetype) {
         return switch (naturalytelsetype) {
-            case ELEKTRISK_KOMMUNIKASJON -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.ElektroniskKommunikasjon;
+            case ELEKTRISK_KOMMUNIKASJON, ELEKTRONISK_KOMMUNIKASJON -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.ElektroniskKommunikasjon;
             case AKSJER_GRUNNFONDSBEVIS_TIL_UNDERKURS ->
                 no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.AksjerGrunnfondsbevisTilUnderkurs;
             case LOSJI -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.Losji;
@@ -290,7 +291,7 @@ public class K9inntektsmeldingTjeneste {
 
     private NaturalytelsetypeDto mapNaturalYtelseType(no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto naturalytelsetype) {
         return switch (naturalytelsetype) {
-            case ElektroniskKommunikasjon -> NaturalytelsetypeDto.ELEKTRISK_KOMMUNIKASJON;
+            case ElektroniskKommunikasjon -> NaturalytelsetypeDto.ELEKTRONISK_KOMMUNIKASJON;
             case AksjerGrunnfondsbevisTilUnderkurs -> NaturalytelsetypeDto.AKSJER_GRUNNFONDSBEVIS_TIL_UNDERKURS;
             case Losji -> NaturalytelsetypeDto.LOSJI;
             case KostDoegn -> NaturalytelsetypeDto.KOST_DOEGN;

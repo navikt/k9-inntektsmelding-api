@@ -202,7 +202,11 @@ class K9inntektsmeldingTjenesteTest {
         var response = k9inntektsmeldingTjeneste.sendInntektsmelding(inntektsmeldingRequest, forespørsel);
 
         assertThat(response).isNotNull();
-        verify(k9inntektsmeldingKlient).sendInntektsmelding(any());
+        var captor = org.mockito.ArgumentCaptor.forClass(no.nav.k9.inntektsmelding.imapi.inntektsmelding.SendInntektsmeldingRequest.class);
+        verify(k9inntektsmeldingKlient).sendInntektsmelding(captor.capture());
+        assertThat(captor.getValue().bortfaltNaturalytelsePerioder())
+            .extracting(b -> b.naturalytelsetype().name())
+            .containsExactly("ELEKTRONISK_KOMMUNIKASJON");
     }
 
     @Test
