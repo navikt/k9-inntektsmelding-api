@@ -206,7 +206,7 @@ class K9inntektsmeldingTjenesteTest {
         verify(k9inntektsmeldingKlient).sendInntektsmelding(captor.capture());
         assertThat(captor.getValue().bortfaltNaturalytelsePerioder())
             .extracting(b -> b.naturalytelsetype().name())
-            .containsExactly("ELEKTRISK_KOMMUNIKASJON");
+            .containsExactly("ELEKTRONISK_KOMMUNIKASJON");
     }
 
     @Test
