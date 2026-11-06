@@ -34,8 +34,8 @@ import no.nav.k9.inntektsmelding.api.tjenester.eksterne.InntektRest;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.InntektsmeldingRest;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.server.rest.RestSecureLogFeature;
-import no.nav.vedtak.server.rest.jackson.Jackson3ContextResolver;
-import no.nav.vedtak.server.rest.jackson.Jackson3ProviderFeature;
+import no.nav.vedtak.server.rest.jackson.JacksonContextResolver;
+import no.nav.vedtak.server.rest.jackson.JacksonProviderFeature;
 
 @ApplicationPath(ApiConfig.API_URI)
 public class ApiConfig extends ResourceConfig {
@@ -46,8 +46,8 @@ public class ApiConfig extends ResourceConfig {
     public ApiConfig() {
         LOG.info("Initialiserer: {}", API_URI);
         // Sikkerhet
-        register(Jackson3ProviderFeature.class);
-        register(Jackson3ContextResolver.class);
+        register(JacksonProviderFeature.class);
+        register(JacksonContextResolver.class);
         register(Jackson3ExceptionMapper.class);
         register(AutentiseringFilter.class);
         registerExceptionMappers();
