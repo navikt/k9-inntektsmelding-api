@@ -32,6 +32,7 @@ import no.nav.k9.inntektsmelding.api.integrasjoner.K9inntektsmeldingTjeneste;
 import no.nav.k9.inntektsmelding.api.server.auth.Tilgang;
 import no.nav.k9.inntektsmelding.api.server.exceptions.EksponertFeilmelding;
 import no.nav.k9.inntektsmelding.api.server.exceptions.ErrorResponse;
+import no.nav.k9.inntektsmelding.api.server.exceptions.InntektsmeldingAPIException;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.requests.ForespørselFilter;
 import no.nav.k9.inntektsmelding.api.tjenester.eksterne.responses.ForespørselDto;
 import no.nav.k9.inntektsmelding.api.typer.KodeverkMapper;
@@ -109,6 +110,8 @@ public class ForespørselRest {
         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     public Response hentForespørsler(@NotNull @Valid ForespørselFilter filterRequest) {
         LOG.info("Innkomende kall på søk etter forespørsler");
+        var tilgangskontrollertOrgnummer = new Organisasjonsnummer(filterRequest.orgnr());
+        tilgang.sjekkAtSystemHarTilgangTilOrganisasjon(tilgangskontrollertOrgnummer);
 
         // Det er spurt etter en spesifikk forespørsel, henter kun denne
         if (filterRequest.forespoerselId() != null) {
@@ -116,7 +119,7 @@ public class ForespørselRest {
             if (forespørsel == null) {
                 return Response.ok(List.of()).build();
             }
-            tilgang.sjekkAtSystemHarTilgangTilOrganisasjon(forespørsel.orgnummer());
+            sjekkAtOrganisasjonSamsvarer(forespørsel.orgnummer(), tilgangskontrollertOrgnummer);
             return Response.ok(List.of(mapTilDto(forespørsel))).build();
         }
 
@@ -126,7 +129,6 @@ public class ForespørselRest {
                  .build();
         }
 
-        tilgang.sjekkAtSystemHarTilgangTilOrganisasjon(new Organisasjonsnummer(filterRequest.orgnr()));
         var forespørsler = k9inntektsmeldingTjeneste.hentForespørsler(filterRequest.orgnr(),
             filterRequest.soekerFnr(),
             filterRequest.status(),
@@ -135,9 +137,16 @@ public class ForespørselRest {
             filterRequest.tom(),
             filterRequest.fraLoepenr());
 
+        forespørsler.forEach(forespørsel -> sjekkAtOrganisasjonSamsvarer(forespørsel.orgnummer(), tilgangskontrollertOrgnummer));
         var dtoer = forespørsler.stream().map(this::mapTilDto).toList();
 
         return Response.ok(dtoer).build();
+    }
+
+    private void sjekkAtOrganisasjonSamsvarer(Organisasjonsnummer orgnummerFraForespørsel, Organisasjonsnummer tilgangskontrollertOrgnummer) {
+        if (!tilgangskontrollertOrgnummer.equals(orgnummerFraForespørsel)) {
+            throw new InntektsmeldingAPIException(EksponertFeilmelding.IKKE_TILGANG_ALTINN, Response.Status.UNAUTHORIZED);
+        }
     }
 
     private boolean datoerErUgyldige(ForespørselFilter filterRequest) {
