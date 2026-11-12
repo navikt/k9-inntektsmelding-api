@@ -99,6 +99,8 @@ public class InntektsmeldingRest {
                 .build();
         }
 
+        tilgang.sjekkAtSystemHarTilgangTilOrganisasjon(new Organisasjonsnummer(forespørsel.orgnummer().orgnr()));
+
         if (!forespørsel.fødselsnummer().equals(inntektsmeldingRequest.soekerFnr())) {
             LOG.info("Avvist inntektsmelding for forespørselUuid {}. Forespørsel og inntektsmelding har ikke samme fødselsnummer.", forespørselUuid);
             return Response.status(Response.Status.BAD_REQUEST)
@@ -108,7 +110,6 @@ public class InntektsmeldingRest {
                 .build();
         }
 
-        tilgang.sjekkAtSystemHarTilgangTilOrganisasjon(new Organisasjonsnummer(forespørsel.orgnummer().orgnr()));
 
         var feilmelding = InntektsmeldingValidererUtil.validerInntektsmelding(inntektsmeldingRequest, forespørsel);
         if (feilmelding.isPresent()) {
