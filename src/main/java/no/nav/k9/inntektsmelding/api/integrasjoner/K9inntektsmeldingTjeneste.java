@@ -170,7 +170,7 @@ public class K9inntektsmeldingTjeneste {
 
     private no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto mapNaturalytelseTypeTilApiType(NaturalytelsetypeDto naturalytelsetype) {
         return switch (naturalytelsetype) {
-            case ELEKTRISK_KOMMUNIKASJON, ELEKTRONISK_KOMMUNIKASJON -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.ElektroniskKommunikasjon;
+            case ELEKTRONISK_KOMMUNIKASJON -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.ElektroniskKommunikasjon;
             case AKSJER_GRUNNFONDSBEVIS_TIL_UNDERKURS ->
                 no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.AksjerGrunnfondsbevisTilUnderkurs;
             case LOSJI -> no.nav.k9.inntektsmelding.api.typer.NaturalytelsetypeDto.Losji;
