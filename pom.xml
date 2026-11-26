@@ -88,11 +88,11 @@
         <!-- SWAGGER -->
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-core-jakarta</artifactId>
+            <artifactId>swagger-core</artifactId>
         </dependency>
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-jaxrs2-jakarta</artifactId>
+            <artifactId>swagger-rest</artifactId>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
